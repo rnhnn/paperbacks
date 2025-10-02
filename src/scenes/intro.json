@@ -1,0 +1,85 @@
+{
+  "id": "intro",
+  "content": [
+    {
+      "type": "singleParagraph",
+      "text": "You wake up in a small, dimly lit room."
+    },
+    {
+      "type": "multipleParagraphs",
+      "text": [
+        "The air smells musty, like old books.",
+        "A single window lets in some weak sunlight."
+      ]
+    },
+    {
+      "type": "characterDialogue",
+      "character": {
+        "id": "kim",
+        "name": "KIM KITSURAGI",
+        "portrait": "kim.png"
+      },
+      "text": [
+        "\"Indeed...\"",
+        "With his notebook under his arm the lieutenant crouches to inspect the soles:",
+        "\"Technically speaking these are *sabatons*, not boots.\""
+      ]
+    },
+    {
+      "type": "characterDialogue",
+      "character": {
+        "id": "kim",
+        "name": "KIM KITSURAGI",
+        "portrait": "kim.png"
+      },
+      "text": [
+        "Let me think about it."
+      ]
+    },
+    {
+      "type": "dialogueChoice",
+      "choices": [
+        {
+          "id": "smile",
+          "text": "Smile",
+          "effects": {
+            "hasSmiled": true
+          },
+          "next": [
+            {
+              "type": "singleParagraph",
+              "text": "You offer a weak smile."
+            }
+          ]
+        },
+        {
+          "id": "sayNothing",
+          "text": "Say nothing",
+          "effects": {
+            "saidNothing": true
+          },
+          "next": [
+            {
+              "type": "singleParagraph",
+              "text": "You stay silent, feeling tense."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "conditions": {
+        "hasSmiled": true
+      },
+      "type": "singleParagraph",
+      "text": "The voice reacts to your actions."
+    },
+    {
+      "conditions": {
+        "saidNothing": true
+      },
+      "type": "singleParagraph",
+      "text": "The voice frowns at your silence."
+    }
+  ]
+}
