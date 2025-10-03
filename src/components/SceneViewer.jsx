@@ -121,14 +121,28 @@ export default function SceneViewer({ scene }) {
 
         {/* Render each block that has been revealed so far */}
         {renderedBlocks.map((block, idx) => {
+          // Determine if this is the last block rendered
+          const isCurrent = idx === renderedBlocks.length - 1;
+          const blockClass = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
+
           // Narrative text (single paragraph)
           if (block.type === "singleParagraph") {
-            return <p key={idx}>{block.text}</p>;
+            return (
+              <div key={idx} className={blockClass}>
+                <p>{block.text}</p>
+              </div>
+            );
           }
 
           // Narrative text (multiple paragraphs)
           if (block.type === "multipleParagraphs") {
-            return block.text.map((t, tIdx) => <p key={`${idx}-${tIdx}`}>{t}</p>);
+            return (
+              <div key={idx} className={blockClass}>
+                {block.text.map((t, tIdx) => (
+                  <p key={`${idx}-${tIdx}`}>{t}</p>
+                ))}
+              </div>
+            );
           }
 
           // Character dialogue
@@ -137,23 +151,27 @@ export default function SceneViewer({ scene }) {
             const dialogueText = Array.isArray(block.text) ? block.text.join(" ") : block.text;
 
             return (
-              <p key={idx}>
-                <strong style={{ textTransform: "uppercase" }}>{characterName} —</strong>{" "}
-                {dialogueText}
-              </p>
+              <div key={idx} className={blockClass}>
+                <p>
+                  <strong style={{ textTransform: "uppercase" }}>{characterName} —</strong>{" "}
+                  {dialogueText}
+                </p>
+              </div>
             );
           }
 
           // Choice menu
           if (block.type === "dialogueChoice") {
             return (
-              <ol key={idx} className="scene-viewer-dialogue-list">
-                {block.choices.map((choice) => (
-                  <li key={choice.id}>
-                    <button onClick={() => handleChoice(choice)}>{choice.text}</button>
-                  </li>
-                ))}
-              </ol>
+              <div key={idx} className={`${blockClass} scene-viewer-dialogue-list`}>
+                <ol>
+                  {block.choices.map((choice) => (
+                    <li key={choice.id}>
+                      <button onClick={() => handleChoice(choice)}>{choice.text}</button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             );
           }
 
