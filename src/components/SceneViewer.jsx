@@ -104,91 +104,89 @@ export default function SceneViewer({ scene }) {
   );
 
   return (
-    <div>
-      <div className="scene-viewer-text">
-        {/* Show the most recent speaker’s portrait */}
-        {lastPortraitBlock && (
-          <div className="scene-viewer-portrait">
-            <img
-              src={new URL(
-                `../assets/portraits/${lastPortraitBlock.character.portrait}`,
-                import.meta.url
-              ).href}
-              alt={lastPortraitBlock.character.name}
-            />
-          </div>
-        )}
+    <div className="scene-viewer-text">
+      {/* Show the most recent speaker’s portrait */}
+      {lastPortraitBlock && (
+        <div className="scene-viewer-portrait">
+          <img
+            src={new URL(
+              `../assets/portraits/${lastPortraitBlock.character.portrait}`,
+              import.meta.url
+            ).href}
+            alt={lastPortraitBlock.character.name}
+          />
+        </div>
+      )}
 
-        {/* Render each block that has been revealed so far */}
-        {renderedBlocks.map((block, idx) => {
-          // Determine if this is the last block rendered
-          const isCurrent = idx === renderedBlocks.length - 1;
-          const blockClass = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
+      {/* Render each block that has been revealed so far */}
+      {renderedBlocks.map((block, idx) => {
+        // Determine if this is the last block rendered
+        const isCurrent = idx === renderedBlocks.length - 1;
+        const blockClass = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
 
-          // Narrative text (single paragraph)
-          if (block.type === "singleParagraph") {
-            return (
-              <div key={idx} className={blockClass}>
-                <p>{block.text}</p>
-              </div>
-            );
-          }
+        // Narrative text (single paragraph)
+        if (block.type === "singleParagraph") {
+          return (
+            <div key={idx} className={blockClass}>
+              <p>{block.text}</p>
+            </div>
+          );
+        }
 
-          // Narrative text (multiple paragraphs)
-          if (block.type === "multipleParagraphs") {
-            return (
-              <div key={idx} className={blockClass}>
-                {block.text.map((t, tIdx) => (
-                  <p key={`${idx}-${tIdx}`}>{t}</p>
+        // Narrative text (multiple paragraphs)
+        if (block.type === "multipleParagraphs") {
+          return (
+            <div key={idx} className={blockClass}>
+              {block.text.map((t, tIdx) => (
+                <p key={`${idx}-${tIdx}`}>{t}</p>
+              ))}
+            </div>
+          );
+        }
+
+        // Character dialogue
+        if (block.type === "characterDialogue") {
+          const characterName = block.character?.name?.toUpperCase() || "???";
+          const dialogueText = Array.isArray(block.text) ? block.text.join(" ") : block.text;
+
+          return (
+            <div key={idx} className={blockClass}>
+              <p>
+                <strong style={{ textTransform: "uppercase" }}>{characterName} —</strong>{" "}
+                {dialogueText}
+              </p>
+            </div>
+          );
+        }
+
+        // Choice menu
+        if (block.type === "dialogueChoice") {
+          return (
+            <div key={idx} className={`${blockClass} scene-viewer-dialogue-list`}>
+              <ol>
+                {block.choices.map((choice) => (
+                  <li key={choice.id}>
+                    <button onClick={() => handleChoice(choice)}>{choice.text}</button>
+                  </li>
                 ))}
-              </div>
-            );
-          }
+              </ol>
+            </div>
+          );
+        }
 
-          // Character dialogue
-          if (block.type === "characterDialogue") {
-            const characterName = block.character?.name?.toUpperCase() || "???";
-            const dialogueText = Array.isArray(block.text) ? block.text.join(" ") : block.text;
+        return null; // Unknown block type
+      })}
 
-            return (
-              <div key={idx} className={blockClass}>
-                <p>
-                  <strong style={{ textTransform: "uppercase" }}>{characterName} —</strong>{" "}
-                  {dialogueText}
-                </p>
-              </div>
-            );
-          }
-
-          // Choice menu
-          if (block.type === "dialogueChoice") {
-            return (
-              <div key={idx} className={`${blockClass} scene-viewer-dialogue-list`}>
-                <ol>
-                  {block.choices.map((choice) => (
-                    <li key={choice.id}>
-                      <button onClick={() => handleChoice(choice)}>{choice.text}</button>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            );
-          }
-
-          return null; // Unknown block type
-        })}
-
-        {/* Begin/Continue button: only visible if:
-              - Not waiting on a choice
-              - There are still renderable blocks left in the queue
-              - Label shows "Begin" if no blocks rendered yet, otherwise "Continue" */}
-        {!waitingChoice &&
-          queue.some((b) => isRenderable(b)) && (
-            <button onClick={renderNext}>
-              {renderedBlocks.length === 0 ? "Begin" : "Continue"}
-            </button>
-          )}
-      </div>
+      {/* Begin/Continue button: only visible if:
+            - Not waiting on a choice
+            - There are still renderable blocks left in the queue
+            - Label shows "Begin" if no blocks rendered yet, otherwise "Continue" */}
+      {!waitingChoice &&
+        queue.some((b) => isRenderable(b)) && (
+          <button onClick={renderNext}>
+            {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+          </button>
+        )}
     </div>
   );
 }
