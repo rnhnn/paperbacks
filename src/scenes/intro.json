@@ -6,30 +6,21 @@
       "text": "You wake up in a small, dimly lit room."
     },
     {
-      "type": "multipleParagraphs",
-      "text": [
-        "The air smells musty, like old books.",
-        "A single window lets in some weak sunlight."
-      ]
-    },
-    {
       "type": "characterDialogue",
       "character": {
         "id": "kim",
-        "name": "KIM KITSURAGI",
+        "name": "Kim Kitsuragi",
         "portrait": "kim.png"
       },
       "text": [
-        "\"Indeed...\"",
-        "With his notebook under his arm the lieutenant crouches to inspect the soles:",
-        "\"Technically speaking these are *sabatons*, not boots.\""
+        "“Indeed...” With his notebook under his arm the lieutenant crouches to inspect the soles: “Technically speaking these are *sabatons*, not boots.”"
       ]
     },
     {
       "type": "characterDialogue",
       "character": {
         "id": "kim",
-        "name": "KIM KITSURAGI",
+        "name": "Kim Kitsuragi",
         "portrait": "kim.png"
       },
       "text": [
@@ -41,27 +32,27 @@
       "choices": [
         {
           "id": "smile",
-          "text": "Smile",
+          "text": "\"Hello there\"",
           "effects": {
             "hasSmiled": true
           },
-          "next": [
+          "reaction": [
             {
               "type": "singleParagraph",
-              "text": "You offer a weak smile."
+              "text": "No one responded."
             }
           ]
         },
         {
           "id": "sayNothing",
-          "text": "Say nothing",
+          "text": "\"Hmm, I'm a bit hungry\"",
           "effects": {
             "saidNothing": true
           },
-          "next": [
+          "reaction": [
             {
               "type": "singleParagraph",
-              "text": "You stay silent, feeling tense."
+              "text": "Total silence."
             }
           ]
         }
