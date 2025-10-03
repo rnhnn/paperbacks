@@ -3,6 +3,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-color: black;
 }
 
 img {
@@ -16,7 +17,7 @@ img {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-color: pink;
+  background-color: white;
   height: 500px;
   width: 360px;
   padding: 30px;
