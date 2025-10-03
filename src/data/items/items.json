@@ -3,5 +3,15 @@
     "id": "beckys_keys",
     "name": "Keys to Becky's Place",
     "description": "She gave them to me after work."
+  },
+  {
+    "id": "toothbrush",
+    "name": "A toothbrush",
+    "description": "It stinks."
+  },
+  {
+    "id": "old_shoe",
+    "name": "Old Shoe",
+    "description": "It *really* stinks. It reminds you of an afternoon at yoru grandmas place."
   }
 ]
