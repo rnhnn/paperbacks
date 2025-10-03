@@ -7,6 +7,10 @@
   font-display: swap;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -17,6 +21,10 @@ body {
   overflow: hidden;
   font-family: 'Grand9K Pixel';
   background-color: black;
+}
+
+p {
+  margin: 0;
 }
 
 img {

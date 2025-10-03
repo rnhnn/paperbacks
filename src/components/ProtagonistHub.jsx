@@ -1,32 +1,29 @@
 import { useState } from "react";
-import { useInventory } from "../context/InventoryContext"; // <-- import inventory hook
-import { useNotes } from "../context/NotesContext";         // <-- import notes hook
-import itemsData from "../data/items/items.json";           // <-- items database
-import notesData from "../data/notes/notes.json";           // <-- notes database
+import { useInventory } from "../context/InventoryContext";
+import { useNotes } from "../context/NotesContext";
+import itemsData from "../data/items/items.json";
+import notesData from "../data/notes/notes.json";
 import "../styles/ProtagonistHub.css";
 import protagonistImg from "../assets/portraits/protagonist.png";
 
 const ProtagonistHub = () => {
   const [activeTab, setActiveTab] = useState("portrait");
 
-  // Track which notes are open
-  const [openNotes, setOpenNotes] = useState({});
+  // Track which single note is open
+  const [openNoteId, setOpenNoteId] = useState(null);
 
   const toggleNote = (id) => {
-    setOpenNotes((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setOpenNoteId((prev) => (prev === id ? null : id));
   };
 
   // Inventory
-  const { inventory } = useInventory(); 
+  const { inventory } = useInventory();
   const inventoryItems = inventory.map((id) =>
     itemsData.find((item) => item.id === id)
   );
 
   // Notes
-  const { notes } = useNotes(); 
+  const { notes } = useNotes();
   const unlockedNotes = notes.map((id) =>
     notesData.find((note) => note.id === id)
   );
@@ -46,6 +43,7 @@ const ProtagonistHub = () => {
           <div className="protagonist-hub-buttons">
             <button onClick={() => setActiveTab("inventory")}>Inventory</button>
             <button onClick={() => setActiveTab("notes")}>Notes</button>
+            <button>Options</button>
           </div>
         </>
       )}
@@ -57,7 +55,7 @@ const ProtagonistHub = () => {
           {inventoryItems.length > 0 ? (
             <ul className="protagonist-hub-inventory-list">
               {inventoryItems.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className="protagonist-hub-inventory-list-item">
                   <strong>{item.name}</strong>
                   {item.description && <p>({item.description})</p>}
                 </li>
@@ -66,7 +64,7 @@ const ProtagonistHub = () => {
           ) : (
             <p>No items yet.</p>
           )}
-          <button onClick={() => setActiveTab("portrait")}>Back</button>
+          <button onClick={() => setActiveTab("portrait")} className="protagonist-hub-inventory-back-button">Back</button>
         </div>
       )}
 
@@ -87,7 +85,7 @@ const ProtagonistHub = () => {
                   </button>
 
                   {/* Description (accordion content) */}
-                  {openNotes[note.id] && (
+                  {openNoteId === note.id && (
                     <div className="protagonist-hub-notes-list-item-description">
                       {note.content.map((paragraph, idx) => (
                         <p key={idx}>{paragraph}</p>
@@ -100,7 +98,7 @@ const ProtagonistHub = () => {
           ) : (
             <p>No notes yet.</p>
           )}
-          <button onClick={() => setActiveTab("portrait")}>Back</button>
+          <button onClick={() => setActiveTab("portrait")} className="protagonist-hub-notes-back-button">Back</button>
         </div>
       )}
     </div>
