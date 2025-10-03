@@ -1,8 +1,18 @@
+@font-face {
+  font-family: 'Grand9K Pixel';
+  src: url('../assets/fonts/Grand9KPixelRegular.woff2') format('woff2'), 
+  url('../assets/fonts/Grand9KPixelRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: 'Grand9K Pixel';
   background-color: black;
 }
 
@@ -10,6 +20,10 @@ img {
   display: block;
   height: auto;
   max-width: 100%;
+}
+
+button {
+  font-family: inherit;
 }
 
 .scene-viewer-text {
