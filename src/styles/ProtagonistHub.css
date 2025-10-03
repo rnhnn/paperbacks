@@ -3,12 +3,45 @@
   flex-direction: column;
   align-items: center;
   width: 200px;
-  height: 200px;
+  height: 300px;
   padding: 16px;
-  background-color: #747474;
-  color: #fff;
+  background-color: #564039;
+  color: var(--white);
   border-radius: 8px;
   margin-left: 40px;
   margin-right: -240px;
   margin-bottom: 60px;
+}
+
+.protagonist-hub-portrait {
+  margin-bottom: 15px;
+  border: 3px solid var(--white);
+}
+
+.protagonist-hub-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.protagonist-hub-buttons button {
+  width: 100%;
+}
+
+.protagonist-hub-buttons button + button {
+  margin-top: 5px;
+}
+
+.protagonist-hub-inventory,
+.protagonist-hub-notes {
+  padding: 10px;
+  font-size: 14px;
+  width: 100%;
+  background-color: var(--white);
+  color: var(--black);
+}
+
+.protagonist-hub-notes-list {
+  overflow-y: scroll;
+  height: 150px;
 }

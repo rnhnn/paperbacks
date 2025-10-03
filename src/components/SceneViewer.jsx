@@ -1,5 +1,7 @@
 import "../styles/SceneViewer.css";
 import { useState } from "react";
+import { useInventory } from "../context/InventoryContext"; // <-- inventory hook
+import { useNotes } from "../context/NotesContext";         // <-- notes hook
 
 export default function SceneViewer({ scene }) {
   // State: what’s already rendered on screen
@@ -11,10 +13,17 @@ export default function SceneViewer({ scene }) {
   // State: whether the game is waiting for a dialogue choice
   const [waitingChoice, setWaitingChoice] = useState(false);
 
+  // Inventory hooks
+  const { addItem, removeItem } = useInventory(); 
+  // Notes hooks
+  const { addNote } = useNotes(); 
+
   /**
    * Advance the story by rendering the next eligible block from the queue.
    * - Skips blocks whose conditions don’t match current flags.
    * - Stops if there’s no block left, or if we’re currently waiting for a choice.
+   * - Applies inventory additions/removals defined in the block.
+   * - Unlocks notes if the block has notesAdd entries.
    */
   const renderNext = () => {
     if (queue.length === 0 || waitingChoice) return;
@@ -46,6 +55,13 @@ export default function SceneViewer({ scene }) {
     // If nothing renderable was found, stop
     if (!nextBlock) return;
 
+    // **Inventory changes**
+    nextBlock.inventoryAdd?.forEach(addItem);
+    nextBlock.inventoryRemove?.forEach(removeItem);
+
+    // **Notes unlocking**
+    nextBlock.notesAdd?.forEach(addNote); // <-- unlock any notes associated with this block
+
     // Add this block to the rendered list
     setRenderedBlocks((prev) => [...prev, nextBlock]);
 
@@ -62,6 +78,8 @@ export default function SceneViewer({ scene }) {
    * - Immediately insert the reaction blocks defined in the choice.
    * - Remove the choice menu from renderedBlocks so it can't be picked again.
    * - Resume flow (not waiting anymore).
+   * - Applies inventory changes from reaction blocks, if any.
+   * - Unlocks notes from reaction blocks, if any.
    */
   const handleChoice = (choice) => {
     // Merge choice.effects into flags
@@ -77,7 +95,14 @@ export default function SceneViewer({ scene }) {
     // Reaction blocks defined in the JSON
     const reactionBlocks = choice.reaction || [];
 
-    // Remove the dialogueChoice block from renderedBlocks
+    // Apply inventory and notes changes for reaction blocks
+    reactionBlocks.forEach((block) => {
+      block.inventoryAdd?.forEach(addItem);
+      block.inventoryRemove?.forEach(removeItem);
+      block.notesAdd?.forEach(addNote); // <-- unlock notes if any
+    });
+
+    // Remove the dialogueChoice block from renderedBlocks and add the choice + reactions
     setRenderedBlocks((prev) => [
       ...prev.filter((b) => b.type !== "dialogueChoice"),
       youBlock,
@@ -120,11 +145,9 @@ export default function SceneViewer({ scene }) {
 
       {/* Render each block that has been revealed so far */}
       {renderedBlocks.map((block, idx) => {
-        // Determine if this is the last block rendered
         const isCurrent = idx === renderedBlocks.length - 1;
         const blockClass = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
 
-        // Narrative text (single paragraph)
         if (block.type === "singleParagraph") {
           return (
             <div key={idx} className={blockClass}>
@@ -133,7 +156,6 @@ export default function SceneViewer({ scene }) {
           );
         }
 
-        // Narrative text (multiple paragraphs)
         if (block.type === "multipleParagraphs") {
           return (
             <div key={idx} className={blockClass}>
@@ -144,10 +166,11 @@ export default function SceneViewer({ scene }) {
           );
         }
 
-        // Character dialogue
         if (block.type === "characterDialogue") {
           const characterName = block.character?.name?.toUpperCase() || "???";
-          const dialogueText = Array.isArray(block.text) ? block.text.join(" ") : block.text;
+          const dialogueText = Array.isArray(block.text)
+            ? block.text.join(" ")
+            : block.text;
 
           return (
             <div key={idx} className={blockClass}>
@@ -159,13 +182,12 @@ export default function SceneViewer({ scene }) {
           );
         }
 
-        // Choice menu
         if (block.type === "dialogueChoice") {
           return (
-            <div key={idx} className={`${blockClass} scene-viewer-dialogue-list`}>
-              <ol>
+            <div key={idx} className={`${blockClass}`}>
+              <ol className="scene-viewer-dialogue-list">
                 {block.choices.map((choice) => (
-                  <li key={choice.id}>
+                  <li key={choice.id} className="scene-viewer-dialogue-list-option">
                     <button onClick={() => handleChoice(choice)}>{choice.text}</button>
                   </li>
                 ))}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "meeting_with_kim",
+    "title": "Meeting Reminder",
+    "content": [
+      "Don't forget the meeting with Kim Kitsuragi at 3 PM.",
+      "Check the evidence folder before attending."
+    ]
+  },
+  {
+    "id": "shopping_list_home",
+    "title": "Shopping List",
+    "content": [
+      "Buy milk, eggs, and bread.",
+      "Pick up some coffee if there’s time."
+    ]
+  },
+  {
+    "id": "mysterious_figure_alley",
+    "title": "Strange Observation",
+    "content": [
+      "Saw a mysterious figure near the alley last night.",
+      "Might be worth investigating later."
+    ]
+  }
+]

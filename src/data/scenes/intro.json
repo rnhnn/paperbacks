@@ -3,7 +3,17 @@
   "content": [
     {
       "type": "singleParagraph",
-      "text": "You wake up in a small, dimly lit room."
+      "text": "We arrive at her house."
+    },
+    {
+      "type": "singleParagraph",
+      "text": "You pick up the keys from under the carpet",
+      "inventoryAdd": ["beckys_keys"]
+    },
+    {
+      "type": "singleParagraph",
+      "text": "You receive a reminder about your upcoming meeting.",
+      "notesAdd": ["meeting_with_kim"]
     },
     {
       "type": "characterDialogue",
@@ -13,18 +23,7 @@
         "portrait": "kim.png"
       },
       "text": [
-        "“Indeed...” With his notebook under his arm the lieutenant crouches to inspect the soles: “Technically speaking these are *sabatons*, not boots.”"
-      ]
-    },
-    {
-      "type": "characterDialogue",
-      "character": {
-        "id": "kim",
-        "name": "Kim Kitsuragi",
-        "portrait": "kim.png"
-      },
-      "text": [
-        "Let me think about it."
+        "“Wow” His eyes widened “She actually left us a key.”"
       ]
     },
     {

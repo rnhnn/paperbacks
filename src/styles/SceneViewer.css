@@ -1,39 +1,9 @@
-@font-face {
-  font-family: 'Grand9K Pixel';
-  src: url('../assets/fonts/Grand9KPixelRegular.woff2') format('woff2'), 
-  url('../assets/fonts/Grand9KPixelRegular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  font-family: 'Grand9K Pixel';
-  background-color: black;
-}
-
-img {
-  display: block;
-  height: auto;
-  max-width: 100%;
-}
-
-button {
-  font-family: inherit;
-}
-
 .scene-viewer-text {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background-color: white;
+  background-color: var(--white);
   height: 500px;
   width: 360px;
   padding: 30px;
@@ -49,7 +19,7 @@ button {
   top: 0;
   left: -160px;
   max-width: 155px;
-  border: 3px solid white;
+  border: 3px solid var(--white);
 }
 
 .scene-viewer-block {
@@ -58,4 +28,25 @@ button {
 
 .scene-viewer-block.is-current {
   opacity: 1;
+}
+.scene-viewer-dialogue-list {
+  counter-reset: dialogue-counter;
+}
+
+.scene-viewer-dialogue-list-option::before {
+  counter-increment: dialogue-counter;
+  content: counter(dialogue-counter) ". ";
+  display: inline-block;
+  min-width: 1.5ch;
+}
+
+.scene-viewer-dialogue-list-option button {
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  font-size: initial;
+}
+
+.scene-viewer-dialogue-list-option button:hover {
+  color: red;
 }
