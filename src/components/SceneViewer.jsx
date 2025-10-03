@@ -178,12 +178,15 @@ export default function SceneViewer({ scene }) {
           return null; // Unknown block type
         })}
 
-        {/* Continue button: only visible if:
+        {/* Begin/Continue button: only visible if:
               - Not waiting on a choice
-              - There are still renderable blocks left in queue */}
+              - There are still renderable blocks left in the queue
+              - Label shows "Begin" if no blocks rendered yet, otherwise "Continue" */}
         {!waitingChoice &&
           queue.some((b) => isRenderable(b)) && (
-            <button onClick={renderNext}>Continue</button>
+            <button onClick={renderNext}>
+              {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+            </button>
           )}
       </div>
     </div>
