@@ -3,73 +3,63 @@
   "content": [
     {
       "type": "singleParagraph",
-      "text": "We arrive at her house."
+      "text": "At the end of a lonely street, you *eventually* find the right building."
     },
     {
       "type": "singleParagraph",
-      "text": "You pick up the keys from under the carpet",
-      "inventoryAdd": ["beckys_keys"]
-    },
-    {
-      "type": "singleParagraph",
-      "text": "You receive a reminder about your upcoming meeting.",
-      "notesAdd": ["meeting_with_kim"]
-    },
-    {
-      "type": "characterDialogue",
-      "character": {
-        "id": "kim",
-        "name": "Kim Kitsuragi",
-        "portrait": "kim.png"
-      },
-      "text": [
-        "“Wow” His eyes widened “She actually left us a key.”"
+      "text": "A three-story relic from the ’60s, with a rust-eaten plaque on the side that reads: Monsello 188.",
+      "inventoryAdd": [
+        "beckys_keys"
       ]
+    },
+    {
+      "type": "singleParagraph",
+      "text": "Or is it 189?"
     },
     {
       "type": "dialogueChoice",
       "choices": [
         {
           "id": "smile",
-          "text": "\"Hello there\"",
+          "text": "“It’s here.”",
           "effects": {
             "hasSmiled": true
           },
           "reaction": [
             {
-              "type": "singleParagraph",
-              "text": "No one responded."
+              "type": "characterDialogue",
+              "character": {
+                "id": "kim",
+                "name": "Kim Kitsuragi",
+                "portrait": "kim.png"
+              },
+              "text": [
+                "“Freaking finally.”"
+              ]
             }
           ]
         },
         {
           "id": "sayNothing",
-          "text": "\"Hmm, I'm a bit hungry\"",
+          "text": "“It’s… here?”",
           "effects": {
             "saidNothing": true
           },
           "reaction": [
             {
-              "type": "singleParagraph",
-              "text": "Total silence."
+              "type": "characterDialogue",
+              "character": {
+                "id": "kim",
+                "name": "Kim Kitsuragi",
+                "portrait": "kim.png"
+              },
+              "text": [
+                "“You don't sound too sure.”"
+              ]
             }
           ]
         }
       ]
-    },
-    {
-      "conditions": {
-        "hasSmiled": true
-      },
-      "type": "singleParagraph",
-      "text": "The voice reacts to your actions."
-    },
-    {
-      "conditions": {
-        "saidNothing": true
-      },
-      "type": "singleParagraph",
-      "text": "The voice frowns at your silence."
     }
   ]
 }
