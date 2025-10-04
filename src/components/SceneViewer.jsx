@@ -129,7 +129,7 @@ export default function SceneViewer({ scene }) {
   );
 
   return (
-    <div className="scene-viewer-text">
+    <div className="scene-viewer">
       {/* Show the most recent speaker’s portrait */}
       {lastPortraitBlock && (
         <div className="scene-viewer-portrait">

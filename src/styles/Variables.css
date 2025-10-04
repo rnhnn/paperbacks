@@ -1,0 +1,11 @@
+:root {
+  --white: #ffffff;
+  --black: #000000;
+
+  --font-size-tiny: 10px;
+  --font-size-small: 12px;
+  --font-size-regular: 16px;
+  --font-size-large: 18px;
+  --font-size-title: 24px;
+  --font-size-huge: 32px;
+}

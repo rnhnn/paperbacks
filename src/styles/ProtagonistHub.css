@@ -5,7 +5,7 @@
   width: 200px;
   height: 300px;
   padding: 16px;
-  background-color: #564039;
+  background-color: #4e4f64;
   color: var(--white);
   border-radius: 8px;
   margin-left: 40px;
@@ -45,7 +45,7 @@
 .protagonist-hub-inventory-title,
 .protagonist-hub-notes-title {
   margin-top: 0;
-  font-size: 15px;
+  font-size: var(--font-size-regular);
 }
 
 .protagonist-hub-notes-list,
@@ -56,7 +56,7 @@
   max-height: 180px;
   background-color: var(--white);
   color: var(--black);
-  font-size: 12px;
+  font-size: var(--font-size-small);
   scrollbar-width: none;
 }
 
@@ -67,6 +67,14 @@
 
 .protagonist-hub-notes-list-item-description p {
   margin: 0;
+}
+
+.protagonist-hub-inventory-list-item::before {
+  content: '*';
+  display: inline-block;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
 }
 
 .protagonist-hub-inventory-list-item + .protagonist-hub-inventory-list-item {
