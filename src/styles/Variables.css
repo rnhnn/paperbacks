@@ -1,4 +1,7 @@
 :root {
+  --game-base-width: 960px;
+  --game-base-height: 540px;
+  
   --white: #ffffff;
   --black: #000000;
 

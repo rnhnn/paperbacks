@@ -1,6 +1,5 @@
 import "./styles/Variables.css";
 import "./styles/Globals.css";
-import "./styles/Game.css";
 
 import sceneData from "./data/scenes/intro.json";
 import SceneViewer from "./components/SceneViewer";
