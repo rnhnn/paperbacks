@@ -1,4 +1,20 @@
+:root {
+  --game-base-width: 960px;
+  --game-base-height: 540px;
+}
+
 .game {
-    display: flex;
-    align-items: flex-end;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--game-base-width);
+  height: var(--game-base-height);
+  transform: translate(-50%, -50%) scale(var(--game-scale));
+  transform-origin: center center;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: var(--black);
+  transition: transform 0.2s ease-out;
 }
