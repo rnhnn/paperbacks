@@ -64,6 +64,10 @@
       },
       "type": "singleParagraph",
       "text": "This is a flag checker."
+    },
+    {
+      "type": "singleParagraph",
+      "text": "And then another paragraph. Just for testing."
     }
   ]
 }
