@@ -1,5 +1,5 @@
 import "../styles/SceneViewer.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 
@@ -17,6 +17,9 @@ export default function SceneViewer({ scene }) {
   const { addNote } = useNotes();
 
   const currentNode = currentNodeIndex !== null ? scene.nodes[currentNodeIndex] : null;
+
+  // --- Ref for scrolling ---
+  const contentRef = useRef(null);
 
   // --- Helpers ---
   const checkConditions = (node, flagSet = flags) =>
@@ -122,44 +125,54 @@ export default function SceneViewer({ scene }) {
     }
   };
 
+  // --- Auto-scroll effect ---
+  useEffect(() => {
+    // Scrolls to bottom whenever renderedBlocks change
+    if (contentRef.current) {
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }
+  }, [renderedBlocks]);
+
   // --- Rendering ---
   const lastPortraitBlock = [...renderedBlocks].reverse().find(b => b.character?.portrait);
 
   return (
     <div className="scene-viewer">
-      {lastPortraitBlock && (
-        <div className="scene-viewer-portrait">
-          <img
-            src={new URL(`../assets/portraits/${lastPortraitBlock.character.portrait}`, import.meta.url).href}
-            alt={lastPortraitBlock.character.name}
-          />
-        </div>
-      )}
-
-      {renderedBlocks.map((block, i) => {
-        const isCurrent = i === renderedBlocks.length - 1;
-        const cls = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
-
-        if (block.type === "singleParagraph") return <div key={i} className={cls}><p>{block.text}</p></div>;
-        if (block.type === "multipleParagraphs") return <div key={i} className={cls}>{block.text.map((t,j) => <p key={`${i}-${j}`}>{t}</p>)}</div>;
-        if (block.type === "characterDialogue") {
-          const name = block.character?.name?.toUpperCase() || "???";
-          const text = Array.isArray(block.text) ? block.text.join(" ") : block.text;
-          return <div key={i} className={cls}><p><strong style={{textTransform:"uppercase"}}>{name} —</strong> {text}</p></div>;
-        }
-        if (block.type === "dialogueChoice") return (
-          <div key={i} className={cls}>
-            <ol className="scene-viewer-dialogue-list">
-              {block.choices.map((c,j) => <li key={j} className="scene-viewer-dialogue-list-option"><button onClick={() => handleChoice(c)}>{c.text}</button></li>)}
-            </ol>
+      <div className="scene-viewer-content" ref={contentRef}>
+        {lastPortraitBlock && (
+          <div className="scene-viewer-portrait">
+            <img
+              src={new URL(`../assets/portraits/${lastPortraitBlock.character.portrait}`, import.meta.url).href}
+              alt={lastPortraitBlock.character.name}
+            />
           </div>
-        );
-        return null;
-      })}
+        )}
 
-      {!waitingChoice && currentNodeIndex !== null && (
-        <button onClick={renderNext}>{renderedBlocks.length === 0 ? "Begin" : "Continue"}</button>
-      )}
+        {renderedBlocks.map((block, i) => {
+          const isCurrent = i === renderedBlocks.length - 1;
+          const cls = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
+
+          if (block.type === "singleParagraph") return <div key={i} className={cls}><p>{block.text}</p></div>;
+          if (block.type === "multipleParagraphs") return <div key={i} className={cls}>{block.text.map((t,j) => <p key={`${i}-${j}`}>{t}</p>)}</div>;
+          if (block.type === "characterDialogue") {
+            const name = block.character?.name?.toUpperCase() || "???";
+            const text = Array.isArray(block.text) ? block.text.join(" ") : block.text;
+            return <div key={i} className={cls}><p><strong style={{textTransform:"uppercase"}}>{name} —</strong> {text}</p></div>;
+          }
+          if (block.type === "dialogueChoice") return (
+            <div key={i} className={cls}>
+              <ol className="scene-viewer-dialogue-list">
+                {block.choices.map((c,j) => <li key={j} className="scene-viewer-dialogue-list-option"><button onClick={() => handleChoice(c)}>{c.text}</button></li>)}
+              </ol>
+            </div>
+          );
+          return null;
+        })}
+
+        {!waitingChoice && currentNodeIndex !== null && (
+          <button onClick={renderNext}>{renderedBlocks.length === 0 ? "Begin" : "Continue"}</button>
+        )}
+      </div>
     </div>
   );
 }
