@@ -7,14 +7,15 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: var(--game-base-width);
-  height: var(--game-base-height);
-  transform: translate(-50%, -50%) scale(var(--game-scale));
-  transform-origin: center center;
-
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  width: var(--game-base-width);
+  height: var(--game-base-height);
+  padding-top: 30px;
+  padding-bottom: 30px;
+  transform: translate(-50%, -50%) scale(var(--game-scale));
+  transform-origin: center center;
   background-color: var(--black);
   transition: transform 0.2s ease-out;
 }
