@@ -1,6 +1,6 @@
 {
   "id": "intro",
-  "content": [
+  "nodes": [
     {
       "type": "singleParagraph",
       "text": "At the end of a lonely street, you *eventually* find the right building."
@@ -14,49 +14,56 @@
       "text": "Or is it 189?"
     },
     {
+      "type": "singleParagraph",
+      "text": "You receive a shopping list.",
+      "notesAdd": ["shopping_list_home"]
+    },
+    {
+      "type": "singleParagraph",
+      "text": "You fond an old shoe.",
+      "inventoryAdd": ["old_shoe"]
+    },
+    {
       "type": "dialogueChoice",
       "choices": [
         {
-          "id": "saysItsHere",
           "text": "“It’s here.”",
-          "effects": {
-            "wasSureItWasHere": true
-          },
-          "reaction": [
-            {
-              "type": "characterDialogue",
-              "character": {
-                "id": "kirby",
-                "name": "Tim Kirby",
-                "portrait": "kirby.png"
-              },
-              "text": [
-                "“Freaking finally.”"
-              ]
-            }
-          ]
+          "effects": { "wasSureItWasHere": true },
+          "next": "kirbyReact1"
         },
         {
-          "id": "saysItsHere?",
           "text": "“It’s… here?”",
-          "effects": {
-            "wasUnsureItWasHere": true
-          },
-          "reaction": [
-            {
-              "type": "characterDialogue",
-              "character": {
-                "id": "kim",
-                "name": "Kim Kitsuragi",
-                "portrait": "kim.png"
-              },
-              "text": [
-                "“You don't sound too sure.”"
-              ]
-            }
-          ]
+          "effects": { "wasUnsureItWasHere": true },
+          "next": "kirbyReact2"
         }
       ]
+    },
+    {
+      "id": "kirbyReact1",
+      "type": "characterDialogue",
+      "character": {
+        "id": "kirby",
+        "name": "Tim Kirby",
+        "portrait": "kirby.png"
+      },
+      "text": ["“Freaking finally.”"]
+    },
+    {
+      "id": "kirbyReact2",
+      "type": "characterDialogue",
+      "character": {
+        "id": "kirby",
+        "name": "Tim Kirby",
+        "portrait": "kirby.png"
+      },
+      "text": ["“You don't sound too sure.”"]
+    },
+    {
+      "conditions": {
+        "wasSureItWasHere": true
+      },
+      "type": "singleParagraph",
+      "text": "This is a flag checker."
     }
   ]
 }

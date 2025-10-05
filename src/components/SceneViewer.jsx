@@ -1,132 +1,191 @@
 import "../styles/SceneViewer.css";
 import { useState } from "react";
-import { useInventory } from "../context/InventoryContext"; // <-- inventory hook
-import { useNotes } from "../context/NotesContext";         // <-- notes hook
+import { useInventory } from "../context/InventoryContext";
+import { useNotes } from "../context/NotesContext";
 
 export default function SceneViewer({ scene }) {
-  // State: what’s already rendered on screen
+  const nodeMap = Object.fromEntries(
+    scene.nodes.filter((n) => n.id).map((n) => [n.id, n])
+  );
+
+  const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
   const [renderedBlocks, setRenderedBlocks] = useState([]);
-  // State: the queue of blocks left to display
-  const [queue, setQueue] = useState([...scene.content]);
-  // State: "flags" keep track of choices/conditions the player triggered
   const [flags, setFlags] = useState({});
-  // State: whether the game is waiting for a dialogue choice
   const [waitingChoice, setWaitingChoice] = useState(false);
 
-  // Inventory hooks
-  const { addItem, removeItem } = useInventory(); 
-  // Notes hooks
-  const { addNote } = useNotes(); 
+  const { addItem, removeItem } = useInventory();
+  const { addNote } = useNotes();
 
-  /**
-   * Advance the story by rendering the next eligible block from the queue.
-   * - Skips blocks whose conditions don’t match current flags.
-   * - Stops if there’s no block left, or if we’re currently waiting for a choice.
-   * - Applies inventory additions/removals defined in the block.
-   * - Unlocks notes if the block has notesAdd entries.
-   */
-  const renderNext = () => {
-    if (queue.length === 0 || waitingChoice) return;
+  const currentNode =
+    currentNodeIndex !== null ? scene.nodes[currentNodeIndex] : null;
 
-    let remaining = [...queue]; // shallow copy of the queue
-    let nextBlock = null;
+  // --- Helpers ---
 
-    // Find the next block that meets its conditions (if any)
-    while (remaining.length > 0) {
-      const candidate = remaining[0];
-
-      // If block has conditions and they’re not met, skip it
-      if (
-        candidate.conditions &&
-        !Object.entries(candidate.conditions).every(([k, v]) => flags[k] === v)
-      ) {
-        remaining.shift();
-        continue;
-      }
-
-      // Otherwise, this block is the next one to render
-      nextBlock = candidate;
-      remaining.shift();
-      break;
-    }
-
-    setQueue(remaining);
-
-    // If nothing renderable was found, stop
-    if (!nextBlock) return;
-
-    // **Inventory changes**
-    nextBlock.inventoryAdd?.forEach(addItem);
-    nextBlock.inventoryRemove?.forEach(removeItem);
-
-    // **Notes unlocking**
-    nextBlock.notesAdd?.forEach(addNote); // <-- unlock any notes associated with this block
-
-    // Add this block to the rendered list
-    setRenderedBlocks((prev) => [...prev, nextBlock]);
-
-    // If it’s a choice block, stop advancing until player picks one
-    if (nextBlock.type === "dialogueChoice") {
-      setWaitingChoice(true);
-    }
+  const checkConditions = (node) => {
+    if (!node.conditions) return true;
+    return Object.entries(node.conditions).every(
+      ([flag, value]) => flags[flag] === value
+    );
   };
 
+  const findNodeIndexById = (id) =>
+    scene.nodes.findIndex((n) => n.id && n.id === id);
+
   /**
-   * Handles what happens when a choice is clicked:
-   * - Apply its effects (set flags).
-   * - Insert a "You — ..." block to represent the player’s choice.
-   * - Immediately insert the reaction blocks defined in the choice.
-   * - Remove the choice menu from renderedBlocks so it can't be picked again.
-   * - Resume flow (not waiting anymore).
-   * - Applies inventory changes from reaction blocks, if any.
-   * - Unlocks notes from reaction blocks, if any.
+   * Get the "next" node index for a given node.
+   * Behavior:
+   *  - If node.next exists and matches a known id, return that index.
+   *  - If node.next exists but no id matches, FALL BACK to sequential next index.
+   *  - If node.next doesn't exist, use sequential next index.
+   *  - Important: when falling back to sequential scanning, skip nodes that have `id`
+   *    because those are branch anchor nodes (they should only be reached via explicit jump).
+   *  - Only return sequential nodes that also pass conditions.
    */
+  const getNextNodeIndex = (node, fromIndex = scene.nodes.indexOf(node)) => {
+    if (!node) return null;
+
+    // If node.next is provided, prefer it when it matches an id
+    if (node.next) {
+      const byId = findNodeIndexById(node.next);
+      if (byId !== -1 && checkConditions(scene.nodes[byId])) return byId;
+
+      // fallback: treat as "next in sequence" if id not found (but still skip id nodes)
+    }
+
+    // Sequential fallback: find the next node AFTER fromIndex that:
+    //  - passes its conditions
+    //  - does NOT have an `id` (we treat id'd nodes as branch-only anchors)
+    for (let i = fromIndex + 1; i < scene.nodes.length; i++) {
+      const candidate = scene.nodes[i];
+      if (candidate.id) continue; // skip anchor/branch nodes in default sequence
+      if (checkConditions(candidate)) return i;
+    }
+    return null;
+  };
+
+  // --- Core logic ---
+
+  const renderNext = () => {
+    if (!currentNode || waitingChoice) return;
+
+    let block = currentNode;
+    let idx = currentNodeIndex;
+
+    // Skip invalid nodes (conditions): advance until one that does match
+    while (block && !checkConditions(block)) {
+      idx = getNextNodeIndex(block, idx);
+      if (idx === null) {
+        setCurrentNodeIndex(null);
+        return;
+      }
+      block = scene.nodes[idx];
+      setCurrentNodeIndex(idx);
+    }
+
+    if (!block) return;
+
+    // Prevent duplicate rendering: if this node (by reference or id) already exists in renderedBlocks,
+    // advance the pointer instead of re-rendering it.
+    const alreadyRendered = renderedBlocks.some((b) =>
+      b === block || (b.id && block.id && b.id === block.id)
+    );
+    if (alreadyRendered) {
+      const nextIndex = getNextNodeIndex(block, idx);
+      setCurrentNodeIndex(nextIndex);
+      return;
+    }
+
+    // Apply inventory/notes for this block
+    block.inventoryAdd?.forEach(addItem);
+    block.inventoryRemove?.forEach(removeItem);
+    block.notesAdd?.forEach(addNote);
+
+    // Render the block
+    setRenderedBlocks((prev) => [...prev, block]);
+
+    // If it's a choice, stop and wait for player input
+    if (block.type === "dialogueChoice") {
+      setWaitingChoice(true);
+      return;
+    }
+
+    // Otherwise, advance to the next node (skipping id'd anchors as per getNextNodeIndex)
+    const nextIndex = getNextNodeIndex(block, idx);
+    setCurrentNodeIndex(nextIndex);
+  };
+
   const handleChoice = (choice) => {
     // Merge choice.effects into flags
     setFlags((prev) => ({ ...prev, ...(choice.effects || {}) }));
 
-    // Represent the player’s choice as dialogue
+    // Represent player's choice as dialogue
     const youBlock = {
       type: "characterDialogue",
       character: { id: "you", name: "You" },
       text: [choice.text],
     };
 
-    // Reaction blocks defined in the JSON
+    // Reaction blocks provided inline in the choice (may be empty)
     const reactionBlocks = choice.reaction || [];
 
-    // Apply inventory and notes changes for reaction blocks
+    // Apply side effects from reaction blocks immediately
     reactionBlocks.forEach((block) => {
       block.inventoryAdd?.forEach(addItem);
       block.inventoryRemove?.forEach(removeItem);
-      block.notesAdd?.forEach(addNote); // <-- unlock notes if any
+      block.notesAdd?.forEach(addNote);
     });
 
-    // Remove the dialogueChoice block from renderedBlocks and add the choice + reactions
+    // Determine the next index:
+    // Try choice.next (id); if not found, fall back to the next valid sequential node
+    let candidateNextIndex = null;
+    if (choice.next) {
+      const byId = findNodeIndexById(choice.next);
+      candidateNextIndex = byId !== -1 ? byId : getNextNodeIndex(scene.nodes[currentNodeIndex], currentNodeIndex);
+    } else {
+      candidateNextIndex = getNextNodeIndex(scene.nodes[currentNodeIndex], currentNodeIndex);
+    }
+
+    const nextNode = candidateNextIndex !== null ? scene.nodes[candidateNextIndex] : null;
+
+    // If we're injecting the nextNode immediately, apply its side effects now
+    if (nextNode) {
+      nextNode.inventoryAdd?.forEach(addItem);
+      nextNode.inventoryRemove?.forEach(removeItem);
+      nextNode.notesAdd?.forEach(addNote);
+    }
+
+    // Build immediate insertion list: YOU + reaction(s) + nextNode (if any)
+    const immediateBlocks = [youBlock, ...reactionBlocks];
+    if (nextNode) immediateBlocks.push(nextNode);
+
+    // Replace the choice block (currentNode) with the immediate blocks
     setRenderedBlocks((prev) => [
-      ...prev.filter((b) => b.type !== "dialogueChoice"),
-      youBlock,
-      ...reactionBlocks,
+      ...prev.filter((b) => b !== currentNode),
+      ...immediateBlocks,
     ]);
 
-    // Resume flow (Continue button can appear again if queue has stuff left)
+    // Reset waitingChoice (we may re-enable it below)
     setWaitingChoice(false);
+
+    // Advance pointer so we don't re-render injected nodes:
+    if (nextNode) {
+      if (nextNode.type === "dialogueChoice") {
+        // If the injected next is itself a choice, keep pointer at that choice and wait
+        setWaitingChoice(true);
+        setCurrentNodeIndex(candidateNextIndex);
+      } else {
+        // Otherwise, move pointer to the node after the injected node (skipping id anchors)
+        const afterNext = getNextNodeIndex(nextNode, candidateNextIndex);
+        setCurrentNodeIndex(afterNext);
+      }
+    } else {
+      // No next -> end scene
+      setCurrentNodeIndex(null);
+    }
   };
 
-  /**
-   * Utility to check if a block is renderable given current flags.
-   */
-  const isRenderable = (block) =>
-    !block.conditions || Object.entries(block.conditions).every(([k, v]) => flags[k] === v);
-
-  /**
-   * Look backwards through rendered blocks to find
-   * the last one with a character portrait.
-   * That portrait is what we display on screen.
-   */
-  const lastPortraitBlock = [...renderedBlocks].reverse().find(
-    (b) => b.character?.portrait
-  );
+  // Find the last block with a portrait to display
+  const lastPortraitBlock = [...renderedBlocks].reverse().find((b) => b.character?.portrait);
 
   return (
     <div className="scene-viewer">
@@ -134,10 +193,7 @@ export default function SceneViewer({ scene }) {
       {lastPortraitBlock && (
         <div className="scene-viewer-portrait">
           <img
-            src={new URL(
-              `../assets/portraits/${lastPortraitBlock.character.portrait}`,
-              import.meta.url
-            ).href}
+            src={new URL(`../assets/portraits/${lastPortraitBlock.character.portrait}`, import.meta.url).href}
             alt={lastPortraitBlock.character.name}
           />
         </div>
@@ -168,10 +224,7 @@ export default function SceneViewer({ scene }) {
 
         if (block.type === "characterDialogue") {
           const characterName = block.character?.name?.toUpperCase() || "???";
-          const dialogueText = Array.isArray(block.text)
-            ? block.text.join(" ")
-            : block.text;
-
+          const dialogueText = Array.isArray(block.text) ? block.text.join(" ") : block.text;
           return (
             <div key={idx} className={blockClass}>
               <p>
@@ -184,10 +237,10 @@ export default function SceneViewer({ scene }) {
 
         if (block.type === "dialogueChoice") {
           return (
-            <div key={idx} className={`${blockClass}`}>
+            <div key={idx} className={blockClass}>
               <ol className="scene-viewer-dialogue-list">
-                {block.choices.map((choice) => (
-                  <li key={choice.id} className="scene-viewer-dialogue-list-option">
+                {block.choices.map((choice, cidx) => (
+                  <li key={cidx} className="scene-viewer-dialogue-list-option">
                     <button onClick={() => handleChoice(choice)}>{choice.text}</button>
                   </li>
                 ))}
@@ -201,14 +254,12 @@ export default function SceneViewer({ scene }) {
 
       {/* Begin/Continue button: only visible if:
             - Not waiting on a choice
-            - There are still renderable blocks left in the queue
-            - Label shows "Begin" if no blocks rendered yet, otherwise "Continue" */}
-      {!waitingChoice &&
-        queue.some((b) => isRenderable(b)) && (
-          <button onClick={renderNext}>
-            {renderedBlocks.length === 0 ? "Begin" : "Continue"}
-          </button>
-        )}
+            - There is a current node to advance to */}
+      {!waitingChoice && currentNodeIndex !== null && (
+        <button onClick={renderNext}>
+          {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+        </button>
+      )}
     </div>
   );
 }
