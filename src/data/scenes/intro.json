@@ -7,10 +7,7 @@
     },
     {
       "type": "singleParagraph",
-      "text": "A three-story relic from the ’60s, with a rust-eaten plaque on the side that reads: Monsello 188.",
-      "inventoryAdd": [
-        "beckys_keys"
-      ]
+      "text": "A three-story relic from the ’60s, with a rust-eaten plaque on the side that reads: Monsello 188."
     },
     {
       "type": "singleParagraph",
@@ -20,18 +17,18 @@
       "type": "dialogueChoice",
       "choices": [
         {
-          "id": "smile",
+          "id": "saysItsHere",
           "text": "“It’s here.”",
           "effects": {
-            "hasSmiled": true
+            "wasSureItWasHere": true
           },
           "reaction": [
             {
               "type": "characterDialogue",
               "character": {
-                "id": "kim",
-                "name": "Kim Kitsuragi",
-                "portrait": "kim.png"
+                "id": "kirby",
+                "name": "Tim Kirby",
+                "portrait": "kirby.png"
               },
               "text": [
                 "“Freaking finally.”"
@@ -40,10 +37,10 @@
           ]
         },
         {
-          "id": "sayNothing",
+          "id": "saysItsHere?",
           "text": "“It’s… here?”",
           "effects": {
-            "saidNothing": true
+            "wasUnsureItWasHere": true
           },
           "reaction": [
             {
