@@ -27,11 +27,11 @@
   border: 3px solid var(--white);
 }
 
-.scene-viewer-block {
+.scene-viewer-node {
   opacity: 0.3;
 }
 
-.scene-viewer-block.is-current {
+.scene-viewer-node.is-current {
   opacity: 1;
 }
 .scene-viewer-dialogue-list {
@@ -54,4 +54,10 @@
 
 .scene-viewer-dialogue-list-option button:hover {
   color: red;
+}
+
+.scene-viewer-button  {
+  cursor: pointer;
+  width: 100%;
+  height: 35px;
 }

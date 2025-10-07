@@ -150,7 +150,7 @@ export default function SceneViewer({ scene }) {
 
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1;
-          const cls = `scene-viewer-block${isCurrent ? " is-current" : ""}`;
+          const cls = `scene-viewer-node${isCurrent ? " is-current" : ""}`;
 
           if (block.type === "singleParagraph") return <div key={i} className={cls}><p>{block.text}</p></div>;
           if (block.type === "multipleParagraphs") return <div key={i} className={cls}>{block.text.map((t,j) => <p key={`${i}-${j}`}>{t}</p>)}</div>;
@@ -170,7 +170,7 @@ export default function SceneViewer({ scene }) {
         })}
 
         {!waitingChoice && currentNodeIndex !== null && (
-          <button onClick={renderNext}>{renderedBlocks.length === 0 ? "Begin" : "Continue"}</button>
+          <button onClick={renderNext} className="scene-viewer-button">{renderedBlocks.length === 0 ? "Begin" : "Continue"}</button>
         )}
       </div>
     </div>
