@@ -152,25 +152,60 @@ export default function SceneViewer({ scene }) {
           const isCurrent = i === renderedBlocks.length - 1;
           const cls = `scene-viewer-node${isCurrent ? " is-current" : ""}`;
 
-          if (block.type === "singleParagraph") return <div key={i} className={cls}><p>{block.text}</p></div>;
-          if (block.type === "multipleParagraphs") return <div key={i} className={cls}>{block.text.map((t,j) => <p key={`${i}-${j}`}>{t}</p>)}</div>;
+          // --- Single Paragraph ---
+          if (block.type === "singleParagraph")
+            return (
+              <div key={i} className={cls}>
+                {/* Render HTML from JSON text */}
+                <p dangerouslySetInnerHTML={{ __html: block.text }} />
+              </div>
+            );
+
+          // --- Multiple Paragraphs ---
+          if (block.type === "multipleParagraphs")
+            return (
+              <div key={i} className={cls}>
+                {block.text.map((t, j) => (
+                  <p key={`${i}-${j}`} dangerouslySetInnerHTML={{ __html: t }} />
+                ))}
+              </div>
+            );
+
+          // --- Character Dialogue ---
           if (block.type === "characterDialogue") {
             const name = block.character?.name?.toUpperCase() || "???";
             const text = Array.isArray(block.text) ? block.text.join(" ") : block.text;
-            return <div key={i} className={cls}><p><strong style={{textTransform:"uppercase"}}>{name} —</strong> {text}</p></div>;
+            return (
+              <div key={i} className={cls}>
+                <p>
+                  <strong style={{ textTransform: "uppercase" }}>{name} —</strong>{" "}
+                  <span dangerouslySetInnerHTML={{ __html: text }} />
+                </p>
+              </div>
+            );
           }
-          if (block.type === "dialogueChoice") return (
-            <div key={i} className={cls}>
-              <ol className="scene-viewer-dialogue-list">
-                {block.choices.map((c,j) => <li key={j} className="scene-viewer-dialogue-list-option"><button onClick={() => handleChoice(c)}>{c.text}</button></li>)}
-              </ol>
-            </div>
-          );
+
+          // --- Dialogue Choice ---
+          if (block.type === "dialogueChoice")
+            return (
+              <div key={i} className={cls}>
+                <ol className="scene-viewer-dialogue-list">
+                  {block.choices.map((c, j) => (
+                    <li key={j} className="scene-viewer-dialogue-list-option">
+                      <button onClick={() => handleChoice(c)}>{c.text}</button>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            );
+
           return null;
         })}
 
         {!waitingChoice && currentNodeIndex !== null && (
-          <button onClick={renderNext} className="scene-viewer-button">{renderedBlocks.length === 0 ? "Begin" : "Continue"}</button>
+          <button onClick={renderNext} className="scene-viewer-button">
+            {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+          </button>
         )}
       </div>
     </div>

@@ -3,7 +3,7 @@
   "nodes": [
     {
       "type": "singleParagraph",
-      "text": "At the end of a lonely street, you *eventually* find the right building."
+      "text": "At the end of a lonely street, you <em>eventually</em> find the right building."
     },
     {
       "type": "singleParagraph",
