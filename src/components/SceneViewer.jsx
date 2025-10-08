@@ -3,12 +3,15 @@ import { useState, useEffect, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 
+// --- Import character definitions ---
+import characters from "../data/characters.json";
+
 export default function SceneViewer({ scene }) {
-  // Map nodes by ID for quick lookup (only nodes with explicit id)
+  // --- Quick lookup for nodes by ID ---
   const nodeMap = Object.fromEntries(scene.nodes.filter(n => n.id).map(n => [n.id, n]));
 
   // --- State ---
-  const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
+  const [currentNodeId, setCurrentNodeId] = useState(scene.nodes[0]?.id ?? null);
   const [renderedBlocks, setRenderedBlocks] = useState([]);
   const [flags, setFlags] = useState({});
   const [waitingChoice, setWaitingChoice] = useState(false);
@@ -16,31 +19,41 @@ export default function SceneViewer({ scene }) {
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
 
-  const currentNode = currentNodeIndex !== null ? scene.nodes[currentNodeIndex] : null;
+  const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
 
-  // --- Ref for scrolling ---
+  // --- Ref for auto-scroll ---
   const contentRef = useRef(null);
 
   // --- Helpers ---
   const checkConditions = (node, flagSet = flags) =>
-    !node.conditions || Object.entries(node.conditions).every(([flag, val]) => flagSet[flag] === val);
+    !node?.conditions || Object.entries(node.conditions).every(([flag, val]) => flagSet[flag] === val);
 
-  const findNodeIndexById = id => scene.nodes.findIndex(n => n.id === id);
+  // --- Resolve character reference if it's a string ---
+  const resolveCharacter = char => {
+    if (!char) return null;
+    if (typeof char === "string") return characters[char] || { id: char, name: "???", portrait: "" };
+    return char;
+  };
 
-  const getNextNodeIndex = (fromNode, fromIndex = scene.nodes.indexOf(fromNode), flagSet = flags) => {
+  // --- Determine next node ID, including conditional nextIf ---
+  const getNextNodeId = (fromNode, flagSet = flags) => {
     if (!fromNode) return null;
 
-    // Prefer explicit "next" ID
-    if (fromNode.next) {
-      const byId = findNodeIndexById(fromNode.next);
-      if (byId !== -1 && checkConditions(scene.nodes[byId], flagSet)) return byId;
+    // Handle conditional nextIf first
+    if (Array.isArray(fromNode.nextIf)) {
+      for (const branch of fromNode.nextIf) {
+        if (!branch.conditions || Object.entries(branch.conditions).every(([f, val]) => flagSet[f] === val)) {
+          if (branch.next && nodeMap[branch.next]) return branch.next;
+        }
+      }
     }
 
-    // Sequential fallback: skip id anchors
-    for (let i = fromIndex + 1; i < scene.nodes.length; i++) {
-      const n = scene.nodes[i];
-      if (n.id) continue;
-      if (checkConditions(n, flagSet)) return i;
+    // Fallback to default next
+    if (fromNode.next && nodeMap[fromNode.next]) {
+      const nextNode = nodeMap[fromNode.next];
+      // Skip node if conditions not met
+      if (!checkConditions(nextNode, flagSet)) return getNextNodeId(nextNode, flagSet);
+      return nextNode.id;
     }
 
     return null;
@@ -51,40 +64,46 @@ export default function SceneViewer({ scene }) {
     if (!currentNode || waitingChoice) return;
 
     let node = currentNode;
-    let idx = currentNodeIndex;
 
     // Skip nodes whose conditions aren't satisfied
     while (node && !checkConditions(node)) {
-      idx = getNextNodeIndex(node, idx);
-      if (idx === null) return setCurrentNodeIndex(null);
-      node = scene.nodes[idx];
-      setCurrentNodeIndex(idx);
+      const nextId = getNextNodeId(node);
+      if (!nextId) return setCurrentNodeId(null);
+      node = nodeMap[nextId];
     }
+
     if (!node) return;
 
-    // Skip already rendered nodes
-    if (renderedBlocks.some(b => b === node || (b.id && node.id && b.id === node.id))) {
-      return setCurrentNodeIndex(getNextNodeIndex(node, idx));
+    // Avoid re-rendering the same node
+    if (renderedBlocks.some(b => b.id && node.id && b.id === node.id)) {
+      const nextId = getNextNodeId(node);
+      return setCurrentNodeId(nextId);
     }
 
-    // Apply inventory/notes
+    // Apply side effects
     node.inventoryAdd?.forEach(addItem);
     node.inventoryRemove?.forEach(removeItem);
     node.notesAdd?.forEach(addNote);
 
+    // Render node
     setRenderedBlocks(prev => [...prev, node]);
 
+    // Stop progression if it's a choice
     if (node.type === "dialogueChoice") return setWaitingChoice(true);
 
-    setCurrentNodeIndex(getNextNodeIndex(node, idx));
+    // Otherwise, go to next node
+    setCurrentNodeId(getNextNodeId(node));
   };
 
   const handleChoice = choice => {
-    // Merge flags immediately for local next-node evaluation
     const mergedFlags = { ...flags, ...(choice.effects || {}) };
 
-    // Player's dialogue block
-    const youBlock = { type: "characterDialogue", character: { id: "you", name: "You" }, text: [choice.text] };
+    // Player dialogue block
+    const youBlock = {
+      type: "characterDialogue",
+      character: { id: "you", name: "You" },
+      text: [choice.text],
+    };
 
     // Optional reaction blocks
     const reactionBlocks = choice.reaction || [];
@@ -94,56 +113,55 @@ export default function SceneViewer({ scene }) {
       b.notesAdd?.forEach(addNote);
     });
 
-    // Determine next node index
-    const choiceIdx = choice.next ? findNodeIndexById(choice.next) : -1;
-    const nextIdx = choiceIdx !== -1 ? choiceIdx : getNextNodeIndex(scene.nodes[currentNodeIndex], currentNodeIndex, mergedFlags);
-    const nextNode = nextIdx !== null ? scene.nodes[nextIdx] : null;
+    // Determine next node
+    const nextId = choice.next || getNextNodeId(currentNode, mergedFlags);
+    const nextNode = nextId ? nodeMap[nextId] : null;
 
     // Apply side effects of next node immediately
     nextNode?.inventoryAdd?.forEach(addItem);
     nextNode?.inventoryRemove?.forEach(removeItem);
     nextNode?.notesAdd?.forEach(addNote);
 
-    // Replace choice node with: you + reactions + next node (if any)
+    // Replace the choice node with "You" + reactions + next node
     const insert = [youBlock, ...reactionBlocks];
     if (nextNode) insert.push(nextNode);
 
-    setRenderedBlocks(prev => [...prev.filter(b => b !== currentNode), ...insert]);
+    setRenderedBlocks(prev => [...prev.filter(b => b.id !== currentNode.id), ...insert]);
     setFlags(mergedFlags);
     setWaitingChoice(false);
 
-    // Advance pointer
+    // Continue story
     if (nextNode) {
       if (nextNode.type === "dialogueChoice") {
         setWaitingChoice(true);
-        setCurrentNodeIndex(nextIdx);
+        setCurrentNodeId(nextNode.id);
       } else {
-        setCurrentNodeIndex(getNextNodeIndex(nextNode, nextIdx, mergedFlags));
+        setCurrentNodeId(getNextNodeId(nextNode, mergedFlags));
       }
     } else {
-      setCurrentNodeIndex(null); // scene ends
+      setCurrentNodeId(null);
     }
   };
 
-  // --- Auto-scroll effect ---
+  // --- Auto-scroll whenever content grows ---
   useEffect(() => {
-    // Scrolls to bottom whenever renderedBlocks change
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
     }
   }, [renderedBlocks]);
 
-  // --- Rendering ---
-  const lastPortraitBlock = [...renderedBlocks].reverse().find(b => b.character?.portrait);
+  // --- Determine portrait to display ---
+  const lastPortraitBlock = [...renderedBlocks].reverse().find(b => resolveCharacter(b.character)?.portrait);
 
+  // --- Render ---
   return (
     <div className="scene-viewer">
       <div className="scene-viewer-content" ref={contentRef}>
         {lastPortraitBlock && (
           <div className="scene-viewer-portrait">
             <img
-              src={`/assets/portraits/${lastPortraitBlock.character.portrait}`}
-              alt={lastPortraitBlock.character.name}
+              src={`/assets/portraits/${resolveCharacter(lastPortraitBlock.character).portrait}`}
+              alt={resolveCharacter(lastPortraitBlock.character).name}
             />
           </div>
         )}
@@ -156,7 +174,6 @@ export default function SceneViewer({ scene }) {
           if (block.type === "singleParagraph")
             return (
               <div key={i} className={cls}>
-                {/* Render HTML from JSON text */}
                 <p dangerouslySetInnerHTML={{ __html: block.text }} />
               </div>
             );
@@ -173,8 +190,10 @@ export default function SceneViewer({ scene }) {
 
           // --- Character Dialogue ---
           if (block.type === "characterDialogue") {
-            const name = block.character?.name?.toUpperCase() || "???";
+            const character = resolveCharacter(block.character);
+            const name = character?.name?.toUpperCase() || "???";
             const text = Array.isArray(block.text) ? block.text.join(" ") : block.text;
+
             return (
               <div key={i} className={cls}>
                 <p>
@@ -202,7 +221,7 @@ export default function SceneViewer({ scene }) {
           return null;
         })}
 
-        {!waitingChoice && currentNodeIndex !== null && (
+        {!waitingChoice && currentNodeId !== null && (
           <button onClick={renderNext} className="scene-viewer-button">
             {renderedBlocks.length === 0 ? "Begin" : "Continue"}
           </button>

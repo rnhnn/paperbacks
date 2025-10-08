@@ -2,72 +2,93 @@
   "id": "scene",
   "nodes": [
     {
+      "id": "lonelyStreet",
       "type": "singleParagraph",
-      "text": "At the end of the lonely street, you <em>eventually</em> find the right building."
+      "text": "At the end of the lonely street, you <em>eventually</em> find the right building.",
+      "next": "threeStoryBuilding"
     },
     {
+      "id": "threeStoryBuilding",
       "type": "singleParagraph",
-      "text": "A blue three-story relic, with a rust-eaten plaque on the side that reads: Monsello 188."
+      "text": "A blue three-story relic, with a rust-eaten plaque on the side that reads: Monsello 188.",
+      "next": "doubtAboutNumber"
     },
     {
+      "id": "doubtAboutNumber",
       "type": "singleParagraph",
-      "text": "Or is it 189?"
+      "text": "Or is it 189?",
+      "next": "reactingToTheBuilding"
     },
     {
+      "id": "reactingToTheBuilding",
       "type": "dialogueChoice",
       "choices": [
         {
           "text": "“It’s here.”",
           "effects": { "wasSureItWasHere": true },
-          "next": "kirbyReact1"
+          "next": "kirbyRelief"
         },
         {
           "text": "“It’s… here?”",
           "effects": { "wasUnsureItWasHere": true },
-          "next": "kirbyReact2"
+          "next": "kirbyNotConvinced"
         }
       ]
     },
     {
-      "id": "kirbyReact1",
+      "id": "kirbyRelief",
       "type": "characterDialogue",
-      "character": {
-        "id": "kirby",
-        "name": "Tim Kirby",
-        "portrait": "kirby.png"
-      },
-      "text": ["“Freaking finally.”"]
+      "character": "tim-kirby",
+      "text": "“Freaking finally.”",
+      "next": "theStoryResumes"
     },
     {
-      "id": "kirbyReact2",
+      "id": "kirbyNotConvinced",
       "type": "characterDialogue",
-      "character": {
-        "id": "kirby",
-        "name": "Tim Kirby",
-        "portrait": "kirby.png"
-      },
-      "text": ["“You don't sound too sure.”"]
+      "character": "tim-kirby",
+      "text": "“You don't sound too sure.”",
+      "next": "theStoryResumes"
     },
     {
-      "conditions": {
-        "wasSureItWasHere": true
-      },
+      "id": "theStoryResumes",
       "type": "singleParagraph",
-      "text": "This is a flag checker."
+      "text": "You look at the sidewalk and find...",
+      "next": "findingAShoe"
     },
     {
+      "id": "findingAShoe",
       "type": "singleParagraph",
-      "text": "And then another paragraph. Just for testing."
+      "text": "An old shoe?!",
+      "inventoryAdd": ["old_shoe"],
+      "next": "findingAShoppingList"
     },
     {
+      "id": "findingAShoppingList",
       "type": "singleParagraph",
-      "text": "You receive a shopping list.",
-      "notesAdd": ["shopping_list_home"]
+      "text": "And inside the shoe you find a shopping list.",
+      "notesAdd": ["shopping_list_home"],
+      "next": "flagChecker"
     },
     {
+      "id": "flagChecker",
+      "type": "characterDialogue",
+      "character": "tim-kirby",
+      "text": "Great, you are both sure of yourself and lucky.",
+      "nextIf": [
+        { "conditions": { "wasSureItWasHere": true }, "next": "conditionalResponse" },
+        { "conditions": { "wasUnsureItWasHere": true }, "next": "someOtherStory" }
+      ],
+      "next": "someOtherStory"
+    },
+    {
+      "id": "conditionalResponse",
       "type": "singleParagraph",
-      "text": "You found an old shoe.",
-      "inventoryAdd": ["old_shoe"]
+      "text": "Let me hear it."
+    },
+    {
+      "id": "someOtherStory",
+      "type": "singleParagraph",
+      "text": "The final text."
     }
   ]
 }
