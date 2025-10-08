@@ -24,7 +24,7 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: 'Grand9K Pixel';
-  background-color: black;
+  background-color: var(--black)
 }
 
 .game {
@@ -54,6 +54,7 @@ img {
 }
 
 button {
+  font-size: inherit;
   font-family: inherit;
 }
 
@@ -62,4 +63,5 @@ ol {
   list-style: none;
   padding: 0;
   margin: 0;
+  font-size: inherit;
 }

@@ -1,7 +1,7 @@
 import "./styles/Variables.css";
 import "./styles/Globals.css";
 
-import sceneData from "./data/scenes/intro.json";
+import sceneData from "./data/scenes/scene.json";
 import SceneViewer from "./components/SceneViewer";
 import ProtagonistHub from "./components/ProtagonistHub";
 
