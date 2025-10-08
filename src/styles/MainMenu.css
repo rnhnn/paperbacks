@@ -42,13 +42,12 @@
   font-family: inherit;
   font-size: 18px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.1s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .menu-options button:hover:not(:disabled) {
   background: white;
   color: black;
-  transform: scale(1.03);
 }
 
 .menu-options button:disabled {
