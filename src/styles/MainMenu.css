@@ -8,14 +8,19 @@
   background: black;
   color: white;
   font-family: "Grand9KPixelRegular", monospace;
-  opacity: 0; /* start hidden */
+  opacity: 0;
   transform: translateY(4px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .main-menu.fade-in {
   opacity: 1;
   transform: translateY(0);
+}
+
+.main-menu.fade-out {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .main-menu h1 {
@@ -37,12 +42,13 @@
   font-family: inherit;
   font-size: 18px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
 }
 
 .menu-options button:hover:not(:disabled) {
   background: white;
   color: black;
+  transform: scale(1.03);
 }
 
 .menu-options button:disabled {

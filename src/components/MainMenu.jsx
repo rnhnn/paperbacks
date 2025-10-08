@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../styles/MainMenu.css";
 
 export default function MainMenu({ onNewGame }) {
-  const [visible, setVisible] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
-  useEffect(() => {
-    // Trigger fade-in after small delay (prevents flash if loaded instantly)
-    const t = setTimeout(() => setVisible(true), 20);
-    return () => clearTimeout(t);
-  }, []);
+  const handleNewGameClick = () => {
+    setFadeOut(true);
+    setTimeout(() => {
+      onNewGame(); // triggers App.jsx to mount game
+    }, 400); // match CSS fade-out duration
+  };
 
   return (
-    <div className={`main-menu ${visible ? "fade-in" : ""}`}>
+    <div className={`main-menu ${fadeOut ? "fade-out" : "fade-in"}`}>
       <h1>Paperbacks</h1>
       <div className="menu-options">
-        <button onClick={onNewGame}>New Game</button>
+        <button onClick={handleNewGameClick}>New Game</button>
         <button disabled>Load Game</button>
         <button disabled>Options</button>
       </div>
