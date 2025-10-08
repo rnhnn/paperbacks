@@ -10,20 +10,26 @@ export default function LoadingScreen({ onComplete }) {
     const start = performance.now();
 
     const loadAssets = async () => {
-      const font = new FontFace("Grand9KPixelRegular", "url(/src/assets/fonts/Grand9KPixelRegular.woff2)");
+      // Load font from public folder
+      const font = new FontFace(
+        "Grand9KPixelRegular",
+        "url(/assets/fonts/Grand9KPixelRegular.woff2)"
+      );
       await font.load();
       document.fonts.add(font);
 
+      // Load portraits from public folder
       const portraits = ["julian.png", "kirby.png", "protagonist.png"];
       await Promise.all(
         portraits.map(src => new Promise(res => {
           const img = new Image();
-          img.src = `/src/assets/portraits/${src}`;
+          img.src = `/assets/portraits/${src}`;
           img.onload = res;
           img.onerror = res;
         }))
       );
 
+      // Enforce minimum display time
       const elapsed = performance.now() - start;
       const remaining = Math.max(0, MIN_TIME - elapsed);
       setTimeout(() => setReady(true), remaining);

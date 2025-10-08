@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Grand9K Pixel';
-  src: url('../assets/fonts/Grand9KPixelRegular.woff2') format('woff2'),
-    url('../assets/fonts/Grand9KPixelRegular.woff') format('woff');
+  src: url('/assets/fonts/Grand9KPixelRegular.woff2') format('woff2'),
+       url('/assets/fonts/Grand9KPixelRegular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

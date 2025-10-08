@@ -142,7 +142,7 @@ export default function SceneViewer({ scene }) {
         {lastPortraitBlock && (
           <div className="scene-viewer-portrait">
             <img
-              src={new URL(`../assets/portraits/${lastPortraitBlock.character.portrait}`, import.meta.url).href}
+              src={`/assets/portraits/${lastPortraitBlock.character.portrait}`}
               alt={lastPortraitBlock.character.name}
             />
           </div>

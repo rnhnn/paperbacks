@@ -4,7 +4,9 @@ import { useNotes } from "../context/NotesContext";
 import itemsData from "../data/items/items.json";
 import notesData from "../data/notes/notes.json";
 import "../styles/ProtagonistHub.css";
-import protagonistImg from "../assets/portraits/protagonist.png";
+
+// Portrait now points to public folder
+const protagonistImg = "/assets/portraits/protagonist.png";
 
 const ProtagonistHub = () => {
   const [activeTab, setActiveTab] = useState("portrait");
