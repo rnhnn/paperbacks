@@ -14,16 +14,6 @@
       "text": "Or is it 189?"
     },
     {
-      "type": "singleParagraph",
-      "text": "You receive a shopping list.",
-      "notesAdd": ["shopping_list_home"]
-    },
-    {
-      "type": "singleParagraph",
-      "text": "You fond an old shoe.",
-      "inventoryAdd": ["old_shoe"]
-    },
-    {
       "type": "dialogueChoice",
       "choices": [
         {
@@ -68,6 +58,16 @@
     {
       "type": "singleParagraph",
       "text": "And then another paragraph. Just for testing."
+    },
+    {
+      "type": "singleParagraph",
+      "text": "You receive a shopping list.",
+      "notesAdd": ["shopping_list_home"]
+    },
+    {
+      "type": "singleParagraph",
+      "text": "You found an old shoe.",
+      "inventoryAdd": ["old_shoe"]
     }
   ]
 }
