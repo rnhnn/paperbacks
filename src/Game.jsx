@@ -1,5 +1,6 @@
 import "./styles/Variables.css";
 import "./styles/Globals.css";
+import "./styles/Game.css";
 
 import { useState, useEffect } from "react";
 import { InventoryProvider } from "./context/InventoryContext";
@@ -13,7 +14,7 @@ import ProtagonistHub from "./components/ProtagonistHub";
 
 import sceneData from "./data/scenes/scene.json";
 
-export default function App() {
+export default function Game() {
   useGameScale(960, 540);
 
   const [phase, setPhase] = useState("loading"); // 'loading' | 'menu' | 'game'
