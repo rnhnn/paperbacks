@@ -2,6 +2,7 @@ import "../styles/SceneViewer.css";
 import { useState, useEffect, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
+import { useFlags } from "../context/FlagsContext"; // Added FlagsContext
 
 // --- Import character definitions ---
 import characters from "../data/characters.json";
@@ -13,11 +14,11 @@ export default function SceneViewer({ scene }) {
   // --- State ---
   const [currentNodeId, setCurrentNodeId] = useState(scene.nodes[0]?.id ?? null);
   const [renderedBlocks, setRenderedBlocks] = useState([]);
-  const [flags, setFlags] = useState({});
   const [waitingChoice, setWaitingChoice] = useState(false);
 
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
+  const { flags, setFlag } = useFlags(); // Get global flags from context
 
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
 
@@ -80,10 +81,15 @@ export default function SceneViewer({ scene }) {
       return setCurrentNodeId(nextId);
     }
 
-    // Apply side effects
+    // --- Apply side effects ---
     node.inventoryAdd?.forEach(addItem);
     node.inventoryRemove?.forEach(removeItem);
     node.notesAdd?.forEach(addNote);
+
+    // --- Apply flag effects from this node (if any) ---
+    if (node.effects) {
+      Object.entries(node.effects).forEach(([flag, val]) => setFlag(flag, val));
+    }
 
     // Render node
     setRenderedBlocks(prev => [...prev, node]);
@@ -96,7 +102,13 @@ export default function SceneViewer({ scene }) {
   };
 
   const handleChoice = choice => {
+    // --- Merge local and global flags for this choice ---
     const mergedFlags = { ...flags, ...(choice.effects || {}) };
+
+    // Apply flag effects globally
+    if (choice.effects) {
+      Object.entries(choice.effects).forEach(([flag, val]) => setFlag(flag, val));
+    }
 
     // Player dialogue block
     const youBlock = {
@@ -111,6 +123,11 @@ export default function SceneViewer({ scene }) {
       b.inventoryAdd?.forEach(addItem);
       b.inventoryRemove?.forEach(removeItem);
       b.notesAdd?.forEach(addNote);
+
+      // Apply flags in reaction blocks
+      if (b.effects) {
+        Object.entries(b.effects).forEach(([flag, val]) => setFlag(flag, val));
+      }
     });
 
     // Determine next node
@@ -121,13 +138,15 @@ export default function SceneViewer({ scene }) {
     nextNode?.inventoryAdd?.forEach(addItem);
     nextNode?.inventoryRemove?.forEach(removeItem);
     nextNode?.notesAdd?.forEach(addNote);
+    if (nextNode?.effects) {
+      Object.entries(nextNode.effects).forEach(([flag, val]) => setFlag(flag, val));
+    }
 
     // Replace the choice node with "You" + reactions + next node
     const insert = [youBlock, ...reactionBlocks];
     if (nextNode) insert.push(nextNode);
 
     setRenderedBlocks(prev => [...prev.filter(b => b.id !== currentNode.id), ...insert]);
-    setFlags(mergedFlags);
     setWaitingChoice(false);
 
     // Continue story
@@ -165,7 +184,6 @@ export default function SceneViewer({ scene }) {
         </div>
       )}
       <div className="scene-viewer-content" ref={contentRef}>
-
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1;
           const cls = `scene-viewer-node${isCurrent ? " is-current" : ""}`;

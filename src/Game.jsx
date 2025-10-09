@@ -6,6 +6,7 @@ import "./styles/Game.css";
 import { useState, useEffect } from "react";
 import { InventoryProvider } from "./context/InventoryContext";
 import { NotesProvider } from "./context/NotesContext";
+import { FlagsProvider } from "./context/FlagsContext"; // Added FlagsProvider
 import useGameScale from "./hooks/useGameScale";
 
 import LoadingScreen from "./components/LoadingScreen";
@@ -46,29 +47,32 @@ export default function Game() {
   }, []);
 
   return (
-    <InventoryProvider>
-      <NotesProvider>
-        {/* Top-level game screen for centering/scaling */}
-        <div className="game-screen">
-          {/* Wrapper responsible for all screen-level transitions (fade, slide, etc.) */}
-          <div
-            className={`game-screen-transition ${fadeIn ? "fade-in" : ""} ${
-              transitioning && !fadeIn ? "fade-out" : ""
-            }`}
-          >
-            {phase === "loading" && (
-              <LoadingScreen onComplete={() => transitionTo("menu")} />
-            )}
-            {phase === "menu" && <MainMenu onNewGame={handleNewGame} />}
-            {phase === "game" && (
-              <div className="game">
-                <SceneViewer scene={sceneData} />
-                <ProtagonistHub />
-              </div>
-            )}
+    <FlagsProvider>
+      {/* Global flag state available to all children */}
+      <InventoryProvider>
+        <NotesProvider>
+          {/* Top-level game screen for centering/scaling */}
+          <div className="game-screen">
+            {/* Wrapper responsible for all screen-level transitions (fade, slide, etc.) */}
+            <div
+              className={`game-screen-transition ${fadeIn ? "fade-in" : ""} ${
+                transitioning && !fadeIn ? "fade-out" : ""
+              }`}
+            >
+              {phase === "loading" && (
+                <LoadingScreen onComplete={() => transitionTo("menu")} />
+              )}
+              {phase === "menu" && <MainMenu onNewGame={handleNewGame} />}
+              {phase === "game" && (
+                <div className="game">
+                  <SceneViewer scene={sceneData} />
+                  <ProtagonistHub />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </NotesProvider>
-    </InventoryProvider>
+        </NotesProvider>
+      </InventoryProvider>
+    </FlagsProvider>
   );
 }
