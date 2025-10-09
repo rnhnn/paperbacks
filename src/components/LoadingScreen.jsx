@@ -4,12 +4,10 @@ import "../styles/LoadingScreen.css";
 export default function LoadingScreen({ onComplete }) {
   const [fontReady, setFontReady] = useState(false); // stage 1: font loaded
   const [ready, setReady] = useState(false); // stage 2: assets + min time loaded
-  const [fadeOut, setFadeOut] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false); // triggers button click fade-out
 
+  // Load custom pixel font
   useEffect(() => {
-    const MIN_TIME = 1500; // minimum display time for "Loading..."
-    const start = performance.now();
-
     const loadFont = async () => {
       const font = new FontFace(
         "Grand9KPixelRegular",
@@ -19,10 +17,10 @@ export default function LoadingScreen({ onComplete }) {
       document.fonts.add(font);
       setFontReady(true);
     };
-
     loadFont();
   }, []);
 
+  // Load portraits with minimum display time
   useEffect(() => {
     if (!fontReady) return;
 
@@ -30,15 +28,17 @@ export default function LoadingScreen({ onComplete }) {
     const start = performance.now();
 
     const loadAssets = async () => {
-      // Load portraits
       const portraits = ["julian.png", "kirby.png", "protagonist.png"];
       await Promise.all(
-        portraits.map((src) => new Promise((res) => {
-          const img = new Image();
-          img.src = `/assets/portraits/${src}`;
-          img.onload = res;
-          img.onerror = res;
-        }))
+        portraits.map(
+          (src) =>
+            new Promise((res) => {
+              const img = new Image();
+              img.src = `/assets/portraits/${src}`;
+              img.onload = res;
+              img.onerror = res;
+            })
+        )
       );
 
       const elapsed = performance.now() - start;
@@ -52,15 +52,15 @@ export default function LoadingScreen({ onComplete }) {
   const handleClick = () => {
     if (!ready) return;
     setFadeOut(true);
-    setTimeout(onComplete, 400);
+    setTimeout(onComplete, 400); // match CSS fade-out duration
   };
 
   return (
     <div className="loading-screen">
-      {fontReady && !ready && <p>Loading...</p>}
+      {fontReady && !ready && <p className="loading-text">Loading...</p>}
       {ready && (
         <button
-          className={`start-button fade-in ${fadeOut ? "fade-out" : ""}`}
+          className={`start-button ${fadeOut ? "fade-out" : "fade-in"}`} // add fade-in for button mount
           onClick={handleClick}
         >
           Click here to start

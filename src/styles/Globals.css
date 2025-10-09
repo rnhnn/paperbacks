@@ -24,7 +24,7 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: 'Grand9K Pixel';
-  background-color: var(--black)
+  background-color: var(--black);
 }
 
 p {
