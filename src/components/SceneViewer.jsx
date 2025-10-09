@@ -156,15 +156,15 @@ export default function SceneViewer({ scene }) {
   // --- Render ---
   return (
     <div className="scene-viewer">
+      {lastPortraitBlock && (
+        <div className="scene-viewer-portrait">
+          <img
+            src={`/assets/portraits/${resolveCharacter(lastPortraitBlock.character).portrait}`}
+            alt={resolveCharacter(lastPortraitBlock.character).name}
+          />
+        </div>
+      )}
       <div className="scene-viewer-content" ref={contentRef}>
-        {lastPortraitBlock && (
-          <div className="scene-viewer-portrait">
-            <img
-              src={`/assets/portraits/${resolveCharacter(lastPortraitBlock.character).portrait}`}
-              alt={resolveCharacter(lastPortraitBlock.character).name}
-            />
-          </div>
-        )}
 
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1;

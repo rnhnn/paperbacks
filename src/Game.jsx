@@ -19,14 +19,19 @@ export default function Game() {
   useGameScale(960, 540);
 
   const [phase, setPhase] = useState("loading"); // 'loading' | 'menu' | 'game'
-  const [nextPhase, setNextPhase] = useState(null); // holds the next phase during fade-out
   const [fadeIn, setFadeIn] = useState(false); // triggers fade-in of current screen
-  const [isFadingOut, setIsFadingOut] = useState(false); // triggers fade-out before screen swap
+  const [transitioning, setTransitioning] = useState(false); // blocks multiple transitions
 
   // Initiate transition to next phase with fade-out
   const transitionTo = (newPhase) => {
-    setNextPhase(newPhase);
-    setIsFadingOut(true); // start fade-out of current screen
+    if (transitioning) return; // block if already transitioning
+    setTransitioning(true);
+    setFadeIn(false); // start fade-out
+    setTimeout(() => {
+      setPhase(newPhase); // swap phase
+      setFadeIn(true); // fade-in new screen
+      setTransitioning(false); // allow next transition
+    }, 400); // match CSS fade-out duration
   };
 
   // When player clicks New Game
@@ -34,27 +39,11 @@ export default function Game() {
     transitionTo("game");
   };
 
-  // Handle fade-in when phase changes or after fade-out completes
+  // Initial fade-in for first screen
   useEffect(() => {
-    if (!isFadingOut) {
-      const t = setTimeout(() => setFadeIn(true), 20); // tiny delay for CSS transition
-      return () => clearTimeout(t);
-    }
-  }, [phase, isFadingOut]);
-
-  // Handle fade-out completion: swap to next phase
-  useEffect(() => {
-    if (!isFadingOut) return;
-    const t = setTimeout(() => {
-      if (nextPhase) {
-        setPhase(nextPhase);
-        setNextPhase(null);
-      }
-      setIsFadingOut(false); // reset fade-out
-      setFadeIn(false); // reset fade-in before next screen mounts
-    }, 400); // match CSS fade-out duration
+    const t = setTimeout(() => setFadeIn(true), 20); // tiny delay for CSS transition
     return () => clearTimeout(t);
-  }, [isFadingOut, nextPhase]);
+  }, []);
 
   return (
     <InventoryProvider>
@@ -63,9 +52,9 @@ export default function Game() {
         <div className="game-screen">
           {/* Wrapper responsible for all screen-level transitions (fade, slide, etc.) */}
           <div
-            className={`game-screen-transition ${
-              fadeIn ? "fade-in" : ""
-            } ${isFadingOut ? "fade-out" : ""}`}
+            className={`game-screen-transition ${fadeIn ? "fade-in" : ""} ${
+              transitioning && !fadeIn ? "fade-out" : ""
+            }`}
           >
             {phase === "loading" && (
               <LoadingScreen onComplete={() => transitionTo("menu")} />
