@@ -9,36 +9,35 @@
   color: var(--white);
 }
 
-.main-menu h1 {
-  font-size: 40px;
+.main-menu-title {
+  font-size: var(--font-size-main-title);
   font-weight: normal;
   margin-bottom: 40px;
 }
 
-.menu-options {
+.menu-menu-options {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.menu-options button {
+.main-menu-button {
   background: transparent;
   color: var(--white);
   border: 2px solid var(--white);
   padding: 8px 24px;
   font-family: inherit;
-  font-size: 18px;
+  font-size: var(--font-size-regular);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.1s;
+  transition: background 0.2s, color 0.2s;
 }
 
-.menu-options button:hover:not(:disabled) {
+.main-menu-button:hover:not(:disabled) {
   background: var(--white);
   color: var(--black);
-  transform: scale(1.03);
 }
 
-.menu-options button:disabled {
+.main-menu-button:disabled {
   opacity: 0.4;
   cursor: default;
 }

@@ -14,11 +14,11 @@ export default function MainMenu({ onNewGame }) {
   // Note: screen-level fade-in handled by game-screen-transition in Game.jsx
   return (
     <div className="main-menu">
-      <h1>Paperbacks</h1>
-      <div className="menu-options">
-        <button onClick={handleNewGameClick}>New Game</button>
-        <button disabled>Load Game</button>
-        <button disabled>Options</button>
+      <h1 className="main-menu-title">Paperbacks</h1>
+      <div className="menu-menu-options">
+        <button className="main-menu-button" onClick={handleNewGameClick}>New Game</button>
+        <button className="main-menu-button" disabled>Load Game</button>
+        <button className="main-menu-button" disabled>Options</button>
       </div>
     </div>
   );

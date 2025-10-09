@@ -1,4 +1,5 @@
 import "./styles/Variables.css";
+import "./styles/Animations.css";
 import "./styles/Globals.css";
 import "./styles/Game.css";
 
