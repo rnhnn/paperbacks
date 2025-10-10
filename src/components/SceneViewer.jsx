@@ -5,9 +5,11 @@ import { useNotes } from "../context/NotesContext";
 import { useFlags } from "../context/FlagsContext";
 import characters from "../data/characters.json";
 
-export default function SceneViewer({ scene, onNodeChange }) {
+export default function SceneViewer({ scene, onSceneUpdate }) {
   // --- Lookup table for nodes ---
-  const nodeMap = Object.fromEntries(scene.nodes.filter(n => n.id).map(n => [n.id, n]));
+  const nodeMap = Object.fromEntries(
+    scene.nodes.filter((n) => n.id).map((n) => [n.id, n])
+  );
 
   // --- Core state ---
   const [currentNodeId, setCurrentNodeId] = useState(scene.nodes[0]?.id ?? null);
@@ -22,18 +24,23 @@ export default function SceneViewer({ scene, onNodeChange }) {
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
   const MAX_RENDERED_BLOCKS = 10; // limit visible history
 
-  // --- Notify parent on node change ---
+  // --- Notify parent on scene update (current node + rendered history) ---
   useEffect(() => {
-    if (onNodeChange && currentNodeId) onNodeChange(currentNodeId);
-  }, [currentNodeId, onNodeChange]);
+    if (onSceneUpdate && currentNodeId) {
+      onSceneUpdate({ currentNodeId, renderedBlocks });
+    }
+  }, [currentNodeId, renderedBlocks, onSceneUpdate]);
 
   // --- Check if node meets flag conditions ---
   const checkConditions = (node, flagSet = flags) =>
-    !node?.conditions || Object.entries(node.conditions).every(([f, v]) => flagSet[f] === v);
+    !node?.conditions ||
+    Object.entries(node.conditions).every(([f, v]) => flagSet[f] === v);
 
   // --- Resolve character data ---
-  const resolveCharacter = char =>
-    typeof char === "string" ? characters[char] || { id: char, name: "???", portrait: "" } : char;
+  const resolveCharacter = (char) =>
+    typeof char === "string"
+      ? characters[char] || { id: char, name: "???", portrait: "" }
+      : char;
 
   // --- Find next node (handles conditionals) ---
   const getNextNodeId = (fromNode, flagSet = flags) => {
@@ -41,7 +48,10 @@ export default function SceneViewer({ scene, onNodeChange }) {
 
     if (Array.isArray(fromNode.nextIf)) {
       for (const branch of fromNode.nextIf) {
-        if (!branch.conditions || Object.entries(branch.conditions).every(([f, v]) => flagSet[f] === v))
+        if (
+          !branch.conditions ||
+          Object.entries(branch.conditions).every(([f, v]) => flagSet[f] === v)
+        )
           if (branch.next && nodeMap[branch.next]) return branch.next;
       }
     }
@@ -69,7 +79,7 @@ export default function SceneViewer({ scene, onNodeChange }) {
     if (!node) return;
 
     // Skip duplicates
-    if (renderedBlocks.some(b => b.id && node.id && b.id === node.id)) {
+    if (renderedBlocks.some((b) => b.id && node.id && b.id === node.id)) {
       const nextId = getNextNodeId(node);
       return setCurrentNodeId(nextId);
     }
@@ -81,7 +91,7 @@ export default function SceneViewer({ scene, onNodeChange }) {
     if (node.effects) Object.entries(node.effects).forEach(([f, v]) => setFlag(f, v));
 
     // Append to visible log (trim older)
-    setRenderedBlocks(prev => [...prev.slice(-MAX_RENDERED_BLOCKS + 1), node]);
+    setRenderedBlocks((prev) => [...prev.slice(-MAX_RENDERED_BLOCKS + 1), node]);
 
     // Stop at choice
     if (node.type === "dialogueChoice") return setWaitingChoice(true);
@@ -91,15 +101,20 @@ export default function SceneViewer({ scene, onNodeChange }) {
   };
 
   // --- Handle player choice ---
-  const handleChoice = choice => {
+  const handleChoice = (choice) => {
     const mergedFlags = { ...flags, ...(choice.effects || {}) };
-    if (choice.effects) Object.entries(choice.effects).forEach(([f, v]) => setFlag(f, v));
+    if (choice.effects)
+      Object.entries(choice.effects).forEach(([f, v]) => setFlag(f, v));
 
-    const youBlock = { type: "characterDialogue", character: { id: "you", name: "You" }, text: [choice.text] };
+    const youBlock = {
+      type: "characterDialogue",
+      character: { id: "you", name: "You" },
+      text: [choice.text],
+    };
     const reactionBlocks = choice.reaction || [];
 
     // Apply effects for reactions
-    reactionBlocks.forEach(b => {
+    reactionBlocks.forEach((b) => {
       b.inventoryAdd?.forEach(addItem);
       b.inventoryRemove?.forEach(removeItem);
       b.notesAdd?.forEach(addNote);
@@ -119,8 +134,8 @@ export default function SceneViewer({ scene, onNodeChange }) {
     if (nextNode) insert.push(nextNode);
 
     // Replace choice node and trim log
-    setRenderedBlocks(prev => [
-      ...prev.filter(b => b.id !== currentNode.id).slice(-MAX_RENDERED_BLOCKS + insert.length),
+    setRenderedBlocks((prev) => [
+      ...prev.filter((b) => b.id !== currentNode.id).slice(-MAX_RENDERED_BLOCKS + insert.length),
       ...insert,
     ]);
 
@@ -141,7 +156,9 @@ export default function SceneViewer({ scene, onNodeChange }) {
   }, [renderedBlocks]);
 
   // --- Pick most recent portrait block ---
-  const lastPortraitBlock = [...renderedBlocks].reverse().find(b => resolveCharacter(b.character)?.portrait);
+  const lastPortraitBlock = [...renderedBlocks]
+    .reverse()
+    .find((b) => resolveCharacter(b.character)?.portrait);
 
   // --- Render ---
   return (

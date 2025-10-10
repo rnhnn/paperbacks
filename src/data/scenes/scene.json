@@ -85,24 +85,30 @@
       "id": "conditionalResponse",
       "type": "singleParagraph",
       "text": "Let me hear it.",
-      "next": "dummyParagraph"
+      "next": "debuggingText1"
     },
     {
-      "id": "dummyParagraph",
+      "id": "someOtherStory",
       "type": "singleParagraph",
-      "text": "Text text text.",
-      "next": "dummyParagraph2"
-    },
-      {
-      "id": "dummyParagraph",
-      "type": "singleParagraph",
-      "text": "Almost done here!",
-      "next": "dummyParagraph3"
+      "text": "The final text.",
+      "next": "debuggingText1"
     },
     {
-      "id": "dummyParagraph3",
+      "id": "debuggingText1",
       "type": "singleParagraph",
-      "text": "And we are done!"
+      "text": "The Beatles!",
+      "next": "debuggingText2"
+    },
+    {
+      "id": "debuggingText2",
+      "type": "singleParagraph",
+      "text": "Are...",
+      "next": "debuggingText3"
+    },
+    {
+      "id": "debuggingText3",
+      "type": "singleParagraph",
+      "text": "THE BEST."
     }
   ]
 }
