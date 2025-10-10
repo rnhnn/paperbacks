@@ -2,13 +2,13 @@ import { useState, useMemo } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 import { useFlags } from "../context/FlagsContext";
-import itemsData from "../data/items.json"; // Corrected path
-import notesData from "../data/notes.json"; // Corrected path
+import itemsData from "../data/items.json";
+import notesData from "../data/notes.json";
 import "../styles/ProtagonistHub.css";
 
 const protagonistImg = "/assets/portraits/protagonist.png";
 
-const ProtagonistHub = ({ currentNodeId }) => {
+const ProtagonistHub = () => {
   const [activeTab, setActiveTab] = useState("portrait");
   const [openNoteId, setOpenNoteId] = useState(null);
 
@@ -16,7 +16,7 @@ const ProtagonistHub = ({ currentNodeId }) => {
 
   const { inventory } = useInventory();
   const { notes } = useNotes();
-  const { flags } = useFlags();
+  const { flags } = useFlags(); // Keep in case we use it later
 
   // --- Memoized inventory lookup ---
   const inventoryItems = useMemo(
@@ -36,12 +36,16 @@ const ProtagonistHub = ({ currentNodeId }) => {
       {activeTab === "portrait" && (
         <>
           <div className="protagonist-hub-portrait">
-            <img src={protagonistImg} alt="Protagonist Portrait" className="protagonist-hub-portrait-image" />
+            <img
+              src={protagonistImg}
+              alt="Protagonist Portrait"
+              className="protagonist-hub-portrait-image"
+            />
           </div>
           <div className="protagonist-hub-buttons">
             <button onClick={() => setActiveTab("inventory")}>Inventory</button>
             <button onClick={() => setActiveTab("notes")}>Notes</button>
-            <button onClick={() => setActiveTab("worldState")}>World State</button>
+            <button>Options</button> {/* Dummy button, leads nowhere */}
           </div>
         </>
       )}
@@ -74,7 +78,12 @@ const ProtagonistHub = ({ currentNodeId }) => {
             <ul className="protagonist-hub-notes-list">
               {unlockedNotes.map((note) => (
                 <li key={note.id} className="protagonist-hub-notes-list-item">
-                  <button onClick={() => toggleNote(note.id)}>{note.title || "No title"}</button>
+                  <button
+                    className="protagonist-hub-notes-list-item-title"
+                    onClick={() => toggleNote(note.id)}
+                  >
+                    {note.title || "No title"}
+                  </button>
                   {openNoteId === note.id && (
                     <div className="protagonist-hub-notes-list-item-description">
                       {note.content.map((p, i) => (
@@ -88,51 +97,6 @@ const ProtagonistHub = ({ currentNodeId }) => {
           ) : (
             <p>No notes yet.</p>
           )}
-          <button onClick={() => setActiveTab("portrait")}>Back</button>
-        </div>
-      )}
-
-      {/* World State Debugger */}
-      {activeTab === "worldState" && (
-        <div className="protagonist-hub-world-state">
-          <h3>World State</h3>
-
-          {/* Flags */}
-          <div>
-            <h4>Flags</h4>
-            <ul>
-              {Object.entries(flags).map(([key, val]) => (
-                <li key={key}>{key}: {val?.toString() ?? "undefined"}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Inventory */}
-          <div>
-            <h4>Inventory</h4>
-            <ul>
-              {inventoryItems.map((item) => (
-                <li key={item.id}>{item.name || "No name"}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <h4>Notes</h4>
-            <ul>
-              {unlockedNotes.map((note) => (
-                <li key={note.id}>{note.title || "No title"}</li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Current story node */}
-          <div>
-            <h4>Current Node</h4>
-            <p>{currentNodeId || "null"}</p>
-          </div>
-
           <button onClick={() => setActiveTab("portrait")}>Back</button>
         </div>
       )}
