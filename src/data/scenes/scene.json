@@ -84,12 +84,25 @@
     {
       "id": "conditionalResponse",
       "type": "singleParagraph",
-      "text": "Let me hear it."
+      "text": "Let me hear it.",
+      "next": "dummyParagraph"
     },
     {
-      "id": "someOtherStory",
+      "id": "dummyParagraph",
       "type": "singleParagraph",
-      "text": "The final text."
+      "text": "Text text text.",
+      "next": "dummyParagraph2"
+    },
+      {
+      "id": "dummyParagraph",
+      "type": "singleParagraph",
+      "text": "Almost done here!",
+      "next": "dummyParagraph3"
+    },
+    {
+      "id": "dummyParagraph3",
+      "type": "singleParagraph",
+      "text": "And we are done!"
     }
   ]
 }

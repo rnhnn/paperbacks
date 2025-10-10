@@ -6,7 +6,7 @@ import "./styles/Game.css";
 import { useState, useEffect } from "react";
 import { InventoryProvider } from "./context/InventoryContext";
 import { NotesProvider } from "./context/NotesContext";
-import { FlagsProvider } from "./context/FlagsContext"; // Added FlagsProvider
+import { FlagsProvider } from "./context/FlagsContext";
 import useGameScale from "./hooks/useGameScale";
 
 import LoadingScreen from "./components/LoadingScreen";
@@ -20,40 +20,34 @@ export default function Game() {
   useGameScale(960, 540);
 
   const [phase, setPhase] = useState("loading"); // 'loading' | 'menu' | 'game'
-  const [fadeIn, setFadeIn] = useState(false); // triggers fade-in of current screen
+  const [fadeIn, setFadeIn] = useState(false); // triggers fade-in
   const [transitioning, setTransitioning] = useState(false); // blocks multiple transitions
 
-  // Initiate transition to next phase with fade-out
+  // Transition to next phase with fade
   const transitionTo = (newPhase) => {
-    if (transitioning) return; // block if already transitioning
+    if (transitioning) return;
     setTransitioning(true);
-    setFadeIn(false); // start fade-out
+    setFadeIn(false);
     setTimeout(() => {
-      setPhase(newPhase); // swap phase
-      setFadeIn(true); // fade-in new screen
-      setTransitioning(false); // allow next transition
-    }, 400); // match CSS fade-out duration
+      setPhase(newPhase);
+      setFadeIn(true);
+      setTransitioning(false);
+    }, 400); // match CSS transition timing
   };
 
-  // When player clicks New Game
-  const handleNewGame = () => {
-    transitionTo("game");
-  };
+  const handleNewGame = () => transitionTo("game");
 
-  // Initial fade-in for first screen
+  // Initial fade-in
   useEffect(() => {
-    const t = setTimeout(() => setFadeIn(true), 20); // tiny delay for CSS transition
+    const t = setTimeout(() => setFadeIn(true), 20);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <FlagsProvider>
-      {/* Global flag state available to all children */}
       <InventoryProvider>
         <NotesProvider>
-          {/* Top-level game screen for centering/scaling */}
           <div className="game-screen">
-            {/* Wrapper responsible for all screen-level transitions (fade, slide, etc.) */}
             <div
               className={`game-screen-transition ${fadeIn ? "fade-in" : ""} ${
                 transitioning && !fadeIn ? "fade-out" : ""
@@ -63,16 +57,30 @@ export default function Game() {
                 <LoadingScreen onComplete={() => transitionTo("menu")} />
               )}
               {phase === "menu" && <MainMenu onNewGame={handleNewGame} />}
-              {phase === "game" && (
-                <div className="game">
-                  <SceneViewer scene={sceneData} />
-                  <ProtagonistHub />
-                </div>
-              )}
+              {phase === "game" && <GameContent />}
             </div>
           </div>
         </NotesProvider>
       </InventoryProvider>
     </FlagsProvider>
+  );
+}
+
+// --- Core in-game view ---
+function GameContent() {
+  // Track SceneViewer's internal state for save system (non-debug)
+  const [sceneState, setSceneState] = useState({
+    currentNodeId: null,
+    renderedBlocks: [],
+  });
+
+  // SceneViewer reports updates here (used later for saving/loading)
+  const handleSceneUpdate = (update) => setSceneState(update);
+
+  return (
+    <div className="game">
+      <SceneViewer scene={sceneData} onSceneUpdate={handleSceneUpdate} />
+      <ProtagonistHub />
+    </div>
   );
 }

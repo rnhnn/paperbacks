@@ -2,57 +2,52 @@ import "../styles/SceneViewer.css";
 import { useState, useEffect, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
-import { useFlags } from "../context/FlagsContext"; // Added FlagsContext
-
-// --- Import character definitions ---
+import { useFlags } from "../context/FlagsContext";
 import characters from "../data/characters.json";
 
-export default function SceneViewer({ scene }) {
-  // --- Quick lookup for nodes by ID ---
+export default function SceneViewer({ scene, onNodeChange }) {
+  // --- Lookup table for nodes ---
   const nodeMap = Object.fromEntries(scene.nodes.filter(n => n.id).map(n => [n.id, n]));
 
-  // --- State ---
+  // --- Core state ---
   const [currentNodeId, setCurrentNodeId] = useState(scene.nodes[0]?.id ?? null);
   const [renderedBlocks, setRenderedBlocks] = useState([]);
   const [waitingChoice, setWaitingChoice] = useState(false);
+  const contentRef = useRef(null);
 
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
-  const { flags, setFlag } = useFlags(); // Get global flags from context
+  const { flags, setFlag } = useFlags();
 
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
+  const MAX_RENDERED_BLOCKS = 10; // limit visible history
 
-  // --- Ref for auto-scroll ---
-  const contentRef = useRef(null);
+  // --- Notify parent on node change ---
+  useEffect(() => {
+    if (onNodeChange && currentNodeId) onNodeChange(currentNodeId);
+  }, [currentNodeId, onNodeChange]);
 
-  // --- Helpers ---
+  // --- Check if node meets flag conditions ---
   const checkConditions = (node, flagSet = flags) =>
-    !node?.conditions || Object.entries(node.conditions).every(([flag, val]) => flagSet[flag] === val);
+    !node?.conditions || Object.entries(node.conditions).every(([f, v]) => flagSet[f] === v);
 
-  // --- Resolve character reference if it's a string ---
-  const resolveCharacter = char => {
-    if (!char) return null;
-    if (typeof char === "string") return characters[char] || { id: char, name: "???", portrait: "" };
-    return char;
-  };
+  // --- Resolve character data ---
+  const resolveCharacter = char =>
+    typeof char === "string" ? characters[char] || { id: char, name: "???", portrait: "" } : char;
 
-  // --- Determine next node ID, including conditional nextIf ---
+  // --- Find next node (handles conditionals) ---
   const getNextNodeId = (fromNode, flagSet = flags) => {
     if (!fromNode) return null;
 
-    // Handle conditional nextIf first
     if (Array.isArray(fromNode.nextIf)) {
       for (const branch of fromNode.nextIf) {
-        if (!branch.conditions || Object.entries(branch.conditions).every(([f, val]) => flagSet[f] === val)) {
+        if (!branch.conditions || Object.entries(branch.conditions).every(([f, v]) => flagSet[f] === v))
           if (branch.next && nodeMap[branch.next]) return branch.next;
-        }
       }
     }
 
-    // Fallback to default next
     if (fromNode.next && nodeMap[fromNode.next]) {
       const nextNode = nodeMap[fromNode.next];
-      // Skip node if conditions not met
       if (!checkConditions(nextNode, flagSet)) return getNextNodeId(nextNode, flagSet);
       return nextNode.id;
     }
@@ -60,93 +55,75 @@ export default function SceneViewer({ scene }) {
     return null;
   };
 
-  // --- Core progression ---
+  // --- Progress story forward ---
   const renderNext = () => {
     if (!currentNode || waitingChoice) return;
-
     let node = currentNode;
 
-    // Skip nodes whose conditions aren't satisfied
+    // Skip unmet conditions
     while (node && !checkConditions(node)) {
       const nextId = getNextNodeId(node);
       if (!nextId) return setCurrentNodeId(null);
       node = nodeMap[nextId];
     }
-
     if (!node) return;
 
-    // Avoid re-rendering the same node
+    // Skip duplicates
     if (renderedBlocks.some(b => b.id && node.id && b.id === node.id)) {
       const nextId = getNextNodeId(node);
       return setCurrentNodeId(nextId);
     }
 
-    // --- Apply side effects ---
+    // Apply effects
     node.inventoryAdd?.forEach(addItem);
     node.inventoryRemove?.forEach(removeItem);
     node.notesAdd?.forEach(addNote);
+    if (node.effects) Object.entries(node.effects).forEach(([f, v]) => setFlag(f, v));
 
-    // --- Apply flag effects from this node (if any) ---
-    if (node.effects) {
-      Object.entries(node.effects).forEach(([flag, val]) => setFlag(flag, val));
-    }
+    // Append to visible log (trim older)
+    setRenderedBlocks(prev => [...prev.slice(-MAX_RENDERED_BLOCKS + 1), node]);
 
-    // Render node
-    setRenderedBlocks(prev => [...prev, node]);
-
-    // Stop progression if it's a choice
+    // Stop at choice
     if (node.type === "dialogueChoice") return setWaitingChoice(true);
 
-    // Otherwise, go to next node
+    // Continue
     setCurrentNodeId(getNextNodeId(node));
   };
 
+  // --- Handle player choice ---
   const handleChoice = choice => {
-    // --- Merge local and global flags for this choice ---
     const mergedFlags = { ...flags, ...(choice.effects || {}) };
+    if (choice.effects) Object.entries(choice.effects).forEach(([f, v]) => setFlag(f, v));
 
-    // Apply flag effects globally
-    if (choice.effects) {
-      Object.entries(choice.effects).forEach(([flag, val]) => setFlag(flag, val));
-    }
-
-    // Player dialogue block
-    const youBlock = {
-      type: "characterDialogue",
-      character: { id: "you", name: "You" },
-      text: [choice.text],
-    };
-
-    // Optional reaction blocks
+    const youBlock = { type: "characterDialogue", character: { id: "you", name: "You" }, text: [choice.text] };
     const reactionBlocks = choice.reaction || [];
+
+    // Apply effects for reactions
     reactionBlocks.forEach(b => {
       b.inventoryAdd?.forEach(addItem);
       b.inventoryRemove?.forEach(removeItem);
       b.notesAdd?.forEach(addNote);
-
-      // Apply flags in reaction blocks
-      if (b.effects) {
-        Object.entries(b.effects).forEach(([flag, val]) => setFlag(flag, val));
-      }
+      if (b.effects) Object.entries(b.effects).forEach(([f, v]) => setFlag(f, v));
     });
 
-    // Determine next node
     const nextId = choice.next || getNextNodeId(currentNode, mergedFlags);
     const nextNode = nextId ? nodeMap[nextId] : null;
 
-    // Apply side effects of next node immediately
+    // Pre-apply effects of next node
     nextNode?.inventoryAdd?.forEach(addItem);
     nextNode?.inventoryRemove?.forEach(removeItem);
     nextNode?.notesAdd?.forEach(addNote);
-    if (nextNode?.effects) {
-      Object.entries(nextNode.effects).forEach(([flag, val]) => setFlag(flag, val));
-    }
+    if (nextNode?.effects) Object.entries(nextNode.effects).forEach(([f, v]) => setFlag(f, v));
 
-    // Replace the choice node with "You" + reactions + next node
     const insert = [youBlock, ...reactionBlocks];
     if (nextNode) insert.push(nextNode);
 
-    setRenderedBlocks(prev => [...prev.filter(b => b.id !== currentNode.id), ...insert]);
+    // Replace choice node and trim log
+    setRenderedBlocks(prev => [
+      ...prev.filter(b => b.id !== currentNode.id).slice(-MAX_RENDERED_BLOCKS + insert.length),
+      ...insert,
+    ]);
+
     setWaitingChoice(false);
 
     // Continue story
@@ -154,22 +131,16 @@ export default function SceneViewer({ scene }) {
       if (nextNode.type === "dialogueChoice") {
         setWaitingChoice(true);
         setCurrentNodeId(nextNode.id);
-      } else {
-        setCurrentNodeId(getNextNodeId(nextNode, mergedFlags));
-      }
-    } else {
-      setCurrentNodeId(null);
-    }
+      } else setCurrentNodeId(getNextNodeId(nextNode, mergedFlags));
+    } else setCurrentNodeId(null);
   };
 
-  // --- Auto-scroll whenever content grows ---
+  // --- Auto-scroll when new block added ---
   useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTop = contentRef.current.scrollHeight;
-    }
+    if (contentRef.current) contentRef.current.scrollTop = contentRef.current.scrollHeight;
   }, [renderedBlocks]);
 
-  // --- Determine portrait to display ---
+  // --- Pick most recent portrait block ---
   const lastPortraitBlock = [...renderedBlocks].reverse().find(b => resolveCharacter(b.character)?.portrait);
 
   // --- Render ---
@@ -183,12 +154,12 @@ export default function SceneViewer({ scene }) {
           />
         </div>
       )}
+
       <div className="scene-viewer-content" ref={contentRef}>
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1;
           const cls = `scene-viewer-node${isCurrent ? " is-current" : ""}`;
 
-          // --- Single Paragraph ---
           if (block.type === "singleParagraph")
             return (
               <div key={i} className={cls}>
@@ -196,7 +167,6 @@ export default function SceneViewer({ scene }) {
               </div>
             );
 
-          // --- Multiple Paragraphs ---
           if (block.type === "multipleParagraphs")
             return (
               <div key={i} className={cls}>
@@ -206,10 +176,9 @@ export default function SceneViewer({ scene }) {
               </div>
             );
 
-          // --- Character Dialogue ---
           if (block.type === "characterDialogue") {
-            const character = resolveCharacter(block.character);
-            const name = character?.name?.toUpperCase() || "???";
+            const char = resolveCharacter(block.character);
+            const name = char?.name?.toUpperCase() || "???";
             const text = Array.isArray(block.text) ? block.text.join(" ") : block.text;
 
             return (
@@ -222,7 +191,6 @@ export default function SceneViewer({ scene }) {
             );
           }
 
-          // --- Dialogue Choice ---
           if (block.type === "dialogueChoice")
             return (
               <div key={i} className={cls}>

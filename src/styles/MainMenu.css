@@ -3,8 +3,9 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-left: 100px;
   background: var(--black);
   color: var(--white);
 }
@@ -12,6 +13,7 @@
 .main-menu-title {
   font-size: var(--font-size-main-title);
   font-weight: normal;
+  margin-top: 0;
   margin-bottom: 40px;
 }
 
@@ -24,17 +26,12 @@
 .main-menu-button {
   background: transparent;
   color: var(--white);
-  border: 2px solid var(--white);
-  padding: 8px 24px;
+  border: 0;
+  text-align: left;
   font-family: inherit;
   font-size: var(--font-size-regular);
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
-}
-
-.main-menu-button:hover:not(:disabled) {
-  background: var(--white);
-  color: var(--black);
 }
 
 .main-menu-button:disabled {
