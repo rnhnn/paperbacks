@@ -83,7 +83,7 @@ export default function Loading({ onComplete }) {
 
   // --- Render ---
   return (
-    <div className="loading-screen">
+    <div className="loading">
       {fontReady && !ready && <p className="loading-text">Loading...</p>}
       {ready && (
         <button

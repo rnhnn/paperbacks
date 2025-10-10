@@ -11,16 +11,16 @@ import sceneData from "../data/scenes/scene.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
   const { quickSave, quickLoad } = useSaveSystem(); // save/load actions
-  const [savedScene, setSavedScene] = useState(null); // restored scene state
+  const [savedScene, setSavedScene] = useState(null); // restored scene snapshot
   const [sceneKey, setSceneKey] = useState(0); // forces SceneViewer remount
-  const sceneSnapshotRef = useRef(() => null); // holds snapshot builder
+  const sceneSnapshotRef = useRef(() => null); // stores latest snapshot builder
 
-  // Update snapshot builder when SceneViewer provides one
+  // Update snapshot builder when SceneViewer provides a new one
   const handleSceneSnapshotUpdate = (fn) => {
     sceneSnapshotRef.current = fn;
   };
 
-  // Load snapshot from save data
+  // Manual quick load (used by Continue as well)
   const handleQuickLoad = () => {
     const sceneSlice = quickLoad();
     if (sceneSlice) {
@@ -29,7 +29,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Save current scene snapshot
+  // Manual quick save
   const handleQuickSave = () => {
     try {
       const snapshot = sceneSnapshotRef.current?.();
@@ -42,6 +42,12 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     } catch (err) {
       console.error("❌ Quick Save failed:", err);
     }
+  };
+
+  // Continue from local save
+  const handleContinue = () => {
+    handleQuickLoad(); // load saved state from localStorage
+    transitionTo("game"); // move to gameplay
   };
 
   return (
@@ -58,7 +64,10 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
 
         {/* Phase 2: main menu */}
         {phase === "menu" && (
-          <MainMenu onNewGame={() => transitionTo("game")} />
+          <MainMenu
+            onNewGame={() => transitionTo("game")}
+            onContinue={handleContinue}
+          />
         )}
 
         {/* Phase 3: main gameplay */}

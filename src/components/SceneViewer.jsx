@@ -41,7 +41,10 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
       .filter(Boolean);
 
     setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
-    setWaitingChoice(false);
+
+    // if the restored node is a dialogueChoice, resume in waiting state
+    const startNode = startId ? nodeMap[startId] : null;
+    setWaitingChoice(startNode?.type === "dialogueChoice");
   }, [savedScene, nodeMap, scene.nodes]);
 
   // --- Helpers ---

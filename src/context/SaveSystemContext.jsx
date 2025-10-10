@@ -15,6 +15,7 @@ export const SaveSystemProvider = ({ children }) => {
 
   const lastSavedRef = useRef("");
 
+  // Build snapshot for saving
   const buildSnapshot = (sceneState) => ({
     version: SAVE_VERSION,
     timestamp: Date.now(),
@@ -24,6 +25,7 @@ export const SaveSystemProvider = ({ children }) => {
     flags: { ...flags },
   });
 
+  // Write snapshot to localStorage
   const persist = (snapshot) => {
     try {
       const json = JSON.stringify(snapshot);
@@ -38,11 +40,13 @@ export const SaveSystemProvider = ({ children }) => {
     }
   };
 
+  // Save current game
   const quickSave = (sceneState) => {
     const snapshot = buildSnapshot(sceneState);
     return persist(snapshot);
   };
 
+  // Load saved game
   const quickLoad = () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -55,12 +59,16 @@ export const SaveSystemProvider = ({ children }) => {
 
       if (Array.isArray(data.inventoryIds)) {
         const acquired = new Set(data.inventoryIds);
-        setItems((prev) => prev.map((it) => ({ ...it, acquired: acquired.has(it.id) })));
+        setItems((prev) =>
+          prev.map((it) => ({ ...it, acquired: acquired.has(it.id) }))
+        );
       }
 
       if (Array.isArray(data.noteIds)) {
         const unlocked = new Set(data.noteIds);
-        setNotes((prev) => prev.map((n) => ({ ...n, unlocked: unlocked.has(n.id) })));
+        setNotes((prev) =>
+          prev.map((n) => ({ ...n, unlocked: unlocked.has(n.id) }))
+        );
       }
 
       if (data.flags && typeof data.flags === "object") {
@@ -75,8 +83,11 @@ export const SaveSystemProvider = ({ children }) => {
     }
   };
 
+  // 👇 Expose storageKey so MainMenu can detect saves
   return (
-    <SaveSystemContext.Provider value={{ quickSave, quickLoad }}>
+    <SaveSystemContext.Provider
+      value={{ quickSave, quickLoad, storageKey: STORAGE_KEY }}
+    >
       {children}
     </SaveSystemContext.Provider>
   );

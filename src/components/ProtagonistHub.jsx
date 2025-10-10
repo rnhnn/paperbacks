@@ -77,8 +77,8 @@ const ProtagonistHub = ({ onQuickSave, onQuickLoad }) => {
           <div className="protagonist-hub-buttons">
             <button onClick={() => setActiveTab("inventory")}>Inventory</button>
             <button onClick={() => setActiveTab("notes")}>Notes</button>
-            <button onClick={handleQuickSave}>Quick Save</button>
-            <button onClick={handleQuickLoad}>Quick Load</button>
+            <button onClick={handleQuickSave}>Save</button>
+            <button onClick={handleQuickLoad}>Load</button>
           </div>
 
           {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
