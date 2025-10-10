@@ -3,15 +3,15 @@ import { useState, useEffect, useRef } from "react";
 import { useSaveSystem } from "../context/SaveSystemContext";
 import "../styles/MainMenu.css";
 
-const FADE_DURATION = 400; // ms, matches CSS fade-out
+const FADE_DURATION = 400; // ms, matches CSS fade-out timing
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
-  const [fadeOut, setFadeOut] = useState(false); // triggers fade-out
-  const [hasSave, setHasSave] = useState(false); // true if save exists
-  const { storageKey } = useSaveSystem(); // from SaveSystemContext
-  const fileInputRef = useRef(null); // hidden input ref
+  const [fadeOut, setFadeOut] = useState(false); // triggers fade-out transition
+  const [hasSave, setHasSave] = useState(false); // true if local save exists
+  const { storageKey } = useSaveSystem(); // save system key
+  const fileInputRef = useRef(null); // hidden input for file picker
 
-  // Check if a local save exists
+  // --- Detect local save on mount ---
   useEffect(() => {
     try {
       const save = localStorage.getItem(storageKey);
@@ -22,18 +22,18 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fade transition helper
+  // --- Fade helper (runs callback after fade-out) ---
   const runWithFade = (callback) => {
     setFadeOut(true);
     setTimeout(callback, FADE_DURATION);
   };
 
-  // Trigger file picker
+  // --- Open file picker for importing save ---
   const handleLoadGameClick = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
-  // Handle file selection
+  // --- Handle selected save file ---
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -42,28 +42,28 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       const text = await file.text();
       const data = JSON.parse(text);
 
-      // Basic validation
+      // --- Basic validation ---
       if (!data || typeof data !== "object" || !data.version) {
         console.warn("⚠️ Invalid save file structure");
         return;
       }
 
       console.log("📂 Loaded save from file:", data);
-
       runWithFade(() => onLoadFromFile(data));
     } catch (err) {
       console.error("❌ Failed to read save file:", err);
     } finally {
-      // Reset input so the same file can be reselected later
-      e.target.value = "";
+      e.target.value = ""; // reset for reselect
     }
   };
 
+  // --- Render ---
   return (
     <div className={`main-menu ${fadeOut ? "fade-out" : ""}`}>
       <h1 className="main-menu-title">Paperbacks</h1>
 
       <div className="main-menu-options">
+        {/* Continue (only shown if save exists) */}
         {hasSave && (
           <button
             type="button"
@@ -74,6 +74,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           </button>
         )}
 
+        {/* Start new game */}
         <button
           type="button"
           className="main-menu-button"
@@ -82,6 +83,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           New Game
         </button>
 
+        {/* Load game from external save file */}
         <button
           type="button"
           className="main-menu-button"
@@ -90,7 +92,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           Load Game
         </button>
 
-        {/* Hidden file input */}
+        {/* Hidden input for file import */}
         <input
           type="file"
           accept=".json,application/json"
