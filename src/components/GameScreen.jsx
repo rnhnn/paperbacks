@@ -10,17 +10,17 @@ import ProtagonistHub from "./ProtagonistHub";
 import sceneData from "../data/scenes/scene.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
-  const { quickSave, quickLoad } = useSaveSystem(); // save/load actions
-  const [savedScene, setSavedScene] = useState(null); // restored scene snapshot
+  const { quickSave, quickLoad } = useSaveSystem(); // save/load handlers
+  const [savedScene, setSavedScene] = useState(null); // current or loaded scene data
   const [sceneKey, setSceneKey] = useState(0); // forces SceneViewer remount
-  const sceneSnapshotRef = useRef(() => null); // stores latest snapshot builder
+  const sceneSnapshotRef = useRef(() => null); // holds current snapshot builder
 
-  // Update snapshot builder when SceneViewer provides a new one
+  // Register snapshot builder from SceneViewer
   const handleSceneSnapshotUpdate = (fn) => {
     sceneSnapshotRef.current = fn;
   };
 
-  // Manual quick load (used by Continue as well)
+  // Load scene from localStorage (used by Continue and Quick Load)
   const handleQuickLoad = () => {
     const sceneSlice = quickLoad();
     if (sceneSlice) {
@@ -29,7 +29,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Manual quick save
+  // Save current scene snapshot to localStorage
   const handleQuickSave = () => {
     try {
       const snapshot = sceneSnapshotRef.current?.();
@@ -44,10 +44,20 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Continue from local save
+  // Continue from localStorage save
   const handleContinue = () => {
-    handleQuickLoad(); // load saved state from localStorage
-    transitionTo("game"); // move to gameplay
+    handleQuickLoad();
+    transitionTo("game");
+  };
+
+  // Load save file imported from disk
+  const handleLoadFromFile = (data) => {
+    console.log("📂 Importing save from file:", data);
+    if (data.scene) {
+      setSavedScene(data.scene);
+      setSceneKey((k) => k + 1);
+    }
+    transitionTo("game");
   };
 
   return (
@@ -67,6 +77,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
           <MainMenu
             onNewGame={() => transitionTo("game")}
             onContinue={handleContinue}
+            onLoadFromFile={handleLoadFromFile}
           />
         )}
 
@@ -82,6 +93,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
             <ProtagonistHub
               onQuickSave={handleQuickSave}
               onQuickLoad={handleQuickLoad}
+              getSceneSnapshot={() => sceneSnapshotRef.current?.()} // ✅ live access
             />
           </div>
         )}

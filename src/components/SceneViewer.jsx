@@ -1,12 +1,15 @@
+// --- Styles & React ---
 import "../styles/SceneViewer.css";
 import { useState, useEffect, useRef, useMemo } from "react";
+
+// --- Context ---
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 import { useFlags } from "../context/FlagsContext";
 import characters from "../data/characters.json";
 
 export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
-  // --- Stable lookup table for nodes ---
+  // --- Build lookup table for nodes ---
   const nodeMap = useMemo(
     () =>
       Object.fromEntries(scene.nodes.filter((n) => n.id).map((n) => [n.id, n])),
@@ -15,11 +18,11 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
 
   // --- Core state ---
   const [currentNodeId, setCurrentNodeId] = useState(
-    savedScene?.currentNodeId ?? scene.nodes[0]?.id ?? null
+    savedScene?.currentNodeId ?? scene.nodes[0]?.id ?? null // id of node currently on screen
   );
-  const [renderedBlocks, setRenderedBlocks] = useState([]);
-  const [waitingChoice, setWaitingChoice] = useState(false);
-  const contentRef = useRef(null);
+  const [renderedBlocks, setRenderedBlocks] = useState([]); // blocks already shown
+  const [waitingChoice, setWaitingChoice] = useState(false); // true when showing a choice list
+  const contentRef = useRef(null); // scroll container
 
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
@@ -28,22 +31,20 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
   const MAX_RENDERED_BLOCKS = 10;
 
-  // --- Rehydrate on Quick Load ---
+  // --- Rehydrate on load (keep currentNodeId = visible node) ---
   useEffect(() => {
     if (!savedScene) return;
 
     console.log("🔁 Restoring scene from saved state:", savedScene);
     const startId = savedScene.currentNodeId ?? scene.nodes[0]?.id ?? null;
-    setCurrentNodeId(startId);
+    const startNode = startId ? nodeMap[startId] : null;
 
     const recent = (savedScene.recentNodeIds || [])
       .map((id) => nodeMap[id])
       .filter(Boolean);
 
     setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
-
-    // if the restored node is a dialogueChoice, resume in waiting state
-    const startNode = startId ? nodeMap[startId] : null;
+    setCurrentNodeId(startId);
     setWaitingChoice(startNode?.type === "dialogueChoice");
   }, [savedScene, nodeMap, scene.nodes]);
 
@@ -88,7 +89,7 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
       Object.entries(nodeLike.effects).forEach(([f, v]) => setFlag(f, v));
   };
 
-  // --- Manual snapshot builder (for Quick Save) ---
+  // --- Build save snapshot (current node + recent history) ---
   const getSceneSnapshot = () => ({
     currentNodeId,
     recentNodeIds: renderedBlocks
@@ -96,40 +97,60 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
       .slice(-MAX_RENDERED_BLOCKS),
   });
 
-  // Provide snapshot getter to parent (only when function reference changes)
+  // --- Provide snapshot getter to parent ---
   useEffect(() => {
     if (onSceneSnapshot) onSceneSnapshot(getSceneSnapshot);
   }, [onSceneSnapshot, currentNodeId, renderedBlocks]);
 
-  // --- Progress story ---
+  // --- Progress story (render current if unseen; otherwise move to and render next) ---
   const renderNext = () => {
     if (!currentNode || waitingChoice) return;
-    let node = currentNode;
 
-    while (node && !checkConditions(node)) {
-      const nextId = getNextNodeId(node);
+    // Resolve to a renderable node that meets conditions
+    const resolveRenderable = (start) => {
+      let node = start;
+      while (node && !checkConditions(node)) {
+        const nid = getNextNodeId(node);
+        if (!nid) return null;
+        node = nodeMap[nid];
+      }
+      return node || null;
+    };
+
+    let nodeToRender = resolveRenderable(currentNode);
+    if (!nodeToRender) return setCurrentNodeId(null); // end of scene
+
+    const alreadyShown = renderedBlocks.some(
+      (b) => b.id && nodeToRender.id && b.id === nodeToRender.id
+    );
+
+    // If already shown, advance pointer to next and render that instead
+    if (alreadyShown) {
+      const nextId = getNextNodeId(nodeToRender);
       if (!nextId) return setCurrentNodeId(null);
-      node = nodeMap[nextId];
-    }
-    if (!node) return;
-
-    if (renderedBlocks.some((b) => b.id && node.id && b.id === node.id)) {
-      const nextId = getNextNodeId(node);
-      return setCurrentNodeId(nextId);
+      nodeToRender = resolveRenderable(nodeMap[nextId]);
+      if (!nodeToRender) return setCurrentNodeId(null);
     }
 
-    applyEffects(node);
+    // Apply effects and append block
+    applyEffects(nodeToRender);
     setRenderedBlocks((prev) => [
       ...prev.slice(-MAX_RENDERED_BLOCKS + 1),
-      node,
+      nodeToRender,
     ]);
 
-    if (node.type === "dialogueChoice") return setWaitingChoice(true);
+    // If it's a choice, enter waiting state and keep pointer on this node
+    if (nodeToRender.type === "dialogueChoice") {
+      setWaitingChoice(true);
+      setCurrentNodeId(nodeToRender.id); // pointer = visible node
+      return;
+    }
 
-    setCurrentNodeId(getNextNodeId(node));
+    // Keep pointer on the node we just rendered (advance on next press)
+    setCurrentNodeId(nodeToRender.id);
   };
 
-  // --- Handle choice ---
+  // --- Handle dialogue choice ---
   const handleChoice = (choice) => {
     const mergedFlags = { ...flags, ...(choice.effects || {}) };
     if (choice.effects)
@@ -163,18 +184,23 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
     if (nextNode) {
       if (nextNode.type === "dialogueChoice") {
         setWaitingChoice(true);
+        setCurrentNodeId(nextNode.id); // pointer = visible choice
+      } else {
+        // pointer = the node we just rendered (advance on next press)
         setCurrentNodeId(nextNode.id);
-      } else setCurrentNodeId(getNextNodeId(nextNode, mergedFlags));
-    } else setCurrentNodeId(null);
+      }
+    } else {
+      setCurrentNodeId(null); // end of scene
+    }
   };
 
-  // --- Auto-scroll ---
+  // --- Auto-scroll to bottom on new blocks ---
   useEffect(() => {
     if (contentRef.current)
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
   }, [renderedBlocks]);
 
-  // --- Portrait ---
+  // --- Portrait handling (last block with a portrait wins) ---
   const lastPortraitBlock = [...renderedBlocks]
     .reverse()
     .find((b) => resolveCharacter(b.character)?.portrait);
@@ -249,6 +275,7 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
           return null;
         })}
 
+        {/* Continue button (hidden during choices) */}
         {!waitingChoice && currentNodeId !== null && (
           <button onClick={renderNext} className="scene-viewer-button">
             {renderedBlocks.length === 0 ? "Begin" : "Continue"}
