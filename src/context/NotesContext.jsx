@@ -31,7 +31,15 @@ export const NotesProvider = ({ children }) => {
   const unlockedNotes = notes.filter((n) => n.unlocked).map((n) => n.id);
 
   return (
-    <NotesContext.Provider value={{ notes, unlockedNotes, addNote, removeNote }}>
+    <NotesContext.Provider
+      value={{
+        notes,
+        unlockedNotes,
+        addNote,
+        removeNote,
+        setNotes, // 🟢 Exposed for SaveSystem to restore notes from snapshots
+      }}
+    >
       {children}
     </NotesContext.Provider>
   );

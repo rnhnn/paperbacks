@@ -31,7 +31,15 @@ export const InventoryProvider = ({ children }) => {
   const inventory = items.filter((i) => i.acquired).map((i) => i.id);
 
   return (
-    <InventoryContext.Provider value={{ items, inventory, addItem, removeItem }}>
+    <InventoryContext.Provider
+      value={{
+        items,
+        inventory,
+        addItem,
+        removeItem,
+        setItems, // 🟢 Exposed for SaveSystem to restore inventory from snapshots
+      }}
+    >
       {children}
     </InventoryContext.Provider>
   );

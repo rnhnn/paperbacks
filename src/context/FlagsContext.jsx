@@ -36,7 +36,15 @@ export function FlagsProvider({ children }) {
   };
 
   return (
-    <FlagsContext.Provider value={{ flags, getFlag, setFlag, resetFlags }}>
+    <FlagsContext.Provider
+      value={{
+        flags,
+        getFlag,
+        setFlag,
+        resetFlags,
+        setFlags, // 🟢 Exposed for SaveSystem to restore all flags from snapshots
+      }}
+    >
       {children}
     </FlagsContext.Provider>
   );

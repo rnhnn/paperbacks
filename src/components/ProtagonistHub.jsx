@@ -8,31 +8,62 @@ import "../styles/ProtagonistHub.css";
 
 const protagonistImg = "/assets/portraits/protagonist.png";
 
-const ProtagonistHub = () => {
+const ProtagonistHub = ({ onQuickSave, onQuickLoad }) => {
   const [activeTab, setActiveTab] = useState("portrait");
   const [openNoteId, setOpenNoteId] = useState(null);
+  const [saveMsg, setSaveMsg] = useState("");
 
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
 
   const { inventory } = useInventory();
   const { notes } = useNotes();
-  const { flags } = useFlags(); // Keep in case we use it later
+  const { flags } = useFlags();
+
+  // --- Handlers with feedback ---
+  const handleQuickSave = () => {
+    if (onQuickSave) {
+      onQuickSave();
+      setSaveMsg("Saved ✓");
+      setTimeout(() => setSaveMsg(""), 1500);
+    }
+  };
+
+  const handleQuickLoad = () => {
+    if (onQuickLoad) {
+      onQuickLoad();
+      setSaveMsg("Loaded ✓");
+      setTimeout(() => setSaveMsg(""), 1500);
+    }
+  };
 
   // --- Memoized inventory lookup ---
   const inventoryItems = useMemo(
-    () => inventory.map((id) => itemsData.find((item) => item.id === id)).filter(Boolean),
+    () =>
+      inventory
+        .map((id) => itemsData.find((item) => item.id === id))
+        .filter(Boolean),
     [inventory]
   );
 
   // --- Memoized unlocked notes lookup ---
   const unlockedNotes = useMemo(
-    () => notes.filter((n) => n.unlocked).map((n) => notesData.find((note) => note.id === n.id) || { id: n.id, title: "No title", content: ["No content"] }),
+    () =>
+      notes
+        .filter((n) => n.unlocked)
+        .map(
+          (n) =>
+            notesData.find((note) => note.id === n.id) || {
+              id: n.id,
+              title: "No title",
+              content: ["No content"],
+            }
+        ),
     [notes]
   );
 
   return (
     <div className="protagonist-hub">
-      {/* Portrait */}
+      {/* Portrait Tab */}
       {activeTab === "portrait" && (
         <>
           <div className="protagonist-hub-portrait">
@@ -42,15 +73,19 @@ const ProtagonistHub = () => {
               className="protagonist-hub-portrait-image"
             />
           </div>
+
           <div className="protagonist-hub-buttons">
             <button onClick={() => setActiveTab("inventory")}>Inventory</button>
             <button onClick={() => setActiveTab("notes")}>Notes</button>
-            <button>Options</button> {/* Dummy button, leads nowhere */}
+            <button onClick={handleQuickSave}>Quick Save</button>
+            <button onClick={handleQuickLoad}>Quick Load</button>
           </div>
+
+          {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
         </>
       )}
 
-      {/* Inventory */}
+      {/* Inventory Tab */}
       {activeTab === "inventory" && (
         <div className="protagonist-hub-inventory">
           <h3 className="protagonist-hub-inventory-title">Inventory</h3>
@@ -70,7 +105,7 @@ const ProtagonistHub = () => {
         </div>
       )}
 
-      {/* Notes */}
+      {/* Notes Tab */}
       {activeTab === "notes" && (
         <div className="protagonist-hub-notes">
           <h3 className="protagonist-hub-notes-title">Notes</h3>
