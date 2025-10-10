@@ -1,0 +1,20 @@
+[
+  {
+    "id": "beckys_keys",
+    "name": "Keys to Becky's",
+    "description": "She gave them to me after work.",
+    "acquired": true
+  },
+  {
+    "id": "toothbrush",
+    "name": "A toothbrush",
+    "description": "It stinks. Badly. It super stinks! But well, such is life.",
+    "acquired": false
+  },
+  {
+    "id": "old_shoe",
+    "name": "Old Shoe",
+    "description": "It *really* stinks. It reminds you of an afternoon at yoru grandmas place.",
+    "acquired": false
+  }
+]

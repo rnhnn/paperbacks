@@ -5,7 +5,8 @@
     "content": [
       "Don't forget the meeting with Kim Kitsuragi at 3 PM.",
       "Check the evidence folder before attending."
-    ]
+    ],
+    "unlocked": true
   },
   {
     "id": "shopping_list_home",
@@ -13,7 +14,8 @@
     "content": [
       "Buy milk, eggs, and bread.",
       "Pick up some coffee if there’s time."
-    ]
+    ],
+    "unlocked": false
   },
   {
     "id": "mysterious_figure_alley",
@@ -21,6 +23,7 @@
     "content": [
       "Saw a mysterious figure near the alley last night.",
       "Might be worth investigating later."
-    ]
+    ],
+    "unlocked": false
   }
 ]

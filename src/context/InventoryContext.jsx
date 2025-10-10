@@ -1,27 +1,37 @@
 import { createContext, useContext, useState } from "react";
-import startingItems from "../data/items/startingItems.json"; // <-- starting items JSON
+import itemsData from "../data/items.json"; // single source of all items
 
 const InventoryContext = createContext();
 
 export const InventoryProvider = ({ children }) => {
-  // inventory stores only item IDs, initialized with starting items
-  const [inventory, setInventory] = useState([...startingItems]);
+  // state: items with their current acquired status
+  const [items, setItems] = useState(() =>
+    itemsData.map((item) => ({ ...item, acquired: !!item.acquired }))
+  );
 
-  // Add an item by ID if not already in inventory
+  // Add an item by ID if not already acquired
   const addItem = (itemId) => {
-    setInventory((prev) => {
-      if (!prev.includes(itemId)) return [...prev, itemId];
-      return prev;
-    });
+    setItems((prev) =>
+      prev.map((i) =>
+        i.id === itemId ? { ...i, acquired: true } : i
+      )
+    );
   };
 
   // Remove an item by ID
   const removeItem = (itemId) => {
-    setInventory((prev) => prev.filter((i) => i !== itemId));
+    setItems((prev) =>
+      prev.map((i) =>
+        i.id === itemId ? { ...i, acquired: false } : i
+      )
+    );
   };
 
+  // list of acquired item IDs
+  const inventory = items.filter((i) => i.acquired).map((i) => i.id);
+
   return (
-    <InventoryContext.Provider value={{ inventory, addItem, removeItem }}>
+    <InventoryContext.Provider value={{ items, inventory, addItem, removeItem }}>
       {children}
     </InventoryContext.Provider>
   );

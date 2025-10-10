@@ -60,6 +60,7 @@
       "type": "singleParagraph",
       "text": "An old shoe?!",
       "inventoryAdd": ["old_shoe"],
+      "effects": { "foundOldShoe": true },
       "next": "findingAShoppingList"
     },
     {
