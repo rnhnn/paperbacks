@@ -22,9 +22,16 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
   );
 
   // --- Core state ---
-  const [currentNodeId, setCurrentNodeId] = useState(
-    savedScene?.currentNodeId ?? scene.nodes[0]?.id ?? null // node currently active
-  );
+  const [currentNodeId, setCurrentNodeId] = useState(() => {
+    // Respect explicit null (scene ended) when restoring from a save
+    if (
+      savedScene &&
+      Object.prototype.hasOwnProperty.call(savedScene, "currentNodeId")
+    ) {
+      return savedScene.currentNodeId; // may be null
+    }
+    return scene.nodes[0]?.id ?? null; // default to first node for new runs
+  });
   const [renderedBlocks, setRenderedBlocks] = useState([]); // blocks shown so far
   const [waitingChoice, setWaitingChoice] = useState(false); // true when player must choose
   const contentRef = useRef(null); // story scroll container
@@ -41,7 +48,15 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
     if (!savedScene) return;
     console.log("🔁 Restoring scene from saved state:", savedScene);
 
-    const startId = savedScene.currentNodeId ?? scene.nodes[0]?.id ?? null;
+    // Respect explicit null currentNodeId (end of scene)
+    const hasExplicitId = Object.prototype.hasOwnProperty.call(
+      savedScene,
+      "currentNodeId"
+    );
+    const startId = hasExplicitId
+      ? savedScene.currentNodeId // may be null
+      : scene.nodes[0]?.id ?? null;
+
     const startNode = startId ? nodeMap[startId] : null;
 
     const recent = (savedScene.recentNodeIds || [])
@@ -154,6 +169,14 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
     if (nodeToRender.type === "dialogueChoice") {
       setWaitingChoice(true);
       setCurrentNodeId(nodeToRender.id);
+      return;
+    }
+
+    // --- NEW: Detect final node with no next path ---
+    const hasNext =
+      nodeToRender.next || (nodeToRender.nextIf?.length ?? 0) > 0;
+    if (!hasNext) {
+      setEndOfScene(); // mark scene end to hide Continue
       return;
     }
 
@@ -303,14 +326,14 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
 
           return null;
         })}
-
-        {/* Continue button (hidden during choices) */}
-        {!waitingChoice && currentNodeId !== null && (
-          <button onClick={renderNext} className="scene-viewer-button">
-            {renderedBlocks.length === 0 ? "Begin" : "Continue"}
-          </button>
-        )}
       </div>
+
+      {/* Continue button (hidden during choices or after end) */}
+      {!waitingChoice && currentNodeId !== null && (
+        <button onClick={renderNext} className="scene-viewer-button">
+          {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+        </button>
+      )}
     </div>
   );
 }
