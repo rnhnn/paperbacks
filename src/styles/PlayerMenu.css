@@ -31,6 +31,7 @@
   cursor: pointer;
   width: 35px;
   height: 35px;
+  image-rendering: pixelated;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -77,4 +78,27 @@
 
 .player-menu-inventory-list-item + .player-menu-inventory-list-item {
   margin-top: 15px;
+}
+
+.player-menu-buttons-item {
+  padding: 0;
+  background-color: transparent;
+  background-size: contain;
+  color: transparent;
+}
+
+.player-menu-buttons-item-inventory {
+  background-image: url("/assets/icons/icon-inventory.png");
+}
+
+.player-menu-buttons-item-notes {
+  background-image: url("/assets/icons/icon-notes.png");
+}
+
+.player-menu-buttons-item-options {
+  background-image: url("/assets/icons/icon-options.png");
+}
+
+.player-menu-buttons-item-exit {
+  background-image: url("/assets/icons/icon-exit.png");
 }

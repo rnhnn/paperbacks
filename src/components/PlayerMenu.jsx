@@ -166,25 +166,25 @@ export default function PlayerMenu({
       <div className="player-menu-buttons">
         <button
           onClick={() => setShowInventory(true)}
-          className="player-menu-buttons-item"
+          className="player-menu-buttons-item player-menu-buttons-item-inventory"
         >
           Inventory
         </button>
         <button
           onClick={() => setShowNotes(true)}
-          className="player-menu-buttons-item"
+          className="player-menu-buttons-item player-menu-buttons-item-notes"
         >
           Notes
         </button>
         <button
           onClick={() => setShowOptions(true)}
-          className="player-menu-buttons-item"
+          className="player-menu-buttons-item player-menu-buttons-item-options"
         >
           Options
         </button>
         <button
           onClick={() => setShowExitConfirm(true)}
-          className="player-menu-buttons-item player-menu-buttons-exit"
+          className="player-menu-buttons-item player-menu-buttons-item-exit"
         >
           Exit
         </button>
