@@ -27,10 +27,6 @@
   width: 100%;
 }
 
-.protagonist-hub button {
-  width: 100%;
-}
-
 .protagonist-hub-buttons button + button {
   margin-top: 5px;
 }
