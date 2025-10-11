@@ -65,11 +65,11 @@
 }
 
 .scene-viewer-dialogue-list-option button {
-  color: #ae4141;
+  color: var(--red);
 }
 
 .scene-viewer-dialogue-list-option button:hover {
-  color: #ee5b5b;
+  color: var(--red-hover);
 }
 
 .scene-viewer-button {
@@ -77,6 +77,10 @@
   cursor: pointer;
   width: 100%;
   height: 35px;
-  background-color: #ae4141;
+  background-color: var(--red);
   color: var(--white);
+}
+
+.scene-viewer-button:hover {
+  background-color: var(--red-hover);
 }

@@ -9,42 +9,21 @@
   color: var(--white);
 }
 
-.inventory-window h2 {
-  text-align: center;
+.inventory-list-item-title {
+  margin-top: 0;
   margin-bottom: 12px;
+  font-size: var(--font-size-regular);
+  font-weight: normal;
 }
 
 .inventory-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 240px;
-  overflow-y: auto;
+  height: 100%;
 }
 
 .inventory-item {
   margin-bottom: 8px;
 }
 
-.inventory-item p {
-  margin: 2px 0 0;
-  font-size: 0.9em;
-  opacity: 0.8;
-}
-
-.inventory-empty {
-  text-align: center;
-  opacity: 0.7;
-  margin-top: 20px;
-}
-
-.window-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 1.2rem;
-  background: none;
-  border: none;
-  color: var(--white);
-  cursor: pointer;
+.inventory-list-item-description {
+  font-size: var(--font-size-small);
 }

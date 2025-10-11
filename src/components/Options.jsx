@@ -4,9 +4,9 @@ import "../styles/Options.css";
 export default function Options({ onClose, onSave, onLoad, onExportSave, onImportSave }) {
   return (
     <WindowOverlay onClose={onClose}>
-      <div className="options-window">
+      <div className="window window-options">
         <button className="window-close" onClick={onClose}>×</button>
-        <h2>Options</h2>
+        <h2 className="window-title">Options</h2>
         <div className="window-buttons">
           <button onClick={onSave}>Save</button>
           <button onClick={onLoad}>Load</button>

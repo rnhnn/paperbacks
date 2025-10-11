@@ -1,35 +1,30 @@
 import WindowOverlay from "./WindowOverlay";
 import "../styles/Notes.css";
 
-export default function Notes({ notes, openNoteId, onToggleNote, onClose }) {
+export default function Notes({ notes, onClose }) {
   return (
     <WindowOverlay onClose={onClose}>
-      <div className="notes-window">
+      <div className="window window-notes">
         <button className="window-close" onClick={onClose}>×</button>
-        <h2>Notes</h2>
+        <h2 className="window-title">Notes</h2>
 
         {notes.length > 0 ? (
           <ul className="notes-list">
             {notes.map((note) => (
               <li key={note.id} className="notes-item">
-                <button
-                  className="notes-item-title"
-                  onClick={() => onToggleNote(note.id)}
-                >
+                <div className="notes-item-title">
                   {note.title || "No title"}
-                </button>
-                {openNoteId === note.id && (
-                  <div className="notes-item-content">
-                    {note.content.map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
-                )}
+                </div>
+                <div className="notes-item-content">
+                  {note.content.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="notes-empty">No notes yet.</p>
+          <p>No notes yet.</p>
         )}
       </div>
     </WindowOverlay>
