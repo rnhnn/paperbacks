@@ -1,23 +1,36 @@
+// --- React & context ---
 import { useState, useMemo, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 import { useFlags } from "../context/FlagsContext";
-import Options from "./Options"; // window for save/load/export/import
-import Inventory from "./Inventory"; // inventory window
-import Notes from "./Notes"; // notes window
+
+// --- Components ---
+import Options from "./Options";
+import Inventory from "./Inventory";
+import Notes from "./Notes";
+import Exit from "./Exit"; // ✅ new import
+import WindowOverlay from "./WindowOverlay"; // still used by subwindows
+
+// --- Data & styles ---
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 import "../styles/PlayerMenu.css";
 
 const protagonistImg = "/assets/portraits/protagonist.png";
 
-export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot }) {
-  const [saveMsg, setSaveMsg] = useState(""); // feedback message
-  const [showOptions, setShowOptions] = useState(false); // controls Options window
-  const [showInventory, setShowInventory] = useState(false); // controls Inventory window
-  const [showNotes, setShowNotes] = useState(false); // controls Notes window
-  const [openNoteId, setOpenNoteId] = useState(null); // expanded note
-  const fileInputRef = useRef(null); // hidden file input for import
+export default function PlayerMenu({
+  onQuickSave,
+  onQuickLoad,
+  getSceneSnapshot,
+  onExitToMenu,
+}) {
+  const [saveMsg, setSaveMsg] = useState("");
+  const [showOptions, setShowOptions] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false); // ✅ Exit modal
+  const [openNoteId, setOpenNoteId] = useState(null);
+  const fileInputRef = useRef(null);
 
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
 
@@ -44,11 +57,11 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
     if (onQuickLoad) {
       onQuickLoad();
       flashMsg("Loaded ✓");
-      setShowOptions(false); // close window after load
+      setShowOptions(false);
     }
   };
 
-  // --- Export save file (includes scene snapshot) ---
+  // --- Export save file ---
   const handleExportSave = () => {
     try {
       const sceneData =
@@ -57,7 +70,7 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
       const snapshot = {
         version: 1,
         timestamp: Date.now(),
-        scene: sceneData, // include scene progress
+        scene: sceneData,
         inventoryIds: [...inventory],
         noteIds: notes.filter((n) => n.unlocked).map((n) => n.id),
         flags: { ...flags },
@@ -80,7 +93,7 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
     }
   };
 
-  // --- Import save file from disk ---
+  // --- Import save file ---
   const handleImportSave = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -99,17 +112,16 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
         return;
       }
 
-      // Save imported file to localStorage for consistency
       localStorage.setItem("paperbacks_quick_save", JSON.stringify(data));
 
-      if (onQuickLoad) onQuickLoad(); // trigger load after import
+      if (onQuickLoad) onQuickLoad();
       flashMsg("Imported ✓");
-      setShowOptions(false); // close window after import
+      setShowOptions(false);
     } catch (err) {
       console.error("❌ Import failed:", err);
       flashMsg("Import failed ❌");
     } finally {
-      e.target.value = ""; // reset file input
+      e.target.value = "";
     }
   };
 
@@ -138,8 +150,10 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
     [notes]
   );
 
+  // --- Render ---
   return (
     <div className="player-menu">
+      {/* Portrait */}
       <div className="player-menu-portrait">
         <img
           src={protagonistImg}
@@ -148,12 +162,35 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
         />
       </div>
 
+      {/* Buttons */}
       <div className="player-menu-buttons">
-        <button onClick={() => setShowInventory(true)}>Inventory</button>
-        <button onClick={() => setShowNotes(true)}>Notes</button>
-        <button onClick={() => setShowOptions(true)}>Options</button>
+        <button
+          onClick={() => setShowInventory(true)}
+          className="player-menu-buttons-item"
+        >
+          Inventory
+        </button>
+        <button
+          onClick={() => setShowNotes(true)}
+          className="player-menu-buttons-item"
+        >
+          Notes
+        </button>
+        <button
+          onClick={() => setShowOptions(true)}
+          className="player-menu-buttons-item"
+        >
+          Options
+        </button>
+        <button
+          onClick={() => setShowExitConfirm(true)}
+          className="player-menu-buttons-item player-menu-buttons-exit"
+        >
+          Exit
+        </button>
       </div>
 
+      {/* Feedback message */}
       {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
 
       {/* Hidden file input */}
@@ -189,6 +226,14 @@ export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot 
           openNoteId={openNoteId}
           onToggleNote={toggleNote}
           onClose={() => setShowNotes(false)}
+        />
+      )}
+
+      {/* ✅ Exit window */}
+      {showExitConfirm && (
+        <Exit
+          onConfirm={onExitToMenu}
+          onClose={() => setShowExitConfirm(false)}
         />
       )}
     </div>

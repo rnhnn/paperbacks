@@ -93,7 +93,8 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
             <PlayerMenu
               onQuickSave={handleQuickSave}
               onQuickLoad={handleQuickLoad}
-              getSceneSnapshot={() => sceneSnapshotRef.current?.()} // ✅ live access
+              getSceneSnapshot={() => sceneSnapshotRef.current?.()}
+              onExitToMenu={() => transitionTo("menu")}
             />
           </div>
         )}

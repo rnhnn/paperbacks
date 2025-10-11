@@ -23,17 +23,16 @@
 
 .player-menu-buttons {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
 }
 
-.player-menu-buttons button + button {
-  margin-top: 5px;
-}
-
-.player-menu-inventory,
-.player-menu-notes {
-  width: 100%;
+.player-menu-buttons-item {
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .player-menu-notes-back-button,
