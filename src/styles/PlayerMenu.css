@@ -1,4 +1,4 @@
-.protagonist-hub {
+.player-menu {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,44 +11,44 @@
   margin-right: -220px;
 }
 
-.protagonist-hub-portrait {
+.player-menu-portrait {
   margin-bottom: 15px;
   border: 3px solid var(--white);
   background-color: #8899a1;
 }
 
-.protagonist-hub-portrait img {
+.player-menu-portrait img {
   image-rendering: pixelated;
 }
 
-.protagonist-hub-buttons {
+.player-menu-buttons {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.protagonist-hub-buttons button + button {
+.player-menu-buttons button + button {
   margin-top: 5px;
 }
 
-.protagonist-hub-inventory,
-.protagonist-hub-notes {
+.player-menu-inventory,
+.player-menu-notes {
   width: 100%;
 }
 
-.protagonist-hub-notes-back-button,
-.protagonist-hub-inventory-back-button {
+.player-menu-notes-back-button,
+.player-menu-inventory-back-button {
   margin-top: 15px;
 }
 
-.protagonist-hub-inventory-title,
-.protagonist-hub-notes-title {
+.player-menu-inventory-title,
+.player-menu-notes-title {
   margin-top: 0;
   font-size: var(--font-size-regular);
 }
 
-.protagonist-hub-notes-list,
-.protagonist-hub-inventory-list {
+.player-menu-notes-list,
+.player-menu-inventory-list {
   overflow-y: scroll;
   min-height: 180px;
   height: 180px;
@@ -59,16 +59,16 @@
   scrollbar-width: none;
 }
 
-.protagonist-hub-notes-list-item-description,
-.protagonist-hub-inventory-list {
+.player-menu-notes-list-item-description,
+.player-menu-inventory-list {
   padding: 9px 15px;
 }
 
-.protagonist-hub-notes-list-item-description p {
+.player-menu-notes-list-item-description p {
   margin: 0;
 }
 
-.protagonist-hub-inventory-list-item::before {
+.player-menu-inventory-list-item::before {
   content: '*';
   display: inline-block;
   position: relative;
@@ -76,6 +76,6 @@
   margin-right: 5px;
 }
 
-.protagonist-hub-inventory-list-item + .protagonist-hub-inventory-list-item {
+.player-menu-inventory-list-item + .player-menu-inventory-list-item {
   margin-top: 15px;
 }

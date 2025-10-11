@@ -7,12 +7,11 @@ import Inventory from "./Inventory"; // inventory window
 import Notes from "./Notes"; // notes window
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
-import "../styles/ProtagonistHub.css";
+import "../styles/PlayerMenu.css";
 
 const protagonistImg = "/assets/portraits/protagonist.png";
-const FADE_DURATION = 400; // ms, matches CSS transitions
 
-export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnapshot }) {
+export default function PlayerMenu({ onQuickSave, onQuickLoad, getSceneSnapshot }) {
   const [saveMsg, setSaveMsg] = useState(""); // feedback message
   const [showOptions, setShowOptions] = useState(false); // controls Options window
   const [showInventory, setShowInventory] = useState(false); // controls Inventory window
@@ -140,16 +139,16 @@ export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnaps
   );
 
   return (
-    <div className="protagonist-hub">
-      <div className="protagonist-hub-portrait">
+    <div className="player-menu">
+      <div className="player-menu-portrait">
         <img
           src={protagonistImg}
           alt="Protagonist Portrait"
-          className="protagonist-hub-portrait-image"
+          className="player-menu-portrait-image"
         />
       </div>
 
-      <div className="protagonist-hub-buttons">
+      <div className="player-menu-buttons">
         <button onClick={() => setShowInventory(true)}>Inventory</button>
         <button onClick={() => setShowNotes(true)}>Notes</button>
         <button onClick={() => setShowOptions(true)}>Options</button>

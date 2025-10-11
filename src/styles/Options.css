@@ -1,15 +1,13 @@
-.options-window {
-  background: var(--black);
-  border: 1px solid var(--white);
-  border-radius: 8px;
-  padding: 20px 24px;
-  width: 260px;
-  text-align: center;
-  position: relative;
+.window-options {
+  height: auto;
+  max-width: 200px;
 }
 
-.window-buttons button {
-  display: block;
-  width: 100%;
-  margin: 8px 0;
+.window-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.window-buttons-item + .window-buttons-item {
+  margin-top: 10px;
 }

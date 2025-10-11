@@ -6,7 +6,7 @@ import { useSaveSystem } from "../context/SaveSystemContext";
 import Loading from "./Loading";
 import MainMenu from "./MainMenu";
 import SceneViewer from "./SceneViewer";
-import ProtagonistHub from "./ProtagonistHub";
+import PlayerMenu from "./PlayerMenu";
 import sceneData from "../data/scenes/scene.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
@@ -90,7 +90,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
               savedScene={savedScene}
               onSceneSnapshot={handleSceneSnapshotUpdate}
             />
-            <ProtagonistHub
+            <PlayerMenu
               onQuickSave={handleQuickSave}
               onQuickLoad={handleQuickLoad}
               getSceneSnapshot={() => sceneSnapshotRef.current?.()} // ✅ live access
