@@ -1,0 +1,26 @@
+.options-window {
+  background: var(--black);
+  border: 1px solid var(--white);
+  border-radius: 8px;
+  padding: 20px 24px;
+  width: 260px;
+  text-align: center;
+  position: relative;
+}
+
+.window-buttons button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.window-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  color: var(--white);
+  cursor: pointer;
+}

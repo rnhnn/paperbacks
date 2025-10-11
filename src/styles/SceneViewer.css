@@ -38,7 +38,7 @@
 
 .scene-viewer-node.is-current {
   opacity: 0;
-  animation: nodeSoftFade 0.8s ease-in-out forwards;
+  animation: nodeSoftFade 0.4s ease-in-out forwards;
 }
 
 @keyframes nodeSoftFade {

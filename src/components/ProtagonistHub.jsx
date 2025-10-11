@@ -2,6 +2,9 @@ import { useState, useMemo, useRef } from "react";
 import { useInventory } from "../context/InventoryContext";
 import { useNotes } from "../context/NotesContext";
 import { useFlags } from "../context/FlagsContext";
+import Options from "./Options"; // window for save/load/export/import
+import Inventory from "./Inventory"; // inventory window
+import Notes from "./Notes"; // notes window
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 import "../styles/ProtagonistHub.css";
@@ -10,9 +13,11 @@ const protagonistImg = "/assets/portraits/protagonist.png";
 const FADE_DURATION = 400; // ms, matches CSS transitions
 
 export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnapshot }) {
-  const [activeTab, setActiveTab] = useState("portrait"); // current tab
-  const [openNoteId, setOpenNoteId] = useState(null); // expanded note
   const [saveMsg, setSaveMsg] = useState(""); // feedback message
+  const [showOptions, setShowOptions] = useState(false); // controls Options window
+  const [showInventory, setShowInventory] = useState(false); // controls Inventory window
+  const [showNotes, setShowNotes] = useState(false); // controls Notes window
+  const [openNoteId, setOpenNoteId] = useState(null); // expanded note
   const fileInputRef = useRef(null); // hidden file input for import
 
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
@@ -40,6 +45,7 @@ export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnaps
     if (onQuickLoad) {
       onQuickLoad();
       flashMsg("Loaded ✓");
+      setShowOptions(false); // close window after load
     }
   };
 
@@ -99,6 +105,7 @@ export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnaps
 
       if (onQuickLoad) onQuickLoad(); // trigger load after import
       flashMsg("Imported ✓");
+      setShowOptions(false); // close window after import
     } catch (err) {
       console.error("❌ Import failed:", err);
       flashMsg("Import failed ❌");
@@ -134,88 +141,56 @@ export default function ProtagonistHub({ onQuickSave, onQuickLoad, getSceneSnaps
 
   return (
     <div className="protagonist-hub">
-      {/* Portrait Tab */}
-      {activeTab === "portrait" && (
-        <>
-          <div className="protagonist-hub-portrait">
-            <img
-              src={protagonistImg}
-              alt="Protagonist Portrait"
-              className="protagonist-hub-portrait-image"
-            />
-          </div>
+      <div className="protagonist-hub-portrait">
+        <img
+          src={protagonistImg}
+          alt="Protagonist Portrait"
+          className="protagonist-hub-portrait-image"
+        />
+      </div>
 
-          <div className="protagonist-hub-buttons">
-            <button onClick={() => setActiveTab("inventory")}>Inventory</button>
-            <button onClick={() => setActiveTab("notes")}>Notes</button>
-            <button onClick={handleQuickSave}>Save</button>
-            <button onClick={handleQuickLoad}>Load</button>
-            <button onClick={handleExportSave}>Export Save File</button>
-            <button onClick={handleImportSave}>Import Save File</button>
-          </div>
+      <div className="protagonist-hub-buttons">
+        <button onClick={() => setShowInventory(true)}>Inventory</button>
+        <button onClick={() => setShowNotes(true)}>Notes</button>
+        <button onClick={() => setShowOptions(true)}>Options</button>
+      </div>
 
-          {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
+      {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
 
-          {/* Hidden file input */}
-          <input
-            type="file"
-            accept=".json,application/json"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-          />
-        </>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        accept=".json,application/json"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+
+      {/* Windows */}
+      {showOptions && (
+        <Options
+          onClose={() => setShowOptions(false)}
+          onSave={handleQuickSave}
+          onLoad={handleQuickLoad}
+          onExportSave={handleExportSave}
+          onImportSave={handleImportSave}
+        />
       )}
 
-      {/* Inventory Tab */}
-      {activeTab === "inventory" && (
-        <div className="protagonist-hub-inventory">
-          <h3 className="protagonist-hub-inventory-title">Inventory</h3>
-          {inventoryItems.length > 0 ? (
-            <ul className="protagonist-hub-inventory-list">
-              {inventoryItems.map((item) => (
-                <li key={item.id} className="protagonist-hub-inventory-list-item">
-                  <strong>{item.name || "No name"}</strong>
-                  {item.description && <p>({item.description})</p>}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No items yet.</p>
-          )}
-          <button onClick={() => setActiveTab("portrait")}>Back</button>
-        </div>
+      {showInventory && (
+        <Inventory
+          items={inventoryItems}
+          onClose={() => setShowInventory(false)}
+        />
       )}
 
-      {/* Notes Tab */}
-      {activeTab === "notes" && (
-        <div className="protagonist-hub-notes">
-          <h3 className="protagonist-hub-notes-title">Notes</h3>
-          {unlockedNotes.length > 0 ? (
-            <ul className="protagonist-hub-notes-list">
-              {unlockedNotes.map((note) => (
-                <li key={note.id} className="protagonist-hub-notes-list-item">
-                  <button
-                    className="protagonist-hub-notes-list-item-title"
-                    onClick={() => toggleNote(note.id)}
-                  >
-                    {note.title || "No title"}
-                  </button>
-                  {openNoteId === note.id && (
-                    <div className="protagonist-hub-notes-list-item-description">
-                      {note.content.map((p, i) => (
-                        <p key={i}>{p}</p>
-                      ))}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No notes yet.</p>
-          )}
-          <button onClick={() => setActiveTab("portrait")}>Back</button>
-        </div>
+      {showNotes && (
+        <Notes
+          notes={unlockedNotes}
+          openNoteId={openNoteId}
+          onToggleNote={toggleNote}
+          onClose={() => setShowNotes(false)}
+        />
       )}
     </div>
   );

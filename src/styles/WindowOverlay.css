@@ -1,0 +1,47 @@
+.window-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.window-content {
+  transform: scale(0.95);
+  opacity: 0;
+  animation: scaleIn 0.3s ease forwards;
+}
+
+/* --- Fade-out states --- */
+.window-overlay.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.window-content.fade-out {
+  animation: scaleOut 0.3s ease forwards;
+}
+
+/* --- Keyframes --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scaleOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.95); opacity: 0; }
+}
