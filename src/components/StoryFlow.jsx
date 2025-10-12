@@ -216,9 +216,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     const frozenBlock =
       nodeToRender.type === "characterDialogue"
         ? {
-            ...nodeToRender,
-            _frozenCharacter: resolveCharacter(nodeToRender.character),
-          }
+          ...nodeToRender,
+          _frozenCharacter: resolveCharacter(nodeToRender.character),
+        }
         : nodeToRender;
 
     setRenderedBlocks((prev) => [
@@ -355,8 +355,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             );
 
           if (block.type === "characterDialogue") {
-            const char =
-              block._frozenCharacter || resolveCharacter(block.character);
+            const isYou = block.character?.id === "you"; // NEW: detect player
+            const char = isYou
+              ? { name: "YOU" }
+              : block._frozenCharacter || resolveCharacter(block.character);
             const name = char.name.toUpperCase();
             const text = Array.isArray(block.text)
               ? block.text.join(" ")
@@ -365,9 +367,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             return (
               <div key={block.id || i} className={cls}>
                 <p>
-                  <strong style={{ textTransform: "uppercase" }}>
-                    {name} —
-                  </strong>{" "}
+                  <strong style={{ textTransform: "uppercase" }}>{name} —</strong>{" "}
                   <span dangerouslySetInnerHTML={{ __html: text }} />
                 </p>
               </div>

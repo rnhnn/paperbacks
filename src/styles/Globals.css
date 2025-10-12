@@ -38,7 +38,7 @@ img {
 }
 
 button {
-  color: inherit;
+  color: var(--black);
   font-size: inherit;
   font-family: inherit;
   border: 0;
