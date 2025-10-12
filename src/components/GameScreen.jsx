@@ -5,17 +5,17 @@ import { useSaveSystem } from "../contexts/SaveSystemContext";
 // --- Components & data ---
 import Loading from "./Loading";
 import MainMenu from "./MainMenu";
-import SceneViewer from "./SceneViewer";
+import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
 import sceneData from "../data/scenes/scene.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
   const { quickSave, quickLoad } = useSaveSystem(); // save/load handlers
   const [savedScene, setSavedScene] = useState(null); // current or loaded scene data
-  const [sceneKey, setSceneKey] = useState(0); // forces SceneViewer remount
+  const [sceneKey, setSceneKey] = useState(0); // forces StoryFlow remount
   const sceneSnapshotRef = useRef(() => null); // holds current snapshot builder
 
-  // Register snapshot builder from SceneViewer
+  // Register snapshot builder from StoryFlow
   const handleSceneSnapshotUpdate = (fn) => {
     sceneSnapshotRef.current = fn;
   };
@@ -25,7 +25,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     const sceneSlice = quickLoad();
     if (sceneSlice) {
       setSavedScene(sceneSlice);
-      setSceneKey((k) => k + 1); // re-render SceneViewer
+      setSceneKey((k) => k + 1); // re-render StoryFlow
     }
   };
 
@@ -84,7 +84,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
         {/* Phase 3: main gameplay */}
         {phase === "game" && (
           <div className="game">
-            <SceneViewer
+            <StoryFlow
               key={sceneKey}
               scene={sceneData}
               savedScene={savedScene}

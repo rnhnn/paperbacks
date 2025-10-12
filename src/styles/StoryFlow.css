@@ -1,4 +1,4 @@
-.scene-viewer {
+.story-flow {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -9,18 +9,18 @@
   padding: 30px;
 }
 
-.scene-viewer-content {
+.story-flow-content {
   overflow-y: scroll;
   scrollbar-width: none;
   margin-bottom: 30px;
 }
 
-.scene-viewer p {
+.story-flow p {
   margin-top: 0;
   margin-bottom: 20px;
 }
 
-.scene-viewer-portrait {
+.story-flow-portrait {
   position: absolute;
   top: 0;
   left: -175px;
@@ -28,15 +28,11 @@
   border: 3px solid var(--white);
 }
 
-.scene-viewer-node {
+.story-flow-node {
   opacity: 0.3;
 }
 
-.scene-viewer-node.is-current {
-  opacity: 1;
-}
-
-.scene-viewer-node.is-current {
+.story-flow-node.is-current {
   opacity: 0;
   animation: nodeSoftFade 0.4s ease-in-out forwards;
 }
@@ -46,33 +42,30 @@
   100% { opacity: 1; }
 }
 
-.scene-viewer-dialogue-list {
+.story-flow-dialogue-list {
   counter-reset: dialogue-counter;
 }
 
-.scene-viewer-dialogue-list-option::before {
+.story-flow-dialogue-list-option::before {
   counter-increment: dialogue-counter;
   content: counter(dialogue-counter) ". ";
   display: inline-block;
   min-width: 1.5ch;
 }
 
-.scene-viewer-dialogue-list-option button {
+.story-flow-dialogue-list-option button {
   cursor: pointer;
   background-color: transparent;
   border: 0;
   font-size: initial;
-}
-
-.scene-viewer-dialogue-list-option button {
   color: var(--red);
 }
 
-.scene-viewer-dialogue-list-option button:hover {
+.story-flow-dialogue-list-option button:hover {
   color: var(--red-hover);
 }
 
-.scene-viewer-button {
+.story-flow-button {
   flex-shrink: 0;
   cursor: pointer;
   width: 100%;
@@ -81,6 +74,6 @@
   color: var(--white);
 }
 
-.scene-viewer-button:hover {
+.story-flow-button:hover {
   background-color: var(--red-hover);
 }

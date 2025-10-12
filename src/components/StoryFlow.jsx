@@ -1,5 +1,5 @@
 // --- React & styles ---
-import "../styles/SceneViewer.css";
+import "../styles/StoryFlow.css";
 import { useState, useEffect, useRef, useMemo } from "react";
 
 // --- Contexts & data ---
@@ -11,7 +11,7 @@ import characters from "../data/characters.json";
 // --- Constants ---
 const MAX_RENDERED_BLOCKS = 10; // limit of visible story blocks
 
-export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
+export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
   // --- Build quick lookup for nodes ---
   const nodeMap = useMemo(
     () =>
@@ -48,13 +48,12 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
     if (!savedScene) return;
     console.log("🔁 Restoring scene from saved state:", savedScene);
 
-    // Respect explicit null currentNodeId (end of scene)
     const hasExplicitId = Object.prototype.hasOwnProperty.call(
       savedScene,
       "currentNodeId"
     );
     const startId = hasExplicitId
-      ? savedScene.currentNodeId // may be null
+      ? savedScene.currentNodeId
       : scene.nodes[0]?.id ?? null;
 
     const startNode = startId ? nodeMap[startId] : null;
@@ -131,7 +130,6 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
   const renderNext = () => {
     if (!currentNode || waitingChoice) return;
 
-    // Skip nodes that don’t meet flag conditions
     const resolveRenderable = (start) => {
       let node = start;
       while (node && !checkConditions(node)) {
@@ -145,12 +143,10 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
     let nodeToRender = resolveRenderable(currentNode);
     if (!nodeToRender) return setEndOfScene();
 
-    // Avoid re-showing the same node
     const alreadyShown = renderedBlocks.some(
       (b) => b.id && nodeToRender.id && b.id === nodeToRender.id
     );
 
-    // If seen before, jump to next
     if (alreadyShown) {
       const nextId = getNextNodeId(nodeToRender);
       if (!nextId) return setEndOfScene();
@@ -158,29 +154,26 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
       if (!nodeToRender) return setEndOfScene();
     }
 
-    // Apply effects and append new block
     applyEffects(nodeToRender);
     setRenderedBlocks((prev) => [
       ...prev.slice(-MAX_RENDERED_BLOCKS + 1),
       nodeToRender,
     ]);
 
-    // If it’s a choice node, pause for input
     if (nodeToRender.type === "dialogueChoice") {
       setWaitingChoice(true);
       setCurrentNodeId(nodeToRender.id);
       return;
     }
 
-    // --- NEW: Detect final node with no next path ---
     const hasNext =
       nodeToRender.next || (nodeToRender.nextIf?.length ?? 0) > 0;
     if (!hasNext) {
-      setEndOfScene(); // mark scene end to hide Continue
+      setEndOfScene();
       return;
     }
 
-    setCurrentNodeId(nodeToRender.id); // stay on last visible node
+    setCurrentNodeId(nodeToRender.id);
   };
 
   // --- Handle dialogue choices ---
@@ -203,7 +196,6 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
 
     applyEffects(nextNode);
 
-    // Merge player line, reactions, and next node
     const insert = [youBlock, ...reactionBlocks];
     if (nextNode) insert.push(nextNode);
 
@@ -212,7 +204,7 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
       const filtered =
         idx >= 0
           ? prev.filter((_, i) => i !== idx)
-          : prev; // remove current node safely
+          : prev;
       return [
         ...filtered.slice(-MAX_RENDERED_BLOCKS + insert.length),
         ...insert,
@@ -221,7 +213,6 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
 
     setWaitingChoice(false);
 
-    // Advance pointer to next or end
     if (nextNode) {
       if (nextNode.type === "dialogueChoice") {
         setWaitingChoice(true);
@@ -254,10 +245,10 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
 
   // --- Render ---
   return (
-    <div className="scene-viewer">
+    <div className="story-flow">
       {/* Character portrait (last speaker) */}
       {lastPortraitBlock && (
-        <div className="scene-viewer-portrait">
+        <div className="story-flow-portrait">
           <img
             src={`/assets/portraits/${
               resolveCharacter(lastPortraitBlock.character).portrait
@@ -267,12 +258,11 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
         </div>
       )}
 
-      <div className="scene-viewer-content" ref={contentRef}>
+      <div className="story-flow-content" ref={contentRef}>
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1;
-          const cls = `scene-viewer-node${isCurrent ? " is-current" : ""}`;
+          const cls = `story-flow-node${isCurrent ? " is-current" : ""}`;
 
-          // Paragraph node
           if (block.type === "singleParagraph")
             return (
               <div key={block.id || i} className={cls}>
@@ -280,7 +270,6 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
               </div>
             );
 
-          // Multi-paragraph node
           if (block.type === "multipleParagraphs")
             return (
               <div key={block.id || i} className={cls}>
@@ -290,7 +279,6 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
               </div>
             );
 
-          // Dialogue node
           if (block.type === "characterDialogue") {
             const char = resolveCharacter(block.character);
             const name = char?.name?.toUpperCase() || "???";
@@ -310,13 +298,12 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
             );
           }
 
-          // Choice node
           if (block.type === "dialogueChoice")
             return (
               <div key={block.id || i} className={cls}>
-                <ol className="scene-viewer-dialogue-list">
+                <ol className="story-flow-dialogue-list">
                   {block.choices.map((c, j) => (
-                    <li key={j} className="scene-viewer-dialogue-list-option">
+                    <li key={j} className="story-flow-dialogue-list-option">
                       <button onClick={() => handleChoice(c)}>{c.text}</button>
                     </li>
                   ))}
@@ -328,9 +315,8 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
         })}
       </div>
 
-      {/* Continue button (hidden during choices or after end) */}
       {!waitingChoice && currentNodeId !== null && (
-        <button onClick={renderNext} className="scene-viewer-button">
+        <button onClick={renderNext} className="story-flow-button">
           {renderedBlocks.length === 0 ? "Begin" : "Continue"}
         </button>
       )}
