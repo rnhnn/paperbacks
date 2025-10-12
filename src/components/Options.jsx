@@ -8,8 +8,8 @@ export default function Options({ onClose, onSave, onLoad, onExportSave, onImpor
         <button className="window-close" onClick={onClose}>×</button>
         <h2 className="window-title">Options</h2>
         <div className="window-buttons">
-          <button onClick={onSave} className="window-buttons-item">Save</button>
-          <button onClick={onLoad} className="window-buttons-item">Load</button>
+          <button onClick={onSave} className="window-buttons-item">Quick Save</button>
+          <button onClick={onLoad} className="window-buttons-item">Quick Load</button>
           <button onClick={onExportSave} className="window-buttons-item">Export Save File</button>
           <button onClick={onImportSave} className="window-buttons-item">Import Save File</button>
         </div>

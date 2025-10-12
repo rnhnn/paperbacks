@@ -38,6 +38,7 @@ img {
 }
 
 button {
+  color: inherit;
   font-size: inherit;
   font-family: inherit;
   border: 0;

@@ -133,7 +133,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         text: b.text,
         character: b.character || null,
         _frozenCharacter: b._frozenCharacter || null,
-        // ✅ NEW: persist choices to allow restoring during dialogueChoice
+        // Persist choices to allow restoring during dialogueChoice
         choices: b.type === "dialogueChoice" ? b.choices || [] : undefined,
       })),
   });
@@ -146,7 +146,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
   // --- Restore saved story ---
   useEffect(() => {
     if (!savedStory) return;
-    console.log("🔁 Restoring story from saved state:", savedStory);
+    console.log("Restoring story from saved state:", savedStory);
 
     const hasExplicitId = Object.prototype.hasOwnProperty.call(
       savedStory,
@@ -164,7 +164,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         ...b,
         // ensure backward compatibility and required fields
         character: b.character || b._frozenCharacter?.id || null,
-        // ✅ NEW: guard against missing choices
+        // NEW: guard against missing choices
         choices:
           b.type === "dialogueChoice" && !Array.isArray(b.choices)
             ? []
