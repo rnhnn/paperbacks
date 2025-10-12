@@ -8,7 +8,7 @@ import { useFlags } from "../contexts/FlagsContext";
 import Options from "./Options";
 import Inventory from "./Inventory";
 import Notes from "./Notes";
-import Exit from "./Exit"; // ✅ new import
+import Exit from "./Exit"; // exit modal
 import WindowOverlay from "./WindowOverlay"; // still used by subwindows
 
 // --- Data & styles ---
@@ -21,14 +21,14 @@ const protagonistImg = "/assets/portraits/protagonist.png";
 export default function PlayerMenu({
   onQuickSave,
   onQuickLoad,
-  getSceneSnapshot,
+  getStorySnapshot,
   onExitToMenu,
 }) {
   const [saveMsg, setSaveMsg] = useState("");
   const [showOptions, setShowOptions] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
-  const [showExitConfirm, setShowExitConfirm] = useState(false); // ✅ Exit modal
+  const [showExitConfirm, setShowExitConfirm] = useState(false); // exit modal
   const [openNoteId, setOpenNoteId] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -64,13 +64,13 @@ export default function PlayerMenu({
   // --- Export save file ---
   const handleExportSave = () => {
     try {
-      const sceneData =
-        typeof getSceneSnapshot === "function" ? getSceneSnapshot() : null;
+      const storyData =
+        typeof getStorySnapshot === "function" ? getStorySnapshot() : null;
 
       const snapshot = {
         version: 1,
         timestamp: Date.now(),
-        scene: sceneData,
+        story: storyData,
         inventoryIds: [...inventory],
         noteIds: notes.filter((n) => n.unlocked).map((n) => n.id),
         flags: { ...flags },
@@ -229,7 +229,7 @@ export default function PlayerMenu({
         />
       )}
 
-      {/* ✅ Exit window */}
+      {/* Exit window */}
       {showExitConfirm && (
         <Exit
           onConfirm={onExitToMenu}

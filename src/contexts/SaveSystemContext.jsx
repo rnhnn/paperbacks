@@ -15,17 +15,17 @@ export const SaveSystemProvider = ({ children }) => {
 
   const lastSavedRef = useRef("");
 
-  // Build snapshot for saving
-  const buildSnapshot = (sceneState) => ({
+  // --- Build snapshot for saving ---
+  const buildSnapshot = (storyState) => ({
     version: SAVE_VERSION,
     timestamp: Date.now(),
-    scene: sceneState || null,
+    story: storyState || null,
     inventoryIds: [...inventory],
     noteIds: [...unlockedNotes],
     flags: { ...flags },
   });
 
-  // Write snapshot to localStorage
+  // --- Write snapshot to localStorage ---
   const persist = (snapshot) => {
     try {
       const json = JSON.stringify(snapshot);
@@ -40,13 +40,13 @@ export const SaveSystemProvider = ({ children }) => {
     }
   };
 
-  // Save current game
-  const quickSave = (sceneState) => {
-    const snapshot = buildSnapshot(sceneState);
+  // --- Save current game ---
+  const quickSave = (storyState) => {
+    const snapshot = buildSnapshot(storyState);
     return persist(snapshot);
   };
 
-  // Load saved game
+  // --- Load saved game ---
   const quickLoad = () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -76,14 +76,14 @@ export const SaveSystemProvider = ({ children }) => {
       }
 
       console.log("✅ Quick Load:", data);
-      return data.scene || null;
+      return data.story || null;
     } catch (err) {
       console.error("❌ Load failed:", err);
       return null;
     }
   };
 
-  // 👇 Expose storageKey so MainMenu can detect saves
+  // --- Expose storageKey so MainMenu can detect saves ---
   return (
     <SaveSystemContext.Provider
       value={{ quickSave, quickLoad, storageKey: STORAGE_KEY }}

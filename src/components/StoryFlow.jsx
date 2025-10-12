@@ -11,61 +11,61 @@ import characters from "../data/characters.json";
 // --- Constants ---
 const MAX_RENDERED_BLOCKS = 10; // limit of visible story blocks
 
-export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
+export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
   // --- Build quick lookup for nodes ---
   const nodeMap = useMemo(
     () =>
       Object.fromEntries(
-        (scene.nodes || []).filter((n) => n.id).map((n) => [n.id, n])
+        (story.nodes || []).filter((n) => n.id).map((n) => [n.id, n])
       ),
-    [scene.nodes]
+    [story.nodes]
   );
 
   // --- Core state ---
   const [currentNodeId, setCurrentNodeId] = useState(() => {
-    // Respect explicit null (scene ended) when restoring from a save
+    // Respect explicit null (story ended) when restoring from a save
     if (
-      savedScene &&
-      Object.prototype.hasOwnProperty.call(savedScene, "currentNodeId")
+      savedStory &&
+      Object.prototype.hasOwnProperty.call(savedStory, "currentNodeId")
     ) {
-      return savedScene.currentNodeId; // may be null
+      return savedStory.currentNodeId; // may be null
     }
-    return scene.nodes[0]?.id ?? null; // default to first node for new runs
+    return story.nodes[0]?.id ?? null; // default to first node for new runs
   });
   const [renderedBlocks, setRenderedBlocks] = useState([]); // blocks shown so far
   const [waitingChoice, setWaitingChoice] = useState(false); // true when player must choose
   const contentRef = useRef(null); // story scroll container
 
-  // --- Contexts hooks ---
+  // --- Context hooks ---
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
   const { flags, setFlag } = useFlags();
 
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
 
-  // --- Restore saved scene ---
+  // --- Restore saved story ---
   useEffect(() => {
-    if (!savedScene) return;
-    console.log("🔁 Restoring scene from saved state:", savedScene);
+    if (!savedStory) return;
+    console.log("🔁 Restoring story from saved state:", savedStory);
 
     const hasExplicitId = Object.prototype.hasOwnProperty.call(
-      savedScene,
+      savedStory,
       "currentNodeId"
     );
     const startId = hasExplicitId
-      ? savedScene.currentNodeId
-      : scene.nodes[0]?.id ?? null;
+      ? savedStory.currentNodeId
+      : story.nodes[0]?.id ?? null;
 
     const startNode = startId ? nodeMap[startId] : null;
 
-    const recent = (savedScene.recentNodeIds || [])
+    const recent = (savedStory.recentNodeIds || [])
       .map((id) => nodeMap[id])
       .filter(Boolean);
 
     setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
     setCurrentNodeId(startId);
     setWaitingChoice(startNode?.type === "dialogueChoice");
-  }, [savedScene, nodeMap, scene.nodes]);
+  }, [savedStory, nodeMap, story.nodes]);
 
   // --- Condition & branching helpers ---
   const checkConditions = (node, flagSet = flags) =>
@@ -111,10 +111,10 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
       Object.entries(nodeLike.effects).forEach(([f, v]) => setFlag(f, v));
   };
 
-  const setEndOfScene = () => setCurrentNodeId(null); // helper for scene end
+  const setEndOfStory = () => setCurrentNodeId(null); // helper for story end
 
   // --- Build save snapshot (for SaveSystem) ---
-  const getSceneSnapshot = () => ({
+  const getStorySnapshot = () => ({
     currentNodeId,
     recentNodeIds: renderedBlocks
       .map((b) => b.id || b.type)
@@ -123,8 +123,8 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
 
   // --- Expose snapshot getter to parent ---
   useEffect(() => {
-    if (onSceneSnapshot) onSceneSnapshot(getSceneSnapshot);
-  }, [onSceneSnapshot, currentNodeId, renderedBlocks]);
+    if (onStorySnapshot) onStorySnapshot(getStorySnapshot);
+  }, [onStorySnapshot, currentNodeId, renderedBlocks]);
 
   // --- Advance story flow ---
   const renderNext = () => {
@@ -141,7 +141,7 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
     };
 
     let nodeToRender = resolveRenderable(currentNode);
-    if (!nodeToRender) return setEndOfScene();
+    if (!nodeToRender) return setEndOfStory();
 
     const alreadyShown = renderedBlocks.some(
       (b) => b.id && nodeToRender.id && b.id === nodeToRender.id
@@ -149,9 +149,9 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
 
     if (alreadyShown) {
       const nextId = getNextNodeId(nodeToRender);
-      if (!nextId) return setEndOfScene();
+      if (!nextId) return setEndOfStory();
       nodeToRender = resolveRenderable(nodeMap[nextId]);
-      if (!nodeToRender) return setEndOfScene();
+      if (!nodeToRender) return setEndOfStory();
     }
 
     applyEffects(nodeToRender);
@@ -169,7 +169,7 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
     const hasNext =
       nodeToRender.next || (nodeToRender.nextIf?.length ?? 0) > 0;
     if (!hasNext) {
-      setEndOfScene();
+      setEndOfStory();
       return;
     }
 
@@ -221,7 +221,7 @@ export default function StoryFlow({ scene, savedScene, onSceneSnapshot }) {
         setCurrentNodeId(nextNode.id);
       }
     } else {
-      setEndOfScene();
+      setEndOfStory();
     }
   };
 

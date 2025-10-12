@@ -1,5 +1,7 @@
 {
-  "id": "scene",
+  "id": "story",
+  "title": "Monsello 188",
+  "description": "A strange evening on a lonely street.",
   "nodes": [
     {
       "id": "lonelyStreet",

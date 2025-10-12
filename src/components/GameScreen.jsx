@@ -7,37 +7,37 @@ import Loading from "./Loading";
 import MainMenu from "./MainMenu";
 import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
-import sceneData from "../data/scenes/scene.json";
+import storyData from "../data/stories/story.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
   const { quickSave, quickLoad } = useSaveSystem(); // save/load handlers
-  const [savedScene, setSavedScene] = useState(null); // current or loaded scene data
-  const [sceneKey, setSceneKey] = useState(0); // forces StoryFlow remount
-  const sceneSnapshotRef = useRef(() => null); // holds current snapshot builder
+  const [savedStory, setSavedStory] = useState(null); // current or loaded story data
+  const [storyKey, setStoryKey] = useState(0); // forces StoryFlow remount
+  const storySnapshotRef = useRef(() => null); // holds current snapshot builder
 
   // Register snapshot builder from StoryFlow
-  const handleSceneSnapshotUpdate = (fn) => {
-    sceneSnapshotRef.current = fn;
+  const handleStorySnapshotUpdate = (fn) => {
+    storySnapshotRef.current = fn;
   };
 
-  // Load scene from localStorage (used by Continue and Quick Load)
+  // Load story from localStorage (used by Continue and Quick Load)
   const handleQuickLoad = () => {
-    const sceneSlice = quickLoad();
-    if (sceneSlice) {
-      setSavedScene(sceneSlice);
-      setSceneKey((k) => k + 1); // re-render StoryFlow
+    const storySlice = quickLoad();
+    if (storySlice) {
+      setSavedStory(storySlice);
+      setStoryKey((k) => k + 1); // re-render StoryFlow
     }
   };
 
-  // Save current scene snapshot to localStorage
+  // Save current story snapshot to localStorage
   const handleQuickSave = () => {
     try {
-      const snapshot = sceneSnapshotRef.current?.();
+      const snapshot = storySnapshotRef.current?.();
       if (snapshot) {
         console.log("📸 Snapshot built:", snapshot);
         quickSave(snapshot);
       } else {
-        console.warn("⚠️ No scene snapshot available to save.");
+        console.warn("⚠️ No story snapshot available to save.");
       }
     } catch (err) {
       console.error("❌ Quick Save failed:", err);
@@ -53,9 +53,9 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
   // Load save file imported from disk
   const handleLoadFromFile = (data) => {
     console.log("📂 Importing save from file:", data);
-    if (data.scene) {
-      setSavedScene(data.scene);
-      setSceneKey((k) => k + 1);
+    if (data.story) {
+      setSavedStory(data.story);
+      setStoryKey((k) => k + 1);
     }
     transitionTo("game");
   };
@@ -85,15 +85,15 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
         {phase === "game" && (
           <div className="game">
             <StoryFlow
-              key={sceneKey}
-              scene={sceneData}
-              savedScene={savedScene}
-              onSceneSnapshot={handleSceneSnapshotUpdate}
+              key={storyKey}
+              story={storyData}
+              savedStory={savedStory}
+              onStorySnapshot={handleStorySnapshotUpdate}
             />
             <PlayerMenu
               onQuickSave={handleQuickSave}
               onQuickLoad={handleQuickLoad}
-              getSceneSnapshot={() => sceneSnapshotRef.current?.()}
+              getStorySnapshot={() => storySnapshotRef.current?.()}
               onExitToMenu={() => transitionTo("menu")}
             />
           </div>
