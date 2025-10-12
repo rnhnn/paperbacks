@@ -1,10 +1,11 @@
+// Flags context
 import { createContext, useContext, useState } from "react";
 import flagsData from "../data/flags.json";
 
 const FlagsContext = createContext();
 
 export function FlagsProvider({ children }) {
-  // Initialize state from flags.json defaults
+  // Initialize flag state using defaults from flags.json
   const [flags, setFlags] = useState(() => {
     const initialFlags = {};
     for (const key in flagsData) {
@@ -13,12 +14,10 @@ export function FlagsProvider({ children }) {
     return initialFlags;
   });
 
-  // --- Helpers ---
-
-  // Returns current value of a flag
+  // Return the current value of a specific flag
   const getFlag = (flagId) => flags[flagId];
 
-  // Updates the value of a flag
+  // Update a single flag by id with the given value
   const setFlag = (flagId, value) => {
     setFlags((prev) => ({
       ...prev,
@@ -26,7 +25,7 @@ export function FlagsProvider({ children }) {
     }));
   };
 
-  // For debugging or resetting
+  // Reset all flags to their default values from flags.json
   const resetFlags = () => {
     const reset = {};
     for (const key in flagsData) {
@@ -35,14 +34,15 @@ export function FlagsProvider({ children }) {
     setFlags(reset);
   };
 
+  // Provide flag state and mutators to all children components
   return (
     <FlagsContext.Provider
       value={{
-        flags,
-        getFlag,
-        setFlag,
-        resetFlags,
-        setFlags, // 🟢 Exposed for SaveSystem to restore all flags from snapshots
+        flags, // Current flag dictionary
+        getFlag, // Read a specific flag
+        setFlag, // Update a specific flag
+        resetFlags, // Restore default values
+        setFlags, // Used internally by SaveSystem to overwrite all flags
       }}
     >
       {children}
@@ -50,7 +50,7 @@ export function FlagsProvider({ children }) {
   );
 }
 
-// Hook for easy access
+// Hook for convenient access to the Flags context
 export function useFlags() {
   return useContext(FlagsContext);
 }

@@ -1,18 +1,18 @@
-// --- React & styles ---
+// React and styles
 import "../styles/StoryFlow.css";
 import { useState, useEffect, useRef, useMemo } from "react";
 
-// --- Contexts & data ---
+// Contexts and data
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 
-// --- Constants ---
-const MAX_RENDERED_BLOCKS = 10; // limit of visible story blocks
+// Constants
+const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
 export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
-  // --- Build quick lookup for nodes ---
+  // Build O(1) node lookup from story.nodes using node id as key
   const nodeMap = useMemo(
     () =>
       Object.fromEntries(
@@ -21,7 +21,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     [story.nodes]
   );
 
-  // --- Core state ---
+  // Initialize current node from save when available, otherwise first node
   const [currentNodeId, setCurrentNodeId] = useState(() => {
     if (
       savedStory &&
@@ -32,46 +32,41 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     return story.nodes[0]?.id ?? null;
   });
 
+  // Keep a sliding window of previously rendered blocks for UI and persistence
   const [renderedBlocks, setRenderedBlocks] = useState([]);
+
+  // Gate user input when a choice is visible to prevent accidental progression
   const [waitingChoice, setWaitingChoice] = useState(false);
+
+  // Ref to the scrollable container to auto-scroll on new content
   const contentRef = useRef(null);
 
-  // --- Context hooks ---
+  // Access gameplay mutation hooks for inventory, notes, and flags
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
   const { flags, setFlag } = useFlags();
 
+  // Resolve the live node object for the current node id
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
 
-  // --- Condition & branching helpers ---
+  // Return true if a node has no conditions or all required flags match
   const checkConditions = (node, flagSet = flags) =>
     !node?.conditions ||
     Object.entries(node.conditions).every(([f, v]) => flagSet[f] === v);
 
-  // --- Resolve character info (with dynamic name states) ---
+  // Resolve character display data, allowing names to change as flags reveal identity
   const resolveCharacter = (charLike, flagSet = flags) => {
     const id = typeof charLike === "string" ? charLike : charLike?.id;
     const base = characters[id];
-
-    if (!base) {
-      return { id, name: "???", portrait: "" };
-    }
+    if (!base) return { id, name: "???", portrait: "" };
 
     if (Array.isArray(base.nameStates) && base.nameStates.length > 0) {
       const revealed = base.nameStates.find(
         (s) => s.condition && flagSet[s.condition]
       );
-      if (revealed) {
-        return {
-          id,
-          name: revealed.label,
-          portrait: base.portrait || "",
-        };
-      }
-
+      if (revealed) return { id, name: revealed.label, portrait: base.portrait || "" };
       const fallback =
         base.nameStates.find((s) => !s.condition) || base.nameStates[0];
-
       return {
         id,
         name: fallback?.label || base.name || "???",
@@ -79,18 +74,15 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       };
     }
 
-    return {
-      id,
-      name: base.name || "???",
-      portrait: base.portrait || "",
-    };
+    return { id, name: base.name || "???", portrait: base.portrait || "" };
   };
 
-  // --- Get next valid node (skipping unmet conditions) ---
+  // Compute the next traversable node, skipping nodes whose conditions are not met
   const getNextNodeId = (fromNode, flagSet = flags, visited = new Set()) => {
-    if (!fromNode || visited.has(fromNode.id)) return null;
+    if (!fromNode || visited.has(fromNode.id)) return null; // Prevent loops
     visited.add(fromNode.id);
 
+    // Prefer conditional branches (nextIf) when their conditions pass
     if (Array.isArray(fromNode.nextIf)) {
       for (const branch of fromNode.nextIf) {
         const pass =
@@ -100,6 +92,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       }
     }
 
+    // Fallback to linear next, recursively skipping unmet nodes
     if (fromNode.next && nodeMap[fromNode.next]) {
       const nextNode = nodeMap[fromNode.next];
       if (!checkConditions(nextNode, flagSet))
@@ -107,10 +100,11 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       return nextNode.id;
     }
 
+    // Reached end of graph for this path
     return null;
   };
 
-  // --- Apply inventory, notes, and flag effects ---
+  // Apply node side effects that mutate the player state (inventory, notes, flags)
   const applyEffects = (nodeLike) => {
     if (!nodeLike) return;
     nodeLike.inventoryAdd?.forEach?.(addItem);
@@ -120,9 +114,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       Object.entries(nodeLike.effects).forEach(([f, v]) => setFlag(f, v));
   };
 
+  // Mark story ended by clearing the current node id
   const setEndOfStory = () => setCurrentNodeId(null);
 
-  // --- Build save snapshot (for SaveSystem) ---
+  // Build a compact snapshot capturing current position and recent blocks
   const getStorySnapshot = () => ({
     currentNodeId,
     renderedBlocks: renderedBlocks
@@ -131,22 +126,20 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         id: b.id,
         type: b.type,
         text: b.text,
-        character: b.character || null,
-        _frozenCharacter: b._frozenCharacter || null,
-        // Persist choices to allow restoring during dialogueChoice
-        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined,
+        character: b.character || null, // Keep original author info
+        _frozenCharacter: b._frozenCharacter || null, // Keep resolved name/portrait at render time
+        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined, // Persist visible choices
       })),
   });
 
-  // --- Expose snapshot getter to parent ---
+  // Provide snapshot getter to the parent so Quick Save can pull latest state
   useEffect(() => {
     if (onStorySnapshot) onStorySnapshot(getStorySnapshot);
   }, [onStorySnapshot, currentNodeId, renderedBlocks]);
 
-  // --- Restore saved story ---
+  // Restore a saved story by hydrating blocks and position with backward compatibility
   useEffect(() => {
     if (!savedStory) return;
-    console.log("Restoring story from saved state:", savedStory);
 
     const hasExplicitId = Object.prototype.hasOwnProperty.call(
       savedStory,
@@ -159,12 +152,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     const startNode = startId ? nodeMap[startId] : null;
 
     if (Array.isArray(savedStory.renderedBlocks)) {
-      // restore full frozen blocks directly
+      // Restore previously frozen blocks to preserve names and portraits
       const restored = savedStory.renderedBlocks.map((b) => ({
         ...b,
-        // ensure backward compatibility and required fields
-        character: b.character || b._frozenCharacter?.id || null,
-        // NEW: guard against missing choices
+        character: b.character || b._frozenCharacter?.id || null, // Guard older saves
         choices:
           b.type === "dialogueChoice" && !Array.isArray(b.choices)
             ? []
@@ -172,7 +163,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       }));
       setRenderedBlocks(restored);
     } else {
-      // backward-compatibility: fallback to nodeId list
+      // Fallback path for older save format that only stored recent node ids
       const recent = (savedStory.recentNodeIds || [])
         .map((id) => nodeMap[id])
         .filter(Boolean);
@@ -180,13 +171,14 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     }
 
     setCurrentNodeId(startId);
-    setWaitingChoice(startNode?.type === "dialogueChoice");
+    setWaitingChoice(startNode?.type === "dialogueChoice"); // Resume with choice gate if needed
   }, [savedStory, nodeMap, story.nodes]);
 
-  // --- Advance story flow ---
+  // Advance the narrative by resolving the next renderable node and applying effects
   const renderNext = () => {
-    if (!currentNode || waitingChoice) return;
+    if (!currentNode || waitingChoice) return; // Do nothing while a choice is displayed
 
+    // Skip nodes that fail conditions until we find a renderable node or end
     const resolveRenderable = (start) => {
       let node = start;
       while (node && !checkConditions(node)) {
@@ -200,10 +192,12 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     let nodeToRender = resolveRenderable(currentNode);
     if (!nodeToRender) return setEndOfStory();
 
+    // Avoid re-rendering the same node when resuming or after effects
     const alreadyShown = renderedBlocks.some(
       (b) => b.id && nodeToRender.id && b.id === nodeToRender.id
     );
 
+    // If already shown, try to hop to the next valid node in the chain
     if (alreadyShown) {
       const nextId = getNextNodeId(nodeToRender);
       if (!nextId) return setEndOfStory();
@@ -211,87 +205,100 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       if (!nodeToRender) return setEndOfStory();
     }
 
+    // Apply node effects before freezing, so UI reflects stateful consequences
     applyEffects(nodeToRender);
 
+    // Freeze character at render-time so later flag changes do not rewrite history
     const frozenBlock =
       nodeToRender.type === "characterDialogue"
         ? {
-          ...nodeToRender,
-          _frozenCharacter: resolveCharacter(nodeToRender.character),
-        }
+            ...nodeToRender,
+            _frozenCharacter: resolveCharacter(nodeToRender.character),
+          }
         : nodeToRender;
 
+    // Append block while keeping only the last N items for performance
     setRenderedBlocks((prev) => [
       ...prev.slice(-MAX_RENDERED_BLOCKS + 1),
       frozenBlock,
     ]);
 
+    // Stop progression and wait for player input if we rendered a choice
     if (nodeToRender.type === "dialogueChoice") {
       setWaitingChoice(true);
       setCurrentNodeId(nodeToRender.id);
       return;
     }
 
+    // Continue traversal if there are follow-up nodes; otherwise mark end
     const hasNext =
       nodeToRender.next || (nodeToRender.nextIf?.length ?? 0) > 0;
     if (!hasNext) return setEndOfStory();
 
+    // Persist current position so the next click advances from here
     setCurrentNodeId(nodeToRender.id);
   };
 
-  // --- Handle dialogue choices ---
+  // Handle a selected choice by rendering player line, reactions, and next node
   const handleChoice = (choice) => {
-    const mergedFlags = { ...flags, ...(choice.effects || {}) };
+    const mergedFlags = { ...flags, ...(choice.effects || {}) }; // Predict flags for branch resolution
     if (choice.effects)
-      Object.entries(choice.effects).forEach(([f, v]) => setFlag(f, v));
+      Object.entries(choice.effects).forEach(([f, v]) => setFlag(f, v)); // Commit flag effects
 
+    // Render the player’s spoken line as a dialogue block ("YOU")
     const youBlock = {
       type: "characterDialogue",
       character: { id: "you", name: "You" },
       text: [choice.text],
     };
 
+    // Apply reaction block effects before inserting them
     const reactionBlocks = choice.reaction || [];
     reactionBlocks.forEach(applyEffects);
 
+    // Determine next node using explicit next or by resolving branches with merged flags
     const nextId = choice.next || getNextNodeId(currentNode, mergedFlags);
     const nextNode = nextId ? nodeMap[nextId] : null;
 
+    // Apply next node effects early to keep state consistent with what will render
     applyEffects(nextNode);
 
+    // Freeze all blocks that show characters so names/portraits stay consistent
     const freezeBlock = (b) =>
       b?.type === "characterDialogue"
         ? { ...b, _frozenCharacter: resolveCharacter(b.character) }
         : b;
 
+    // Insert the sequence: YOU line → reactions → immediate next node
     const insert = [freezeBlock(youBlock), ...reactionBlocks.map(freezeBlock)];
     if (nextNode) insert.push(freezeBlock(nextNode));
 
+    // Replace the current-node placeholder if present, then append the new sequence
     setRenderedBlocks((prev) => {
       const idx = prev.findIndex((b) => b.id === currentNode?.id);
-      const filtered =
-        idx >= 0 ? prev.filter((_, i) => i !== idx) : prev;
+      const filtered = idx >= 0 ? prev.filter((_, i) => i !== idx) : prev;
       return [
         ...filtered.slice(-MAX_RENDERED_BLOCKS + insert.length),
         ...insert,
       ];
     });
 
+    // Exit choice mode and set up the next progression point
     setWaitingChoice(false);
 
     if (nextNode) {
       if (nextNode.type === "dialogueChoice") {
-        setWaitingChoice(true);
+        setWaitingChoice(true); // Enter choice mode again if next node is a choice
         setCurrentNodeId(nextNode.id);
       } else {
-        setCurrentNodeId(nextNode.id);
+        setCurrentNodeId(nextNode.id); // Continue linear traversal from next node
       }
     } else {
-      setEndOfStory();
+      setEndOfStory(); // No next node means the path ended after the choice
     }
   };
 
-  // --- Auto-scroll to bottom when new text appears ---
+  // Keep the latest content in view by scrolling to bottom on new render
   useEffect(() => {
     if (contentRef.current)
       contentRef.current.scrollTo({
@@ -300,7 +307,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       });
   }, [renderedBlocks]);
 
-  // --- Determine last portrait to display ---
+  // Pick the most recent block with a portrait to display in the side panel
   const lastPortraitBlock = useMemo(
     () =>
       [...renderedBlocks]
@@ -313,10 +320,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     [renderedBlocks]
   );
 
-  // --- Render ---
+  // Render the story UI with portrait, content feed, and progression controls
   return (
     <div className="story-flow">
-      {/* Character portrait (last speaker) */}
+      {/* Portrait of the last speaking character */}
       {lastPortraitBlock && (
         <div className="story-flow-portrait">
           {(() => {
@@ -335,9 +342,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
       <div className="story-flow-content" ref={contentRef}>
         {renderedBlocks.map((block, i) => {
-          const isCurrent = i === renderedBlocks.length - 1;
+          const isCurrent = i === renderedBlocks.length - 1; // Mark last block for subtle emphasis
           const cls = `story-flow-node${isCurrent ? " is-current" : ""}`;
 
+          // Render a single HTML paragraph block
           if (block.type === "singleParagraph")
             return (
               <div key={block.id || i} className={cls}>
@@ -345,6 +353,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
               </div>
             );
 
+          // Render multiple HTML paragraphs as a sequence
           if (block.type === "multipleParagraphs")
             return (
               <div key={block.id || i} className={cls}>
@@ -354,8 +363,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
               </div>
             );
 
+          // Render a dialogue line with uppercase speaker label
           if (block.type === "characterDialogue") {
-            const isYou = block.character?.id === "you"; // detect player
+            const isYou = block.character?.id === "you";
             const char = isYou
               ? { name: "YOU" }
               : block._frozenCharacter || resolveCharacter(block.character);
@@ -367,18 +377,18 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             return (
               <div key={block.id || i} className={cls}>
                 <p>
-                  <strong style={{ textTransform: "uppercase" }}>{name} —</strong>{" "}
+                  <strong style={{ textTransform: "uppercase" }}>
+                    {name} —
+                  </strong>{" "}
                   <span dangerouslySetInnerHTML={{ __html: text }} />
                 </p>
               </div>
             );
           }
 
+          // Render an ordered list of choices that call handleChoice on click
           if (block.type === "dialogueChoice") {
-            // Guard for missing choices during load
-            const safeChoices = Array.isArray(block.choices)
-              ? block.choices
-              : [];
+            const safeChoices = Array.isArray(block.choices) ? block.choices : [];
             return (
               <div key={block.id || i} className={cls}>
                 <ol className="story-flow-dialogue-list">
@@ -392,10 +402,12 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             );
           }
 
+          // Ignore unknown block types for forward compatibility
           return null;
         })}
       </div>
 
+      {/* Continue button is hidden when a choice is on-screen or the story ended */}
       {!waitingChoice && currentNodeId !== null && (
         <button onClick={renderNext} className="story-flow-button">
           {renderedBlocks.length === 0 ? "Begin" : "Continue"}

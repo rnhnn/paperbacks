@@ -1,15 +1,16 @@
+// Notes context
 import { createContext, useContext, useState } from "react";
-import notesData from "../data/notes.json"; // single source of all notes
+import notesData from "../data/notes.json"; // Master list of all possible notes
 
 const NotesContext = createContext();
 
 export const NotesProvider = ({ children }) => {
-  // state: notes with current unlocked status
+  // Initialize notes from notes.json, marking each with its unlocked status
   const [notes, setNotes] = useState(() =>
     notesData.map((note) => ({ ...note, unlocked: !!note.unlocked }))
   );
 
-  // Unlock a note by ID
+  // Unlock a note by its ID if not already unlocked
   const addNote = (noteId) => {
     setNotes((prev) =>
       prev.map((n) =>
@@ -18,7 +19,7 @@ export const NotesProvider = ({ children }) => {
     );
   };
 
-  // Optional: lock a note by ID
+  // Lock a note by its ID (used rarely, mainly for debugging or design control)
   const removeNote = (noteId) => {
     setNotes((prev) =>
       prev.map((n) =>
@@ -27,17 +28,18 @@ export const NotesProvider = ({ children }) => {
     );
   };
 
-  // list of unlocked note IDs
+  // Compute a list of all unlocked note IDs for quick access
   const unlockedNotes = notes.filter((n) => n.unlocked).map((n) => n.id);
 
+  // Provide notes state and mutators to all child components
   return (
     <NotesContext.Provider
       value={{
-        notes,
-        unlockedNotes,
-        addNote,
-        removeNote,
-        setNotes, // 🟢 Exposed for SaveSystem to restore notes from snapshots
+        notes, // Full list of note objects
+        unlockedNotes, // List of unlocked note IDs
+        addNote, // Unlock a note by ID
+        removeNote, // Lock a note by ID
+        setNotes, // Used internally by SaveSystem to restore note state
       }}
     >
       {children}
@@ -45,5 +47,5 @@ export const NotesProvider = ({ children }) => {
   );
 };
 
-// Hook to access notes from any component
+// Hook for convenient access to the notes system
 export const useNotes = () => useContext(NotesContext);

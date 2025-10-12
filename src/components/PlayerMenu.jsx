@@ -1,16 +1,16 @@
-// --- React & contexts ---
+// React and context hooks
 import { useState, useMemo, useRef } from "react";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 
-// --- Components ---
+// UI components
 import Options from "./Options";
 import Inventory from "./Inventory";
 import Notes from "./Notes";
-import Exit from "./Exit"; // exit modal
+import Exit from "./Exit";
 
-// --- Data & styles ---
+// Data and styles
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 import "../styles/PlayerMenu.css";
@@ -23,27 +23,34 @@ export default function PlayerMenu({
   getStorySnapshot,
   onExitToMenu,
 }) {
-  const [saveMsg, setSaveMsg] = useState("");
+  // UI state for various modal windows
   const [showOptions, setShowOptions] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
-  const [showExitConfirm, setShowExitConfirm] = useState(false); // exit modal
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  // State for feedback message and opened note
+  const [saveMsg, setSaveMsg] = useState("");
   const [openNoteId, setOpenNoteId] = useState(null);
+
+  // Ref for hidden input element used to import save files
   const fileInputRef = useRef(null);
 
-  const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
-
+  // Access context data from gameplay systems
   const { inventory } = useInventory();
   const { notes } = useNotes();
   const { flags } = useFlags();
 
-  // --- Feedback helper ---
+  // Toggle the open state of a note entry by id
+  const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
+
+  // Display short confirmation message (e.g., Saved ✓)
   const flashMsg = (msg) => {
     setSaveMsg(msg);
     setTimeout(() => setSaveMsg(""), 1500);
   };
 
-  // --- LocalStorage quick save ---
+  // Trigger quick save via context and show confirmation
   const handleQuickSave = () => {
     if (onQuickSave) {
       onQuickSave();
@@ -51,7 +58,7 @@ export default function PlayerMenu({
     }
   };
 
-  // --- LocalStorage quick load ---
+  // Trigger quick load via context and close options menu afterward
   const handleQuickLoad = () => {
     if (onQuickLoad) {
       onQuickLoad();
@@ -60,14 +67,14 @@ export default function PlayerMenu({
     }
   };
 
-  // --- Export save file ---
+  // Create and download a JSON save file with current game state
   const handleExportSave = () => {
     try {
       const storyData =
         typeof getStorySnapshot === "function" ? getStorySnapshot() : null;
 
       const snapshot = {
-        version: 1,
+        version: 1, // Save schema version
         timestamp: Date.now(),
         story: storyData,
         inventoryIds: [...inventory],
@@ -87,16 +94,17 @@ export default function PlayerMenu({
 
       flashMsg("Exported ✓");
     } catch (err) {
-      console.error("❌ Export failed:", err);
-      flashMsg("Export failed ❌");
+      console.error("Export failed:", err);
+      flashMsg("Export failed");
     }
   };
 
-  // --- Import save file ---
+  // Open hidden file input to let user choose a save file
   const handleImportSave = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  // Read and validate an imported save file, then load it into localStorage
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -105,9 +113,10 @@ export default function PlayerMenu({
       const text = await file.text();
       const data = JSON.parse(text);
 
+      // Validate basic save structure before applying
       if (!data || typeof data !== "object" || !data.version) {
-        console.warn("⚠️ Invalid save file");
-        flashMsg("Invalid File ❌");
+        console.warn("Invalid save file");
+        flashMsg("Invalid File");
         return;
       }
 
@@ -117,14 +126,14 @@ export default function PlayerMenu({
       flashMsg("Imported ✓");
       setShowOptions(false);
     } catch (err) {
-      console.error("❌ Import failed:", err);
-      flashMsg("Import failed ❌");
+      console.error("Import failed:", err);
+      flashMsg("Import failed");
     } finally {
-      e.target.value = "";
+      e.target.value = ""; // Reset input so same file can be re-imported
     }
   };
 
-  // --- Memoized inventory ---
+  // Build derived inventory data from item IDs for rendering
   const inventoryItems = useMemo(
     () =>
       inventory
@@ -133,7 +142,7 @@ export default function PlayerMenu({
     [inventory]
   );
 
-  // --- Memoized unlocked notes ---
+  // Build derived unlocked notes list for rendering
   const unlockedNotes = useMemo(
     () =>
       notes
@@ -149,10 +158,10 @@ export default function PlayerMenu({
     [notes]
   );
 
-  // --- Render ---
+  // Render UI
   return (
     <div className="player-menu">
-      {/* Portrait */}
+      {/* Player portrait section */}
       <div className="player-menu-portrait">
         <img
           src={protagonistImg}
@@ -161,7 +170,7 @@ export default function PlayerMenu({
         />
       </div>
 
-      {/* Buttons */}
+      {/* Main menu buttons */}
       <div className="player-menu-buttons">
         <button
           onClick={() => setShowInventory(true)}
@@ -189,10 +198,10 @@ export default function PlayerMenu({
         </button>
       </div>
 
-      {/* Feedback message */}
+      {/* Feedback message for quick actions */}
       {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
 
-      {/* Hidden file input */}
+      {/* Hidden input used to import .json save files */}
       <input
         type="file"
         accept=".json,application/json"
@@ -201,7 +210,7 @@ export default function PlayerMenu({
         onChange={handleFileChange}
       />
 
-      {/* Windows */}
+      {/* Options window with save/load/export/import */}
       {showOptions && (
         <Options
           onClose={() => setShowOptions(false)}
@@ -212,6 +221,7 @@ export default function PlayerMenu({
         />
       )}
 
+      {/* Inventory window showing acquired items */}
       {showInventory && (
         <Inventory
           items={inventoryItems}
@@ -219,6 +229,7 @@ export default function PlayerMenu({
         />
       )}
 
+      {/* Notes window showing unlocked notes */}
       {showNotes && (
         <Notes
           notes={unlockedNotes}
@@ -228,7 +239,7 @@ export default function PlayerMenu({
         />
       )}
 
-      {/* Exit window */}
+      {/* Exit confirmation modal */}
       {showExitConfirm && (
         <Exit
           onConfirm={onExitToMenu}
