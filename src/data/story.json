@@ -27,12 +27,16 @@
       "choices": [
         {
           "text": "“It’s here.”",
-          "effects": { "wasSureItWasHere": true },
+          "effects": {
+            "wasSureItWasHere": true
+          },
           "next": "kirbyRelief"
         },
         {
           "text": "“It’s… here?”",
-          "effects": { "wasUnsureItWasHere": true },
+          "effects": {
+            "wasUnsureItWasHere": true
+          },
           "next": "kirbyNotConvinced"
         }
       ]
@@ -61,15 +65,21 @@
       "id": "findingAShoe",
       "type": "singleParagraph",
       "text": "An old shoe?!",
-      "inventoryAdd": ["old_shoe"],
-      "effects": { "foundOldShoe": true },
+      "inventoryAdd": [
+        "old_shoe"
+      ],
+      "effects": {
+        "foundOldShoe": true
+      },
       "next": "findingAShoppingList"
     },
     {
       "id": "findingAShoppingList",
       "type": "singleParagraph",
       "text": "And inside the shoe you find a shopping list.",
-      "notesAdd": ["shopping_list_home"],
+      "notesAdd": [
+        "shopping_list_home"
+      ],
       "next": "flagChecker"
     },
     {
@@ -78,8 +88,18 @@
       "character": "tim-kirby",
       "text": "Great, you are both sure of yourself and lucky.",
       "nextIf": [
-        { "conditions": { "wasSureItWasHere": true }, "next": "conditionalResponse" },
-        { "conditions": { "wasUnsureItWasHere": true }, "next": "someOtherStory" }
+        {
+          "conditions": {
+            "wasSureItWasHere": true
+          },
+          "next": "conditionalResponse"
+        },
+        {
+          "conditions": {
+            "wasUnsureItWasHere": true
+          },
+          "next": "someOtherStory"
+        }
       ],
       "next": "someOtherStory"
     },
@@ -87,30 +107,57 @@
       "id": "conditionalResponse",
       "type": "singleParagraph",
       "text": "Let me hear it.",
-      "next": "debuggingText1"
+      "next": "oldLadyAppears"
     },
     {
       "id": "someOtherStory",
       "type": "singleParagraph",
       "text": "The final text.",
-      "next": "debuggingText1"
+      "next": "oldLadyAppears"
     },
     {
-      "id": "debuggingText1",
-      "type": "singleParagraph",
-      "text": "The Beatles!",
-      "next": "debuggingText2"
+      "id": "oldLadyAppears",
+      "type": "characterDialogue",
+      "character": "agnes",
+      "text": "“Hey! What are you doing near my doorstep?”",
+      "next": "agnesSecondLine"
     },
     {
-      "id": "debuggingText2",
-      "type": "singleParagraph",
-      "text": "Are...",
-      "next": "debuggingText3"
+      "id": "agnesSecondLine",
+      "type": "characterDialogue",
+      "character": "agnes",
+      "text": "“I’ve had enough of youngsters sneaking around here.”",
+      "next": "agnesRevealsName"
     },
     {
-      "id": "debuggingText3",
-      "type": "singleParagraph",
-      "text": "THE BEST."
+      "id": "agnesRevealsName",
+      "type": "characterDialogue",
+      "character": "agnes",
+      "text": "“Ah, where are my manners. I’m Agnes.”",
+      "effects": {
+        "knowsAgnesName": true
+      },
+      "next": "finalAgnes"
+    },
+    {
+      "id": "finalAgnes",
+      "type": "characterDialogue",
+      "character": "agnes",
+      "text": "“Ok, bye!”",
+      "next": "agnesKeepsRambling"
+    },
+    {
+      "id": "agnesKeepsRambling",
+      "type": "characterDialogue",
+      "character": "agnes",
+      "text": "“Will the circle be unbroken?”",
+      "next": "kirbyIsBack"
+    },
+    {
+      "id": "kirbyIsBack",
+      "type": "characterDialogue",
+      "character": "tim-kirby",
+      "text": "“Of course lady. I'm back!”"
     }
   ]
 }

@@ -2,7 +2,20 @@
   "tim-kirby": {
     "id": "tim-kirby",
     "name": "Tim Kirby",
-    "portrait": "kirby.png",
-    "color": "#58aaff"
+    "portrait": "kirby.png"
+  },
+  "agnes": {
+    "id": "agnes",
+    "nameStates": [
+      {
+        "label": "Fierce Old Lady",
+        "condition": null
+      },
+      {
+        "label": "Agnes",
+        "condition": "knowsAgnesName"
+      }
+    ],
+    "portrait": "agnes.png"
   }
 }

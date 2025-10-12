@@ -23,18 +23,18 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
   // --- Core state ---
   const [currentNodeId, setCurrentNodeId] = useState(() => {
-    // Respect explicit null (story ended) when restoring from a save
     if (
       savedStory &&
       Object.prototype.hasOwnProperty.call(savedStory, "currentNodeId")
     ) {
-      return savedStory.currentNodeId; // may be null
+      return savedStory.currentNodeId;
     }
-    return story.nodes[0]?.id ?? null; // default to first node for new runs
+    return story.nodes[0]?.id ?? null;
   });
-  const [renderedBlocks, setRenderedBlocks] = useState([]); // blocks shown so far
-  const [waitingChoice, setWaitingChoice] = useState(false); // true when player must choose
-  const contentRef = useRef(null); // story scroll container
+
+  const [renderedBlocks, setRenderedBlocks] = useState([]);
+  const [waitingChoice, setWaitingChoice] = useState(false);
+  const contentRef = useRef(null);
 
   // --- Context hooks ---
   const { addItem, removeItem } = useInventory();
@@ -43,39 +43,48 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
 
-  // --- Restore saved story ---
-  useEffect(() => {
-    if (!savedStory) return;
-    console.log("🔁 Restoring story from saved state:", savedStory);
-
-    const hasExplicitId = Object.prototype.hasOwnProperty.call(
-      savedStory,
-      "currentNodeId"
-    );
-    const startId = hasExplicitId
-      ? savedStory.currentNodeId
-      : story.nodes[0]?.id ?? null;
-
-    const startNode = startId ? nodeMap[startId] : null;
-
-    const recent = (savedStory.recentNodeIds || [])
-      .map((id) => nodeMap[id])
-      .filter(Boolean);
-
-    setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
-    setCurrentNodeId(startId);
-    setWaitingChoice(startNode?.type === "dialogueChoice");
-  }, [savedStory, nodeMap, story.nodes]);
-
   // --- Condition & branching helpers ---
   const checkConditions = (node, flagSet = flags) =>
     !node?.conditions ||
     Object.entries(node.conditions).every(([f, v]) => flagSet[f] === v);
 
-  const resolveCharacter = (char) =>
-    typeof char === "string"
-      ? characters[char] || { id: char, name: "???", portrait: "" }
-      : char;
+  // --- Resolve character info (with dynamic name states) ---
+  const resolveCharacter = (charLike, flagSet = flags) => {
+    const id = typeof charLike === "string" ? charLike : charLike?.id;
+    const base = characters[id];
+
+    if (!base) {
+      return { id, name: "???", portrait: "" };
+    }
+
+    if (Array.isArray(base.nameStates) && base.nameStates.length > 0) {
+      const revealed = base.nameStates.find(
+        (s) => s.condition && flagSet[s.condition]
+      );
+      if (revealed) {
+        return {
+          id,
+          name: revealed.label,
+          portrait: base.portrait || "",
+        };
+      }
+
+      const fallback =
+        base.nameStates.find((s) => !s.condition) || base.nameStates[0];
+
+      return {
+        id,
+        name: fallback?.label || base.name || "???",
+        portrait: base.portrait || "",
+      };
+    }
+
+    return {
+      id,
+      name: base.name || "???",
+      portrait: base.portrait || "",
+    };
+  };
 
   // --- Get next valid node (skipping unmet conditions) ---
   const getNextNodeId = (fromNode, flagSet = flags, visited = new Set()) => {
@@ -111,20 +120,61 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       Object.entries(nodeLike.effects).forEach(([f, v]) => setFlag(f, v));
   };
 
-  const setEndOfStory = () => setCurrentNodeId(null); // helper for story end
+  const setEndOfStory = () => setCurrentNodeId(null);
 
   // --- Build save snapshot (for SaveSystem) ---
   const getStorySnapshot = () => ({
     currentNodeId,
-    recentNodeIds: renderedBlocks
-      .map((b) => b.id || b.type)
-      .slice(-MAX_RENDERED_BLOCKS),
+    renderedBlocks: renderedBlocks
+      .slice(-MAX_RENDERED_BLOCKS)
+      .map((b) => ({
+        id: b.id,
+        type: b.type,
+        text: b.text,
+        character: b.character || null,
+        _frozenCharacter: b._frozenCharacter || null,
+      })),
   });
 
   // --- Expose snapshot getter to parent ---
   useEffect(() => {
     if (onStorySnapshot) onStorySnapshot(getStorySnapshot);
   }, [onStorySnapshot, currentNodeId, renderedBlocks]);
+
+  // --- Restore saved story ---
+  useEffect(() => {
+    if (!savedStory) return;
+    console.log("🔁 Restoring story from saved state:", savedStory);
+
+    const hasExplicitId = Object.prototype.hasOwnProperty.call(
+      savedStory,
+      "currentNodeId"
+    );
+    const startId = hasExplicitId
+      ? savedStory.currentNodeId
+      : story.nodes[0]?.id ?? null;
+
+    const startNode = startId ? nodeMap[startId] : null;
+
+    if (Array.isArray(savedStory.renderedBlocks)) {
+      // restore full frozen blocks directly
+      const restored = savedStory.renderedBlocks.map((b) => ({
+        ...b,
+        // ensure backward compatibility and required fields
+        character: b.character || b._frozenCharacter?.id || null,
+      }));
+      setRenderedBlocks(restored);
+    } else {
+      // backward-compatibility: fallback to nodeId list
+      const recent = (savedStory.recentNodeIds || [])
+        .map((id) => nodeMap[id])
+        .filter(Boolean);
+      setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
+    }
+
+    setCurrentNodeId(startId);
+    setWaitingChoice(startNode?.type === "dialogueChoice");
+  }, [savedStory, nodeMap, story.nodes]);
 
   // --- Advance story flow ---
   const renderNext = () => {
@@ -155,9 +205,18 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     }
 
     applyEffects(nodeToRender);
+
+    const frozenBlock =
+      nodeToRender.type === "characterDialogue"
+        ? {
+            ...nodeToRender,
+            _frozenCharacter: resolveCharacter(nodeToRender.character),
+          }
+        : nodeToRender;
+
     setRenderedBlocks((prev) => [
       ...prev.slice(-MAX_RENDERED_BLOCKS + 1),
-      nodeToRender,
+      frozenBlock,
     ]);
 
     if (nodeToRender.type === "dialogueChoice") {
@@ -168,10 +227,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
     const hasNext =
       nodeToRender.next || (nodeToRender.nextIf?.length ?? 0) > 0;
-    if (!hasNext) {
-      setEndOfStory();
-      return;
-    }
+    if (!hasNext) return setEndOfStory();
 
     setCurrentNodeId(nodeToRender.id);
   };
@@ -196,15 +252,18 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
     applyEffects(nextNode);
 
-    const insert = [youBlock, ...reactionBlocks];
-    if (nextNode) insert.push(nextNode);
+    const freezeBlock = (b) =>
+      b?.type === "characterDialogue"
+        ? { ...b, _frozenCharacter: resolveCharacter(b.character) }
+        : b;
+
+    const insert = [freezeBlock(youBlock), ...reactionBlocks.map(freezeBlock)];
+    if (nextNode) insert.push(freezeBlock(nextNode));
 
     setRenderedBlocks((prev) => {
       const idx = prev.findIndex((b) => b.id === currentNode?.id);
       const filtered =
-        idx >= 0
-          ? prev.filter((_, i) => i !== idx)
-          : prev;
+        idx >= 0 ? prev.filter((_, i) => i !== idx) : prev;
       return [
         ...filtered.slice(-MAX_RENDERED_BLOCKS + insert.length),
         ...insert,
@@ -239,7 +298,11 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     () =>
       [...renderedBlocks]
         .reverse()
-        .find((b) => resolveCharacter(b.character)?.portrait),
+        .find(
+          (b) =>
+            (b._frozenCharacter && b._frozenCharacter.portrait) ||
+            resolveCharacter(b.character)?.portrait
+        ),
     [renderedBlocks]
   );
 
@@ -249,12 +312,17 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       {/* Character portrait (last speaker) */}
       {lastPortraitBlock && (
         <div className="story-flow-portrait">
-          <img
-            src={`/assets/portraits/${
-              resolveCharacter(lastPortraitBlock.character).portrait
-            }`}
-            alt={resolveCharacter(lastPortraitBlock.character).name}
-          />
+          {(() => {
+            const char =
+              lastPortraitBlock._frozenCharacter ||
+              resolveCharacter(lastPortraitBlock.character);
+            return (
+              <img
+                src={`/assets/portraits/${char.portrait}`}
+                alt={char.name}
+              />
+            );
+          })()}
         </div>
       )}
 
@@ -280,8 +348,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             );
 
           if (block.type === "characterDialogue") {
-            const char = resolveCharacter(block.character);
-            const name = char?.name?.toUpperCase() || "???";
+            const char =
+              block._frozenCharacter || resolveCharacter(block.character);
+            const name = char.name.toUpperCase();
             const text = Array.isArray(block.text)
               ? block.text.join(" ")
               : block.text;
