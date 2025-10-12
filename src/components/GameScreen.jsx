@@ -7,7 +7,7 @@ import Loading from "./Loading";
 import MainMenu from "./MainMenu";
 import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
-import storyData from "../data/stories/story.json";
+import storyData from "../data/story.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
   const { quickSave, quickLoad } = useSaveSystem(); // save/load handlers
