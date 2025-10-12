@@ -13,7 +13,7 @@ export default function WindowOverlay({ onClose, children }) {
   // Render a semi-transparent overlay that captures clicks outside the modal
   return (
     <div className="window-overlay" onClick={onClose}>
-      <div className="window-content" onClick={(e) => e.stopPropagation()}>
+      <div className="window-content pixelated-corners" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>

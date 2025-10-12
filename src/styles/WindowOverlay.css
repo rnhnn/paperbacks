@@ -16,7 +16,7 @@
   width: 500px;
   height: 400px;
   background-color: var(--window);
-  border-radius: 8px;
+  color: var(--white);
 }
 
 .window-title {

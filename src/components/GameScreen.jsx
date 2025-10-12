@@ -11,6 +11,8 @@ import MainMenu from "./MainMenu";
 import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
 import storyData from "../data/story.json";
+import itemsData from "../data/items.json";
+import notesData from "../data/notes.json";
 
 export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
@@ -70,12 +72,15 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
 
   // Resets in-memory states for a new game
   const resetGameState = () => {
-    setItems((prev) => prev.map((it) => ({ ...it, acquired: false }))); // Clears inventory
-    setNotes((prev) => prev.map((n) => ({ ...n, unlocked: false }))); // Locks notes
+    // Restore inventory and notes from their JSON defaults
+    setItems(itemsData.map((it) => ({ ...it, acquired: !!it.acquired })));
+    setNotes(notesData.map((n) => ({ ...n, unlocked: !!n.unlocked })));
+
     setFlags({}); // Clears all flags
     setSavedStory(null); // Removes story progress
     setStoryKey((k) => k + 1); // Forces StoryFlow remount
-    console.log("Game state reset for New Game (localStorage preserved)");
+
+    console.log("Game state reset to JSON defaults (localStorage preserved)");
   };
 
   return (

@@ -160,55 +160,58 @@ export default function PlayerMenu({
 
   // Render UI
   return (
-    <div className="player-menu">
-      {/* Player portrait section */}
-      <div className="player-menu-portrait">
-        <img
-          src={protagonistImg}
-          alt="Protagonist Portrait"
-          className="player-menu-portrait-image"
+    <>
+      {/* Main player menu interface */}
+      <div className="player-menu pixelated-corners">
+        {/* Player portrait section */}
+        <div className="player-menu-portrait">
+          <img
+            src={protagonistImg}
+            alt="Protagonist Portrait"
+            className="player-menu-portrait-image"
+          />
+        </div>
+
+        {/* Main menu buttons */}
+        <div className="player-menu-buttons">
+          <button
+            onClick={() => setShowInventory(true)}
+            className="player-menu-buttons-item player-menu-buttons-item-inventory"
+          >
+            Inventory
+          </button>
+          <button
+            onClick={() => setShowNotes(true)}
+            className="player-menu-buttons-item player-menu-buttons-item-notes"
+          >
+            Notes
+          </button>
+          <button
+            onClick={() => setShowOptions(true)}
+            className="player-menu-buttons-item player-menu-buttons-item-options"
+          >
+            Options
+          </button>
+          <button
+            onClick={() => setShowExitConfirm(true)}
+            className="player-menu-buttons-item player-menu-buttons-item-exit"
+          >
+            Exit
+          </button>
+        </div>
+
+        {/* Feedback message for quick actions */}
+        {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
+
+        {/* Hidden input used to import .json save files */}
+        <input
+          type="file"
+          accept=".json,application/json"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleFileChange}
         />
       </div>
-
-      {/* Main menu buttons */}
-      <div className="player-menu-buttons">
-        <button
-          onClick={() => setShowInventory(true)}
-          className="player-menu-buttons-item player-menu-buttons-item-inventory"
-        >
-          Inventory
-        </button>
-        <button
-          onClick={() => setShowNotes(true)}
-          className="player-menu-buttons-item player-menu-buttons-item-notes"
-        >
-          Notes
-        </button>
-        <button
-          onClick={() => setShowOptions(true)}
-          className="player-menu-buttons-item player-menu-buttons-item-options"
-        >
-          Options
-        </button>
-        <button
-          onClick={() => setShowExitConfirm(true)}
-          className="player-menu-buttons-item player-menu-buttons-item-exit"
-        >
-          Exit
-        </button>
-      </div>
-
-      {/* Feedback message for quick actions */}
-      {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
-
-      {/* Hidden input used to import .json save files */}
-      <input
-        type="file"
-        accept=".json,application/json"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
 
       {/* Options window with save/load/export/import */}
       {showOptions && (
@@ -246,6 +249,6 @@ export default function PlayerMenu({
           onClose={() => setShowExitConfirm(false)}
         />
       )}
-    </div>
+    </>
   );
 }
