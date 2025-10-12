@@ -355,7 +355,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             );
 
           if (block.type === "characterDialogue") {
-            const isYou = block.character?.id === "you"; // NEW: detect player
+            const isYou = block.character?.id === "you"; // detect player
             const char = isYou
               ? { name: "YOU" }
               : block._frozenCharacter || resolveCharacter(block.character);
@@ -375,7 +375,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
           }
 
           if (block.type === "dialogueChoice") {
-            // ✅ NEW: guard for missing choices during load
+            // Guard for missing choices during load
             const safeChoices = Array.isArray(block.choices)
               ? block.choices
               : [];

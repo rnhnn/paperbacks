@@ -9,7 +9,6 @@ import Options from "./Options";
 import Inventory from "./Inventory";
 import Notes from "./Notes";
 import Exit from "./Exit"; // exit modal
-import WindowOverlay from "./WindowOverlay"; // still used by subwindows
 
 // --- Data & styles ---
 import itemsData from "../data/items.json";
