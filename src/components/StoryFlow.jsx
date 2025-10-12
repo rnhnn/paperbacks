@@ -133,6 +133,8 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         text: b.text,
         character: b.character || null,
         _frozenCharacter: b._frozenCharacter || null,
+        // ✅ NEW: persist choices to allow restoring during dialogueChoice
+        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined,
       })),
   });
 
@@ -162,6 +164,11 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         ...b,
         // ensure backward compatibility and required fields
         character: b.character || b._frozenCharacter?.id || null,
+        // ✅ NEW: guard against missing choices
+        choices:
+          b.type === "dialogueChoice" && !Array.isArray(b.choices)
+            ? []
+            : b.choices,
       }));
       setRenderedBlocks(restored);
     } else {
@@ -367,11 +374,15 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             );
           }
 
-          if (block.type === "dialogueChoice")
+          if (block.type === "dialogueChoice") {
+            // ✅ NEW: guard for missing choices during load
+            const safeChoices = Array.isArray(block.choices)
+              ? block.choices
+              : [];
             return (
               <div key={block.id || i} className={cls}>
                 <ol className="story-flow-dialogue-list">
-                  {block.choices.map((c, j) => (
+                  {safeChoices.map((c, j) => (
                     <li key={j} className="story-flow-dialogue-list-option">
                       <button onClick={() => handleChoice(c)}>{c.text}</button>
                     </li>
@@ -379,6 +390,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
                 </ol>
               </div>
             );
+          }
 
           return null;
         })}

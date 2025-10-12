@@ -1,6 +1,9 @@
 // --- React & contexts ---
 import { useState, useRef } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
+import { useInventory } from "../contexts/InventoryContext";
+import { useNotes } from "../contexts/NotesContext";
+import { useFlags } from "../contexts/FlagsContext";
 
 // --- Components & data ---
 import Loading from "./Loading";
@@ -15,12 +18,17 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
   const [storyKey, setStoryKey] = useState(0); // forces StoryFlow remount
   const storySnapshotRef = useRef(() => null); // holds current snapshot builder
 
-  // Register snapshot builder from StoryFlow
+  // --- Access context setters for reset ---
+  const { setItems } = useInventory();
+  const { setNotes } = useNotes();
+  const { setFlags } = useFlags();
+
+  // --- Register snapshot builder from StoryFlow ---
   const handleStorySnapshotUpdate = (fn) => {
     storySnapshotRef.current = fn;
   };
 
-  // Load story from localStorage (used by Continue and Quick Load)
+  // --- Load story from localStorage (used by Continue and Quick Load) ---
   const handleQuickLoad = () => {
     const storySlice = quickLoad();
     if (storySlice) {
@@ -29,7 +37,7 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Save current story snapshot to localStorage
+  // --- Save current story snapshot to localStorage ---
   const handleQuickSave = () => {
     try {
       const snapshot = storySnapshotRef.current?.();
@@ -44,13 +52,13 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Continue from localStorage save
+  // --- Continue from localStorage save ---
   const handleContinue = () => {
     handleQuickLoad();
     transitionTo("game");
   };
 
-  // Load save file imported from disk
+  // --- Load save file imported from disk ---
   const handleLoadFromFile = (data) => {
     console.log("📂 Importing save from file:", data);
     if (data.story) {
@@ -58,6 +66,27 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
       setStoryKey((k) => k + 1);
     }
     transitionTo("game");
+  };
+
+  // --- Reset all in-memory contexts for New Game ---
+  const resetGameState = () => {
+    // Clear acquired inventory state
+    setItems((prev) => prev.map((it) => ({ ...it, acquired: false })));
+
+    // Lock all notes again
+    setNotes((prev) => prev.map((n) => ({ ...n, unlocked: false })));
+
+    // Reset flags to an empty object (default)
+    setFlags({});
+
+    // Forget the previous story state
+    setSavedStory(null);
+
+    // Force StoryFlow remount
+    setStoryKey((k) => k + 1);
+
+    // Keep localStorage untouched so Continue still works
+    console.log("🧹 Game state reset for New Game (localStorage preserved)");
   };
 
   return (
@@ -75,7 +104,10 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
         {/* Phase 2: main menu */}
         {phase === "menu" && (
           <MainMenu
-            onNewGame={() => transitionTo("game")}
+            onNewGame={() => {
+              resetGameState(); // ensures a clean start
+              transitionTo("game");
+            }}
             onContinue={handleContinue}
             onLoadFromFile={handleLoadFromFile}
           />
