@@ -1,13 +1,23 @@
 .player-menu {
+  width: 200px;
+  margin-right: -220px;
+  margin-left: 20px;
+}
+
+.player-menu-toast {
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
+  color: white;
+}
+
+.player-menu-window {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
   padding: 16px;
   background-color: #4e4f64;
   color: var(--white);
-  margin-left: 20px;
-  margin-right: -220px;
 }
 
 .player-menu-portrait {

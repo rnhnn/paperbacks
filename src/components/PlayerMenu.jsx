@@ -44,7 +44,7 @@ export default function PlayerMenu({
   // Toggle the open state of a note entry by id
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
 
-  // Display short confirmation message (e.g., Saved ✓)
+  // Display short confirmation message
   const flashMsg = (msg) => {
     setSaveMsg(msg);
     setTimeout(() => setSaveMsg(""), 1500);
@@ -54,7 +54,8 @@ export default function PlayerMenu({
   const handleQuickSave = () => {
     if (onQuickSave) {
       onQuickSave();
-      flashMsg("Saved ✓");
+      flashMsg("Saved!");
+      setShowOptions(false);
     }
   };
 
@@ -62,19 +63,19 @@ export default function PlayerMenu({
   const handleQuickLoad = () => {
     if (onQuickLoad) {
       onQuickLoad();
-      flashMsg("Loaded ✓");
+      flashMsg("Loaded!");
       setShowOptions(false);
     }
   };
 
-  // Create and download a JSON save file with current game state
+  // Export current game state as a JSON file and close the options window
   const handleExportSave = () => {
     try {
       const storyData =
         typeof getStorySnapshot === "function" ? getStorySnapshot() : null;
 
       const snapshot = {
-        version: 1, // Save schema version
+        version: 1,
         timestamp: Date.now(),
         story: storyData,
         inventoryIds: [...inventory],
@@ -93,13 +94,14 @@ export default function PlayerMenu({
       link.click();
 
       flashMsg("Exported ✓");
+      setShowOptions(false);
     } catch (err) {
       console.error("Export failed:", err);
       flashMsg("Export failed");
     }
   };
 
-  // Open hidden file input to let user choose a save file
+  // Trigger hidden file input to import save data
   const handleImportSave = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -133,7 +135,7 @@ export default function PlayerMenu({
     }
   };
 
-  // Build derived inventory data from item IDs for rendering
+  // Build inventory items from current IDs
   const inventoryItems = useMemo(
     () =>
       inventory
@@ -142,7 +144,7 @@ export default function PlayerMenu({
     [inventory]
   );
 
-  // Build derived unlocked notes list for rendering
+  // Build unlocked notes with fallback content
   const unlockedNotes = useMemo(
     () =>
       notes
@@ -158,62 +160,65 @@ export default function PlayerMenu({
     [notes]
   );
 
-  // Render UI
+  // Render player menu and subwindows
   return (
     <>
-      {/* Main player menu interface */}
-      <div className="player-menu pixelated-corners">
-        {/* Player portrait section */}
-        <div className="player-menu-portrait">
-          <img
-            src={protagonistImg}
-            alt="Protagonist Portrait"
-            className="player-menu-portrait-image"
+      {/* Display main player menu */}
+      <div className="player-menu">
+        {/* Show feedback message for quick actions */}
+        {saveMsg && <span className="player-menu-toast">{saveMsg}</span>}
+
+        {/* Wrap portrait and buttons */}
+        <div className="player-menu-window pixelated-corners">
+          {/* Show player portrait */}
+          <div className="player-menu-portrait">
+            <img
+              src={protagonistImg}
+              alt="Protagonist Portrait"
+              className="player-menu-portrait-image"
+            />
+          </div>
+
+          {/* Render main action buttons */}
+          <div className="player-menu-buttons">
+            <button
+              onClick={() => setShowInventory(true)}
+              className="player-menu-buttons-item player-menu-buttons-item-inventory"
+            >
+              Inventory
+            </button>
+            <button
+              onClick={() => setShowNotes(true)}
+              className="player-menu-buttons-item player-menu-buttons-item-notes"
+            >
+              Notes
+            </button>
+            <button
+              onClick={() => setShowOptions(true)}
+              className="player-menu-buttons-item player-menu-buttons-item-options"
+            >
+              Options
+            </button>
+            <button
+              onClick={() => setShowExitConfirm(true)}
+              className="player-menu-buttons-item player-menu-buttons-item-exit"
+            >
+              Exit
+            </button>
+          </div>
+
+          {/* Hidden input for importing save files */}
+          <input
+            type="file"
+            accept=".json,application/json"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
           />
         </div>
-
-        {/* Main menu buttons */}
-        <div className="player-menu-buttons">
-          <button
-            onClick={() => setShowInventory(true)}
-            className="player-menu-buttons-item player-menu-buttons-item-inventory"
-          >
-            Inventory
-          </button>
-          <button
-            onClick={() => setShowNotes(true)}
-            className="player-menu-buttons-item player-menu-buttons-item-notes"
-          >
-            Notes
-          </button>
-          <button
-            onClick={() => setShowOptions(true)}
-            className="player-menu-buttons-item player-menu-buttons-item-options"
-          >
-            Options
-          </button>
-          <button
-            onClick={() => setShowExitConfirm(true)}
-            className="player-menu-buttons-item player-menu-buttons-item-exit"
-          >
-            Exit
-          </button>
-        </div>
-
-        {/* Feedback message for quick actions */}
-        {saveMsg && <div style={{ color: "white", marginTop: 6 }}>{saveMsg}</div>}
-
-        {/* Hidden input used to import .json save files */}
-        <input
-          type="file"
-          accept=".json,application/json"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
       </div>
 
-      {/* Options window with save/load/export/import */}
+      {/* Show options window */}
       {showOptions && (
         <Options
           onClose={() => setShowOptions(false)}
@@ -224,7 +229,7 @@ export default function PlayerMenu({
         />
       )}
 
-      {/* Inventory window showing acquired items */}
+      {/* Show inventory window */}
       {showInventory && (
         <Inventory
           items={inventoryItems}
@@ -232,7 +237,7 @@ export default function PlayerMenu({
         />
       )}
 
-      {/* Notes window showing unlocked notes */}
+      {/* Show notes window */}
       {showNotes && (
         <Notes
           notes={unlockedNotes}
@@ -242,7 +247,7 @@ export default function PlayerMenu({
         />
       )}
 
-      {/* Exit confirmation modal */}
+      {/* Show exit confirmation window */}
       {showExitConfirm && (
         <Exit
           onConfirm={onExitToMenu}
