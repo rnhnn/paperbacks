@@ -1,8 +1,8 @@
-// --- React & context ---
+// --- React & contexts ---
 import { useState, useMemo, useRef } from "react";
-import { useInventory } from "../context/InventoryContext";
-import { useNotes } from "../context/NotesContext";
-import { useFlags } from "../context/FlagsContext";
+import { useInventory } from "../contexts/InventoryContext";
+import { useNotes } from "../contexts/NotesContext";
+import { useFlags } from "../contexts/FlagsContext";
 
 // --- Components ---
 import Options from "./Options";

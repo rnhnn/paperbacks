@@ -2,10 +2,10 @@
 import "../styles/SceneViewer.css";
 import { useState, useEffect, useRef, useMemo } from "react";
 
-// --- Context & data ---
-import { useInventory } from "../context/InventoryContext";
-import { useNotes } from "../context/NotesContext";
-import { useFlags } from "../context/FlagsContext";
+// --- Contexts & data ---
+import { useInventory } from "../contexts/InventoryContext";
+import { useNotes } from "../contexts/NotesContext";
+import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 
 // --- Constants ---
@@ -36,7 +36,7 @@ export default function SceneViewer({ scene, savedScene, onSceneSnapshot }) {
   const [waitingChoice, setWaitingChoice] = useState(false); // true when player must choose
   const contentRef = useRef(null); // story scroll container
 
-  // --- Context hooks ---
+  // --- Contexts hooks ---
   const { addItem, removeItem } = useInventory();
   const { addNote } = useNotes();
   const { flags, setFlag } = useFlags();

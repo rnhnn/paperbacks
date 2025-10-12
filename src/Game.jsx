@@ -4,12 +4,12 @@ import "./styles/Animations.css";
 import "./styles/Globals.css";
 import "./styles/Game.css";
 
-// --- React & context imports ---
+// --- React & contexts imports ---
 import { useState, useEffect } from "react";
-import { InventoryProvider } from "./context/InventoryContext";
-import { NotesProvider } from "./context/NotesContext";
-import { FlagsProvider } from "./context/FlagsContext";
-import { SaveSystemProvider } from "./context/SaveSystemContext";
+import { InventoryProvider } from "./contexts/InventoryContext";
+import { NotesProvider } from "./contexts/NotesContext";
+import { FlagsProvider } from "./contexts/FlagsContext";
+import { SaveSystemProvider } from "./contexts/SaveSystemContext";
 
 // --- Hooks & components ---
 import useGameScale from "./hooks/useGameScale";
