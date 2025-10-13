@@ -3,6 +3,8 @@
   "mainMenu.continue": "Continuar",
   "mainMenu.newGame": "Nuevo juego",
   "mainMenu.loadGame": "Cargar partida",
+  "storyFlow.begin": "Comenzar",
+  "storyFlow.continue": "Continuar",
   "exitWindow.title": "Salir del juego",
   "exitWindow.message": "¿Seguro que quieres volver al menú principal?",
   "exitWindow.confirm": "Sí",

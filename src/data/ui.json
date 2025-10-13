@@ -5,6 +5,10 @@
     "newGame": "New Game",
     "loadGame": "Load Game"
   },
+  "storyFlow": {
+    "begin": "Begin",
+    "continue": "Continue"
+  },
   "exitWindow": {
     "title": "Exit Game",
     "message": "Are you sure you want to exit to the main menu?",

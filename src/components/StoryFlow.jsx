@@ -6,19 +6,24 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
+import useText from "../hooks/useText"; // Added: hook for localized text
 import characters from "../data/characters.json";
 
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
 export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
+  // Use the translated version of the story when available, otherwise fall back to the base English version
+  const { t, textData } = useText();
+  const localizedStory = textData.story || story;
+
   // Build O(1) node lookup from story.nodes using node id as key
   const nodeMap = useMemo(
     () =>
       Object.fromEntries(
-        (story.nodes || []).filter((n) => n.id).map((n) => [n.id, n])
+        (localizedStory.nodes || []).filter((n) => n.id).map((n) => [n.id, n])
       ),
-    [story.nodes]
+    [localizedStory.nodes]
   );
 
   // Initialize current node from save when available, otherwise first node
@@ -29,7 +34,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     ) {
       return savedStory.currentNodeId;
     }
-    return story.nodes[0]?.id ?? null;
+    return localizedStory.nodes[0]?.id ?? null;
   });
 
   // Keep a sliding window of previously rendered blocks for UI and persistence
@@ -64,7 +69,8 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       const revealed = base.nameStates.find(
         (s) => s.condition && flagSet[s.condition]
       );
-      if (revealed) return { id, name: revealed.label, portrait: base.portrait || "" };
+      if (revealed)
+        return { id, name: revealed.label, portrait: base.portrait || "" };
       const fallback =
         base.nameStates.find((s) => !s.condition) || base.nameStates[0];
       return {
@@ -147,7 +153,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     );
     const startId = hasExplicitId
       ? savedStory.currentNodeId
-      : story.nodes[0]?.id ?? null;
+      : localizedStory.nodes[0]?.id ?? null;
 
     const startNode = startId ? nodeMap[startId] : null;
 
@@ -172,7 +178,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
     setCurrentNodeId(startId);
     setWaitingChoice(startNode?.type === "dialogueChoice"); // Resume with choice gate if needed
-  }, [savedStory, nodeMap, story.nodes]);
+  }, [savedStory, nodeMap, localizedStory.nodes]);
 
   // Advance the narrative by resolving the next renderable node and applying effects
   const renderNext = () => {
@@ -410,7 +416,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       {/* Continue button is hidden when a choice is on-screen or the story ended */}
       {!waitingChoice && currentNodeId !== null && (
         <button onClick={renderNext} className="story-flow-button">
-          {renderedBlocks.length === 0 ? "Begin" : "Continue"}
+          {renderedBlocks.length === 0
+            ? t("ui.storyFlow.begin")
+            : t("ui.storyFlow.continue")}
         </button>
       )}
     </div>
