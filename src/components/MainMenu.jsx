@@ -3,6 +3,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useAudio } from "../contexts/AudioContext";
 import useText from "../hooks/useText";
+import WindowOverlay from "./WindowOverlay";
+import Credits from "./Credits";
 import "../styles/MainMenu.css";
 
 const FADE_DURATION = 400; // Must match CSS fade timing
@@ -11,6 +13,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   // Track fade state and quick-save availability
   const [fadeOut, setFadeOut] = useState(false);
   const [hasSave, setHasSave] = useState(false);
+  const [showCredits, setShowCredits] = useState(false);
   const fileInputRef = useRef(null);
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
@@ -100,6 +103,14 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           {t("ui.mainMenu.loadGame")}
         </button>
 
+        <button
+          type="button"
+          className="main-menu-button"
+          onClick={() => setShowCredits(true)}
+        >
+          {t("ui.mainMenu.credits")}
+        </button>
+
         <input
           type="file"
           accept=".json,application/json"
@@ -108,6 +119,12 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           onChange={handleFileChange}
         />
       </div>
+
+      {showCredits && (
+        <WindowOverlay onClose={() => setShowCredits(false)}>
+          <Credits onClose={() => setShowCredits(false)} />
+        </WindowOverlay>
+      )}
     </div>
   );
 }

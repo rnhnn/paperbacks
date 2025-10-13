@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "writing": "Writing, Art & Programming",
+    "editing": "Editing & Proofreading",
+    "music": "Music",
+    "specialThanks": "Special Thanks"
+  },
+  "names": {
+    "rolando": "Rolando Hernández",
+    "valentina": "Valentina Lamazon"
+  },
+  "musicInfo": {
+    "title": "“The Snow Queen” by Kevin MacLeod",
+    "site": "Incompetech.com",
+    "license": "Licensed under Creative Commons: By Attribution 3.0 License"
+  },
+  "specialThanks": "To The Beatles",
+  "copyright": "© 2025 Rolando Hernández"
+}

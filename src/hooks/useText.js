@@ -8,6 +8,7 @@ import storyEn from "../data/story.json";
 import itemsEn from "../data/items.json";
 import notesEn from "../data/notes.json";
 import charactersEn from "../data/characters.json";
+import creditsEn from "../data/credits.json";
 
 // Load translation overlays (only Spanish for now)
 import uiEs from "../data/translations/es-ui.json";
@@ -15,11 +16,12 @@ import storyEs from "../data/translations/es-story.json";
 import itemsEs from "../data/translations/es-items.json";
 import notesEs from "../data/translations/es-notes.json";
 import charactersEs from "../data/translations/es-characters.json";
+import creditsEs from "../data/translations/es-credits.json";
 
 // Map available languages and their datasets
 const LANG_MAP = {
-  en: { ui: uiEn, story: storyEn, items: itemsEn, notes: notesEn, characters: charactersEn },
-  es: { ui: uiEs, story: storyEs, items: itemsEs, notes: notesEs, characters: charactersEs },
+  en: { ui: uiEn, story: storyEn, items: itemsEn, notes: notesEn, characters: charactersEn, credits: creditsEn },
+  es: { ui: uiEs, story: storyEs, items: itemsEs, notes: notesEs, characters: charactersEs, credits: creditsEs }
 };
 
 // Get value by dot path (e.g., "mainMenu.title" or "nodes.lonelyStreet.text")
@@ -64,6 +66,7 @@ function applyTranslation(base, overlay) {
   return localized;
 }
 
+// Provide translation utilities and localized datasets
 export default function useText() {
   const { language = "en" } = useFlags(); // Read selected language from context
 
@@ -78,6 +81,7 @@ export default function useText() {
       items: applyTranslation(base.items, overlay.items),
       notes: applyTranslation(base.notes, overlay.notes),
       characters: applyTranslation(base.characters, overlay.characters),
+      credits: applyTranslation(base.credits, overlay.credits)
     };
   }, [language]);
 

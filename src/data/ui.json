@@ -3,7 +3,8 @@
     "title": "Paperbacks",
     "continue": "Continue",
     "newGame": "New Game",
-    "loadGame": "Load Game"
+    "loadGame": "Load Game",
+    "credits": "Credits"
   },
   "storyFlow": {
     "begin": "Begin",

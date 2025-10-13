@@ -1,0 +1,31 @@
+/* Hide native scrollbars in Chromium/WebKit */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Wrapper holding scrollable content and custom thumb */
+.scrollbar-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scrollable content area */
+.scrollbar-content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 100%;
+  padding-right: 8px;
+}
+
+/* Visual scrollbar thumb */
+.scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: 3px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0; /* Pixel style */
+  pointer-events: none;
+  opacity: 1; /* Always visible */
+  transition: transform 0.1s linear;
+}
