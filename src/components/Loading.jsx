@@ -1,5 +1,6 @@
 // Loading screen shown before the main menu
 import { useState, useEffect } from "react";
+import { useAudio } from "../contexts/AudioContext";
 import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
@@ -7,16 +8,18 @@ import "../styles/Loading.css";
 
 export default function Loading({ onComplete }) {
   // Track asset and transition states
-  const [fontReady, setFontReady] = useState(false); // True once pixel font has loaded
+  const [fontReady, setFontReady] = useState(false); // True once pixel font is loaded
   const [ready, setReady] = useState(false); // True once assets and min time complete
-  const [fadeOut, setFadeOut] = useState(false); // Triggers fade-out animation
+  const [fadeOut, setFadeOut] = useState(false); // Triggers fade-out transition
 
-  const { setLanguage } = useFlags(); // Access language setter from context
+  const { setLanguage } = useFlags(); // Control active language
+  const { playMusic } = useAudio(); // Control background music
 
-  const FADE_DURATION = 400; // Must match CSS transition timing
-  const MIN_TIME = 1500; // Ensures minimum loading duration
+  const FADE_DURATION = 400; // Must match CSS fade timing
+  const BLACK_DELAY = 1000; // Delay before menu appears and music starts
+  const MIN_TIME = 1500; // Minimum visible loading time
 
-  // Load custom pixel font before anything else
+  // Load pixel font before any other assets
   useEffect(() => {
     const loadFont = async () => {
       try {
@@ -29,20 +32,20 @@ export default function Loading({ onComplete }) {
       } catch (err) {
         console.error("Font failed to load:", err);
       } finally {
-        setFontReady(true); // Proceed even if font loading fails
+        setFontReady(true); // Continue even if loading fails
       }
     };
     loadFont();
   }, []);
 
-  // Preload all portraits and icons after the font is ready
+  // Preload portraits and icons once the font is ready
   useEffect(() => {
     if (!fontReady) return;
 
     const start = performance.now();
 
-    // Helper to preload an image and resolve even if it errors
-    const loadImage = (src) =>
+    // Preload a single image and resolve even on error
+    const preloadImage = (src) =>
       new Promise((resolve) => {
         const img = new Image();
         img.onload = resolve;
@@ -50,47 +53,52 @@ export default function Loading({ onComplete }) {
         img.src = src;
       });
 
-    const loadAssets = async () => {
-      // Build portrait paths from character data
+    const preloadAssets = async () => {
+      // Collect portrait paths from character data
       const portraits = Object.values(characters)
         .map((c) => c.portrait)
         .filter(Boolean)
         .map((f) => `/assets/portraits/${f}`);
 
-      // Build icon paths from icons.json
+      // Collect icon paths from icons.json
       const iconPaths = icons.map((f) => `/assets/icons/${f}`);
 
       try {
-        // Load all assets in parallel for efficiency
-        await Promise.all([...portraits, ...iconPaths].map(loadImage));
+        // Load all assets in parallel
+        await Promise.all([...portraits, ...iconPaths].map(preloadImage));
       } catch (err) {
-        console.error("Asset loading failed:", err);
+        console.error("Asset preload failed:", err);
       }
 
-      // Enforce minimum display duration before ready state
+      // Wait remaining time to enforce minimum loading duration
       const elapsed = performance.now() - start;
       const delay = Math.max(0, MIN_TIME - elapsed);
       setTimeout(() => setReady(true), delay);
     };
 
-    loadAssets();
+    preloadAssets();
   }, [fontReady]);
 
-  // Handle language selection
+  // Handle language selection and transition to main menu
   const handleSelectLanguage = (lang) => {
     if (!ready) return;
     setLanguage(lang);
     setFadeOut(true);
-    setTimeout(onComplete, FADE_DURATION);
+
+    // After fade-out, hold black screen, then start music and menu
+    setTimeout(() => {
+      playMusic();
+      onComplete();
+    }, FADE_DURATION + BLACK_DELAY);
   };
 
-  // Render the loading interface
+  // Render the loading UI
   return (
     <div className={`loading ${fadeOut ? "fade-out" : ""}`}>
-      {/* Display "Loading..." while assets are still processing */}
+      {/* Show "Loading..." until assets are ready */}
       {fontReady && !ready && <p className="loading-text">Loading...</p>}
 
-      {/* Show language choices once everything is ready */}
+      {/* Show language options once assets are ready */}
       {ready && (
         <div className="language-select fade-in">
           <button

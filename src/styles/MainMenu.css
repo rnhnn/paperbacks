@@ -8,6 +8,22 @@
   padding-left: 100px;
   background: var(--black);
   color: var(--white);
+  opacity: 1; /* Visible by default */
+  animation: menuFadeIn 5s ease both;
+}
+
+@keyframes menuFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.main-menu.fade-out {
+  opacity: 0;
+  transition: opacity 0.6s ease; /* Slightly faster fade-out */
 }
 
 .main-menu-title {
@@ -24,6 +40,7 @@
 }
 
 .main-menu-button {
+  padding: 0;
   background: transparent;
   color: var(--white);
   border: 0;

@@ -1,24 +1,23 @@
-// Import React hooks
+// Main menu displayed after the loading screen
 import { useState, useEffect, useRef, useCallback } from "react";
-
-// Import contexts and utilities
 import { useSaveSystem } from "../contexts/SaveSystemContext";
+import { useAudio } from "../contexts/AudioContext";
 import useText from "../hooks/useText";
-
-// Import styles
 import "../styles/MainMenu.css";
 
-const FADE_DURATION = 400; // ms, must match CSS transition
+const FADE_DURATION = 400; // Must match CSS fade timing
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
+  // Track fade state and quick-save availability
   const [fadeOut, setFadeOut] = useState(false);
   const [hasSave, setHasSave] = useState(false);
   const fileInputRef = useRef(null);
 
-  const { storageKey } = useSaveSystem();
-  const { t } = useText();
+  const { storageKey } = useSaveSystem(); // Identify save slot key
+  const { t } = useText(); // Access translation function
+  const { stopMusic } = useAudio(); // Control background music
 
-  // Check for quick save existence once
+  // Check for an existing quick save once on mount
   useEffect(() => {
     try {
       setHasSave(Boolean(localStorage.getItem(storageKey)));
@@ -27,21 +26,23 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     }
   }, [storageKey]);
 
-  // Helper: run a transition before executing an action
+  // Run fade-out transition and stop music before invoking callback
   const runWithFade = useCallback(
-    (callback) => {
+    async (callback) => {
       setFadeOut(true);
-      setTimeout(callback, FADE_DURATION);
+      await stopMusic();
+      const timeout = setTimeout(callback, FADE_DURATION);
+      return () => clearTimeout(timeout);
     },
-    []
+    [stopMusic]
   );
 
-  // Open hidden file input to import save
+  // Open hidden file input to choose an external save
   const handleLoadGameClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
 
-  // Read and validate external save file
+  // Read external save file and validate its structure
   const handleFileChange = useCallback(
     async (e) => {
       const file = e.target.files?.[0];
@@ -57,16 +58,17 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         }
 
         console.log("Loaded save from file:", data);
-        runWithFade(() => onLoadFromFile(data));
+        await runWithFade(() => onLoadFromFile(data));
       } catch (err) {
         console.error("Failed to read save file:", err);
       } finally {
-        e.target.value = ""; // Allow reselecting the same file
+        e.target.value = ""; // Allow selecting the same file again
       }
     },
     [onLoadFromFile, runWithFade]
   );
 
+  // Render the main menu UI
   return (
     <div className={`main-menu ${fadeOut ? "fade-out" : ""}`}>
       <h1 className="main-menu-title">{t("ui.mainMenu.title")}</h1>
