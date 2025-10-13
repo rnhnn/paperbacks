@@ -1,105 +1,103 @@
-// Main menu screen
-import { useState, useEffect, useRef } from "react";
+// Import React hooks
+import { useState, useEffect, useRef, useCallback } from "react";
+
+// Import contexts and utilities
 import { useSaveSystem } from "../contexts/SaveSystemContext";
+import useText from "../hooks/useText";
+
+// Import styles
 import "../styles/MainMenu.css";
 
-const FADE_DURATION = 400; // Duration in ms, must match CSS fade timing
+const FADE_DURATION = 400; // ms, must match CSS transition
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
-  // Control fade-out transition when moving to a new phase
   const [fadeOut, setFadeOut] = useState(false);
-
-  // Track if a local quick save exists to enable the Continue button
   const [hasSave, setHasSave] = useState(false);
-
-  // Access localStorage key from the save system
-  const { storageKey } = useSaveSystem();
-
-  // Ref for hidden file input used to import save files
   const fileInputRef = useRef(null);
 
-  // Check if local save data exists when the menu mounts
+  const { storageKey } = useSaveSystem();
+  const { t } = useText();
+
+  // Check for quick save existence once
   useEffect(() => {
     try {
-      const save = localStorage.getItem(storageKey);
-      setHasSave(Boolean(save));
+      setHasSave(Boolean(localStorage.getItem(storageKey)));
     } catch (err) {
       console.warn("Could not access localStorage:", err);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
+
+  // Helper: run a transition before executing an action
+  const runWithFade = useCallback(
+    (callback) => {
+      setFadeOut(true);
+      setTimeout(callback, FADE_DURATION);
+    },
+    []
+  );
+
+  // Open hidden file input to import save
+  const handleLoadGameClick = useCallback(() => {
+    fileInputRef.current?.click();
   }, []);
 
-  // Run a transition fade-out before executing a callback (e.g., starting a game)
-  const runWithFade = (callback) => {
-    setFadeOut(true);
-    setTimeout(callback, FADE_DURATION);
-  };
+  // Read and validate external save file
+  const handleFileChange = useCallback(
+    async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-  // Open hidden file picker to import an external save
-  const handleLoadGameClick = () => {
-    fileInputRef.current?.click();
-  };
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
 
-  // Read and validate the selected save file, then pass it to parent loader
-  const handleFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+        if (!data || typeof data !== "object" || !data.version) {
+          console.warn("Invalid save file structure");
+          return;
+        }
 
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-
-      // Validate save structure before applying
-      if (!data || typeof data !== "object" || !data.version) {
-        console.warn("Invalid save file structure");
-        return;
+        console.log("Loaded save from file:", data);
+        runWithFade(() => onLoadFromFile(data));
+      } catch (err) {
+        console.error("Failed to read save file:", err);
+      } finally {
+        e.target.value = ""; // Allow reselecting the same file
       }
+    },
+    [onLoadFromFile, runWithFade]
+  );
 
-      console.log("Loaded save from file:", data);
-      runWithFade(() => onLoadFromFile(data));
-    } catch (err) {
-      console.error("Failed to read save file:", err);
-    } finally {
-      e.target.value = ""; // Reset input so the same file can be reselected
-    }
-  };
-
-  // Render the main menu interface
   return (
     <div className={`main-menu ${fadeOut ? "fade-out" : ""}`}>
-      <h1 className="main-menu-title">Paperbacks</h1>
+      <h1 className="main-menu-title">{t("ui.mainMenu.title")}</h1>
 
       <div className="main-menu-options">
-        {/* Continue button appears only if a quick save is found */}
         {hasSave && (
           <button
             type="button"
             className="main-menu-button"
             onClick={() => runWithFade(onContinue)}
           >
-            Continue
+            {t("ui.mainMenu.continue")}
           </button>
         )}
 
-        {/* Start a new game from the beginning */}
         <button
           type="button"
           className="main-menu-button"
           onClick={() => runWithFade(onNewGame)}
         >
-          New Game
+          {t("ui.mainMenu.newGame")}
         </button>
 
-        {/* Import a save file manually from disk */}
         <button
           type="button"
           className="main-menu-button"
           onClick={handleLoadGameClick}
         >
-          Load Game
+          {t("ui.mainMenu.loadGame")}
         </button>
 
-        {/* Hidden input element for selecting .json save files */}
         <input
           type="file"
           accept=".json,application/json"

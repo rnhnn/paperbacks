@@ -1,0 +1,8 @@
+{
+  "mainMenu": {
+    "title": "Paperbacks",
+    "continue": "Continue",
+    "newGame": "New Game",
+    "loadGame": "Load Game"
+  }
+}

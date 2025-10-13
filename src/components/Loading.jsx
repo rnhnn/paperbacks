@@ -1,5 +1,6 @@
 // Loading screen shown before the main menu
 import { useState, useEffect } from "react";
+import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
 import "../styles/Loading.css";
@@ -9,6 +10,8 @@ export default function Loading({ onComplete }) {
   const [fontReady, setFontReady] = useState(false); // True once pixel font has loaded
   const [ready, setReady] = useState(false); // True once assets and min time complete
   const [fadeOut, setFadeOut] = useState(false); // Triggers fade-out animation
+
+  const { setLanguage } = useFlags(); // Access language setter from context
 
   const FADE_DURATION = 400; // Must match CSS transition timing
   const MIN_TIME = 1500; // Ensures minimum loading duration
@@ -73,27 +76,36 @@ export default function Loading({ onComplete }) {
     loadAssets();
   }, [fontReady]);
 
-  // Handle click to start the game after loading completes
-  const handleClick = () => {
+  // Handle language selection
+  const handleSelectLanguage = (lang) => {
     if (!ready) return;
+    setLanguage(lang);
     setFadeOut(true);
     setTimeout(onComplete, FADE_DURATION);
   };
 
   // Render the loading interface
   return (
-    <div className="loading">
+    <div className={`loading ${fadeOut ? "fade-out" : ""}`}>
       {/* Display "Loading..." while assets are still processing */}
       {fontReady && !ready && <p className="loading-text">Loading...</p>}
 
-      {/* Show start button once everything is ready */}
+      {/* Show language choices once everything is ready */}
       {ready && (
-        <button
-          className={`start-button ${fadeOut ? "fade-out" : "fade-in"}`}
-          onClick={handleClick}
-        >
-          Click here to start
-        </button>
+        <div className="language-select fade-in">
+          <button
+            className="language-button"
+            onClick={() => handleSelectLanguage("en")}
+          >
+            English
+          </button>
+          <button
+            className="language-button"
+            onClick={() => handleSelectLanguage("es")}
+          >
+            Español
+          </button>
+        </div>
       )}
     </div>
   );

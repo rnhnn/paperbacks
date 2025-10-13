@@ -1,5 +1,5 @@
 // Flags context
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import flagsData from "../data/flags.json";
 
 const FlagsContext = createContext();
@@ -13,6 +13,24 @@ export function FlagsProvider({ children }) {
     }
     return initialFlags;
   });
+
+  // Initialize language (default to English, or read from localStorage)
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem("language") || "en";
+    } catch {
+      return "en";
+    }
+  });
+
+  // Persist language choice
+  useEffect(() => {
+    try {
+      localStorage.setItem("language", language);
+    } catch {
+      console.warn("Could not persist language setting");
+    }
+  }, [language]);
 
   // Return the current value of a specific flag
   const getFlag = (flagId) => flags[flagId];
@@ -34,7 +52,7 @@ export function FlagsProvider({ children }) {
     setFlags(reset);
   };
 
-  // Provide flag state and mutators to all children components
+  // Provide flag state, language, and mutators to all children components
   return (
     <FlagsContext.Provider
       value={{
@@ -42,7 +60,9 @@ export function FlagsProvider({ children }) {
         getFlag, // Read a specific flag
         setFlag, // Update a specific flag
         resetFlags, // Restore default values
-        setFlags, // Used internally by SaveSystem to overwrite all flags
+        setFlags, // Used internally by SaveSystem
+        language, // Current language code ("en", "es", etc.)
+        setLanguage, // Change language at runtime
       }}
     >
       {children}
