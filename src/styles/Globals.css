@@ -13,6 +13,10 @@
   box-sizing: border-box;
 }
 
+*:focus {
+  outline: none !important;
+}
+
 body {
   display: flex;
   justify-content: center;

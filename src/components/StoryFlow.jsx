@@ -414,13 +414,15 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       </div>
 
       {/* Continue button is hidden when a choice is on-screen or the story ended */}
-      {!waitingChoice && currentNodeId !== null && (
-        <button onClick={renderNext} className="story-flow-button">
-          {renderedBlocks.length === 0
-            ? t("ui.storyFlow.begin")
-            : t("ui.storyFlow.continue")}
-        </button>
-      )}
+      <div className="story-flow-button-area">
+        {!waitingChoice && currentNodeId !== null && (
+          <button onClick={renderNext} className="story-flow-button">
+            {renderedBlocks.length === 0
+              ? t("ui.storyFlow.begin")
+              : t("ui.storyFlow.continue")}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

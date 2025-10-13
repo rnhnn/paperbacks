@@ -9,11 +9,24 @@
     "begin": "Begin",
     "continue": "Continue"
   },
-  "exitWindow": {
-    "title": "Exit Game",
-    "message": "Are you sure you want to exit to the main menu?",
-    "confirm": "Yes",
-    "cancel": "No"
+  "playerMenu": {
+    "buttons": {
+      "inventory": "Inventory",
+      "notes": "Notes",
+      "options": "Options",
+      "exit": "Exit"
+    },
+    "toast": {
+      "saved": "Saved!",
+      "loaded": "Loaded!",
+      "exported": "Exported!",
+      "exportFailed": "Export failed",
+      "imported": "Imported!",
+      "importFailed": "Import failed",
+      "invalidFile": "Invalid File"
+    },
+    "noTitle": "No title",
+    "noContent": "No content"
   },
   "inventoryWindow": {
     "title": "Inventory",
@@ -32,23 +45,10 @@
     "exportSave": "Export Save File",
     "importSave": "Import Save File"
   },
-  "playerMenu": {
-    "buttons": {
-      "inventory": "Inventory",
-      "notes": "Notes",
-      "options": "Options",
-      "exit": "Exit"
-    },
-    "toast": {
-      "saved": "Saved!",
-      "loaded": "Loaded!",
-      "exported": "Exported ✓",
-      "exportFailed": "Export failed",
-      "imported": "Imported ✓",
-      "importFailed": "Import failed",
-      "invalidFile": "Invalid File"
-    },
-    "noTitle": "No title",
-    "noContent": "No content"
+  "exitWindow": {
+    "title": "Exit Game",
+    "message": "Are you sure you want to exit to the main menu?",
+    "confirm": "Yes",
+    "cancel": "No"
   }
 }
