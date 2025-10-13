@@ -13,6 +13,7 @@ import Exit from "./Exit";
 // Data and styles
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
+import useText from "../hooks/useText";
 import "../styles/PlayerMenu.css";
 
 const protagonistImg = "/assets/portraits/protagonist.png";
@@ -41,6 +42,9 @@ export default function PlayerMenu({
   const { notes } = useNotes();
   const { flags } = useFlags();
 
+  // Load localized text utility
+  const { t } = useText();
+
   // Toggle the open state of a note entry by id
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
 
@@ -54,7 +58,7 @@ export default function PlayerMenu({
   const handleQuickSave = () => {
     if (onQuickSave) {
       onQuickSave();
-      flashMsg("Saved!");
+      flashMsg(t("ui.playerMenu.toast.saved"));
       setShowOptions(false);
     }
   };
@@ -63,7 +67,7 @@ export default function PlayerMenu({
   const handleQuickLoad = () => {
     if (onQuickLoad) {
       onQuickLoad();
-      flashMsg("Loaded!");
+      flashMsg(t("ui.playerMenu.toast.loaded"));
       setShowOptions(false);
     }
   };
@@ -93,11 +97,11 @@ export default function PlayerMenu({
       link.download = filename;
       link.click();
 
-      flashMsg("Exported ✓");
+      flashMsg(t("ui.playerMenu.toast.exported"));
       setShowOptions(false);
     } catch (err) {
       console.error("Export failed:", err);
-      flashMsg("Export failed");
+      flashMsg(t("ui.playerMenu.toast.exportFailed"));
     }
   };
 
@@ -118,18 +122,18 @@ export default function PlayerMenu({
       // Validate basic save structure before applying
       if (!data || typeof data !== "object" || !data.version) {
         console.warn("Invalid save file");
-        flashMsg("Invalid File");
+        flashMsg(t("ui.playerMenu.toast.invalidFile"));
         return;
       }
 
       localStorage.setItem("paperbacks_quick_save", JSON.stringify(data));
 
       if (onQuickLoad) onQuickLoad();
-      flashMsg("Imported ✓");
+      flashMsg(t("ui.playerMenu.toast.imported"));
       setShowOptions(false);
     } catch (err) {
       console.error("Import failed:", err);
-      flashMsg("Import failed");
+      flashMsg(t("ui.playerMenu.toast.importFailed"));
     } finally {
       e.target.value = ""; // Reset input so same file can be re-imported
     }
@@ -153,11 +157,11 @@ export default function PlayerMenu({
           (n) =>
             notesData.find((note) => note.id === n.id) || {
               id: n.id,
-              title: "No title",
-              content: ["No content"],
+              title: t("ui.playerMenu.noTitle"),
+              content: [t("ui.playerMenu.noContent")],
             }
         ),
-    [notes]
+    [notes, t]
   );
 
   // Render player menu and subwindows
@@ -185,25 +189,25 @@ export default function PlayerMenu({
               onClick={() => setShowInventory(true)}
               className="player-menu-buttons-item player-menu-buttons-item-inventory"
             >
-              Inventory
+              {t("ui.playerMenu.buttons.inventory")}
             </button>
             <button
               onClick={() => setShowNotes(true)}
               className="player-menu-buttons-item player-menu-buttons-item-notes"
             >
-              Notes
+              {t("ui.playerMenu.buttons.notes")}
             </button>
             <button
               onClick={() => setShowOptions(true)}
               className="player-menu-buttons-item player-menu-buttons-item-options"
             >
-              Options
+              {t("ui.playerMenu.buttons.options")}
             </button>
             <button
               onClick={() => setShowExitConfirm(true)}
               className="player-menu-buttons-item player-menu-buttons-item-exit"
             >
-              Exit
+              {t("ui.playerMenu.buttons.exit")}
             </button>
           </div>
 

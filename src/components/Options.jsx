@@ -1,5 +1,6 @@
 // Options window with save and load controls
 import WindowOverlay from "./WindowOverlay";
+import useText from "../hooks/useText";
 import "../styles/Options.css";
 
 export default function Options({
@@ -9,6 +10,8 @@ export default function Options({
   onExportSave,
   onImportSave,
 }) {
+  const { t } = useText();
+
   // Render a modal window with quick save, load, and file management options
   return (
     <WindowOverlay onClose={onClose}>
@@ -18,21 +21,21 @@ export default function Options({
           ×
         </button>
 
-        <h2 className="window-title">Options</h2>
+        <h2 className="window-title">{t("ui.optionsWindow.title")}</h2>
 
         {/* Action buttons for save, load, export, and import */}
         <div className="window-buttons">
           <button onClick={onSave} className="window-buttons-item">
-            Quick Save
+            {t("ui.optionsWindow.quickSave")}
           </button>
           <button onClick={onLoad} className="window-buttons-item">
-            Quick Load
+            {t("ui.optionsWindow.quickLoad")}
           </button>
           <button onClick={onExportSave} className="window-buttons-item">
-            Export Save File
+            {t("ui.optionsWindow.exportSave")}
           </button>
           <button onClick={onImportSave} className="window-buttons-item">
-            Import Save File
+            {t("ui.optionsWindow.importSave")}
           </button>
         </div>
       </div>

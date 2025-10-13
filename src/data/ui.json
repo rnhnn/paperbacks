@@ -4,5 +4,47 @@
     "continue": "Continue",
     "newGame": "New Game",
     "loadGame": "Load Game"
+  },
+  "exitWindow": {
+    "title": "Exit Game",
+    "message": "Are you sure you want to exit to the main menu?",
+    "confirm": "Yes",
+    "cancel": "No"
+  },
+  "inventoryWindow": {
+    "title": "Inventory",
+    "empty": "No items yet.",
+    "noName": "No name"
+  },
+  "notesWindow": {
+    "title": "Notes",
+    "empty": "No notes yet.",
+    "noTitle": "No title"
+  },
+  "optionsWindow": {
+    "title": "Options",
+    "quickSave": "Quick Save",
+    "quickLoad": "Quick Load",
+    "exportSave": "Export Save File",
+    "importSave": "Import Save File"
+  },
+  "playerMenu": {
+    "buttons": {
+      "inventory": "Inventory",
+      "notes": "Notes",
+      "options": "Options",
+      "exit": "Exit"
+    },
+    "toast": {
+      "saved": "Saved!",
+      "loaded": "Loaded!",
+      "exported": "Exported ✓",
+      "exportFailed": "Export failed",
+      "imported": "Imported ✓",
+      "importFailed": "Import failed",
+      "invalidFile": "Invalid File"
+    },
+    "noTitle": "No title",
+    "noContent": "No content"
   }
 }
