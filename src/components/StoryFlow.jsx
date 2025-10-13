@@ -7,7 +7,6 @@ import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import useText from "../hooks/useText"; // Added: hook for localized text
-import characters from "../data/characters.json";
 
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
@@ -15,6 +14,7 @@ const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memor
 export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
+  const characters = textData.characters;
   const localizedStory = textData.story || story;
 
   // Build O(1) node lookup from story.nodes using node id as key
@@ -383,9 +383,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
             return (
               <div key={block.id || i} className={cls}>
                 <p>
-                  <strong style={{ textTransform: "uppercase" }}>
+                  <span className="story-flow-node-character">
                     {name} —
-                  </strong>{" "}
+                  </span>{" "}
                   <span dangerouslySetInnerHTML={{ __html: text }} />
                 </p>
               </div>
