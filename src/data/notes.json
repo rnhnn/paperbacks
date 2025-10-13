@@ -16,14 +16,5 @@
       "Pick up some coffee if there’s time."
     ],
     "unlocked": false
-  },
-  {
-    "id": "mysterious_figure_alley",
-    "title": "Strange Observation",
-    "content": [
-      "Saw a mysterious figure near the alley last night.",
-      "Might be worth investigating later."
-    ],
-    "unlocked": false
   }
 ]
