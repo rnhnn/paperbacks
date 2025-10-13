@@ -1,26 +1,23 @@
 {
   "title": "Monsello 188",
   "description": "Una noche extraña en una calle solitaria.",
-
-  "nodes.lonelyStreet.text": "Al final de la calle desolada y ventosa, <em>finalmente</em> encuentras el edificio correcto.",
+  "nodes.lonelyStreet.text": "Al final de la calle desierta y ventosa, <em>por fin</em> encuentras el edificio correcto.",
   "nodes.threeStoryBuilding.text": "Un edificio de tres pisos de los años 40, con una placa oxidada que dice: Monsello 188.",
-  "nodes.doubtAboutNumber.text": "¿O era el 189?",
-
+  "nodes.doubtAboutNumber.text": "¿O era 189?",
   "nodes.reactingToTheBuilding.choices.0.text": "“Es aquí.”",
   "nodes.reactingToTheBuilding.choices.1.text": "“¿Es… aquí?”",
-
   "nodes.kirbyRelief.text": "“Por fin.”",
   "nodes.kirbyNotConvinced.text": "“No suenas muy convencido.”",
-  "nodes.theStoryResumes.text": "Miras la acera y encuentras...",
+  "nodes.theStoryResumes.text": "Miras la vereda y encuentras...",
   "nodes.findingAShoe.text": "¿Un zapato viejo?!",
-  "nodes.findingAShoppingList.text": "Y dentro del zapato encuentras una lista de compras.",
-  "nodes.flagChecker.text": "Genial, eres seguro de ti mismo y con suerte.",
-  "nodes.conditionalResponse.text": "Déjame oírlo.",
+  "nodes.findingAShoppingList.text": "Y dentro del zapato, encuentras una lista de compras.",
+  "nodes.flagChecker.text": "Perfecto, seguro de ti mismo y con suerte.",
+  "nodes.conditionalResponse.text": "Déjame escucharte.",
   "nodes.someOtherStory.text": "El texto final.",
   "nodes.oldLadyAppears.text": "“¡Eh! ¿Qué haces cerca de mi puerta?”",
-  "nodes.agnesSecondLine.text": "“Ya tuve suficiente de jóvenes husmeando por aquí.”",
-  "nodes.agnesRevealsName.text": "“Ah, dónde están mis modales. Soy Agnes.”",
-  "nodes.finalAgnes.text": "“Ok, ¡adiós!”",
-  "nodes.agnesKeepsRambling.text": "“¿El círculo permanecerá intacto?”",
-  "nodes.kirbyIsBack.text": "“Por supuesto, señora. ¡He vuelto!”"
+  "nodes.agnesSecondLine.text": "“Ya tuve suficiente de jóvenes merodeando por aquí.”",
+  "nodes.agnesRevealsName.text": "“Ah, mis modales. Soy Agnes.”",
+  "nodes.finalAgnes.text": "“Bien, adiós.”",
+  "nodes.agnesKeepsRambling.text": "“¿Será el círculo inquebrantable?”",
+  "nodes.kirbyIsBack.text": "“Claro señora. ¡He vuelto!”"
 }

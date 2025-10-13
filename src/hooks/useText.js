@@ -1,3 +1,7 @@
+// Load React hooks
+import { useMemo } from "react";
+import { useFlags } from "../contexts/FlagsContext";
+
 // Load all base (English) text data
 import uiEn from "../data/ui.json";
 import storyEn from "../data/story.json";
@@ -12,7 +16,7 @@ import itemsEs from "../data/translations/es-items.json";
 import notesEs from "../data/translations/es-notes.json";
 import charactersEs from "../data/translations/es-characters.json";
 
-// Optional: future languages could go here too
+// Map available languages and their datasets
 const LANG_MAP = {
   en: { ui: uiEn, story: storyEn, items: itemsEn, notes: notesEn, characters: charactersEn },
   es: { ui: uiEs, story: storyEs, items: itemsEs, notes: notesEs, characters: charactersEs },
@@ -60,13 +64,10 @@ function applyTranslation(base, overlay) {
   return localized;
 }
 
-import { useMemo } from "react";
-import { useFlags } from "../contexts/FlagsContext"; // or wherever language is stored
-
 export default function useText() {
-  const { language = "en" } = useFlags(); // e.g. "en" or "es"
+  const { language = "en" } = useFlags(); // Read selected language from context
 
-  // Compute localized text sets
+  // Build localized datasets for all content types
   const textData = useMemo(() => {
     const base = LANG_MAP.en;
     const overlay = LANG_MAP[language];
@@ -80,17 +81,15 @@ export default function useText() {
     };
   }, [language]);
 
-  // Helper to get a specific string (with graceful fallback)
+  // Resolve a text key like "ui.mainMenu.title"
   const t = (path) => {
-    // Expect full key like "ui.mainMenu.title" or "story.nodes.lonelyStreet.text"
     const [section, ...rest] = path.split(".");
     const sectionData = textData[section];
     if (!sectionData) return path;
-
-    // Try direct lookup (nested or flat overlay key)
     const value = getDeepValue(sectionData, rest.join("."));
     return value ?? path;
   };
 
-  return { t, language };
+  // Return translation helper, current language, and localized datasets
+  return { t, language, textData };
 }
