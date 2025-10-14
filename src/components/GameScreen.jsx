@@ -13,7 +13,6 @@ import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
 import ScreenTransition from "./ScreenTransition"; // Visual fade layer
 import "../styles/ScreenTransition.css"; // Transition styles
-import { wait } from "../helpers/transitionHelpers"; // Async helper for sequencing fades
 import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
@@ -88,11 +87,19 @@ export default function GameScreen({ phase, transitionTo }) {
     setTransitioning(true);
     setNextPhase(targetPhase);
 
-    await wait(FADE_DURATION); // Fade out
-    await wait(300); // Optional black hold
-    transitionTo(targetPhase); // Switch screen
-    await wait(FADE_DURATION); // Fade in
-    setTransitioning(false);
+    // Wait for fade-out to complete
+    await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
+
+    // Optional black hold
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Switch to the new phase (fade-in starts immediately)
+    transitionTo(targetPhase);
+
+    // Wait for fade-in to complete
+    await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
+
+    setTransitioning(false); // Allow new transitions
   };
 
   // --- Delayed music start just for main menu --------------------------------
