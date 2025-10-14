@@ -17,6 +17,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const fileInputRef = useRef(null);
+  const muteLock = useRef(false); // Prevent rapid spamming during fade
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
@@ -28,6 +29,14 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       setHasSave(Boolean(localStorage.getItem(storageKey)));
     } catch (err) {
       console.warn("Could not access localStorage:", err);
+    }
+
+    // Read mute preference from localStorage
+    try {
+      const savedMute = localStorage.getItem("paperbacks_audio_muted") === "true";
+      setIsMuted(savedMute);
+    } catch {
+      console.warn("Could not read mute preference");
     }
   }, [storageKey]);
 
@@ -52,7 +61,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         }
 
         console.log("Loaded save from file:", data);
-        stopMusic(); // Stop music before loading a save
+        await fadeOutMusic?.(); // Fade out music before loading
         onLoadFromFile(data);
       } catch (err) {
         console.error("Failed to read save file:", err);
@@ -60,23 +69,27 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         e.target.value = ""; // Allow selecting the same file again
       }
     },
-    [onLoadFromFile, stopMusic]
+    [onLoadFromFile, fadeOutMusic]
   );
 
   // Toggle mute state and control background music
-  const muteLock = useRef(false); // Prevent rapid spamming during fade
-
   const handleMuteClick = useCallback(async () => {
     if (muteLock.current) return; // Ignore repeated clicks during transition
     muteLock.current = true;
 
     if (isMuted) {
       await fadeInMusic?.(); // Resume music if previously faded
+      setIsMuted(false);
+      try {
+        localStorage.setItem("paperbacks_audio_muted", "false");
+      } catch {}
     } else {
       await fadeOutMusic?.(); // Fade out music smoothly and pause
+      setIsMuted(true);
+      try {
+        localStorage.setItem("paperbacks_audio_muted", "true");
+      } catch {}
     }
-
-    setIsMuted(!isMuted);
 
     // Unlock after fade completes
     setTimeout(() => {
@@ -93,6 +106,17 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     }
   }, []);
 
+  // Handle transitions that require stopping or fading out music
+  const handleNewGame = useCallback(async () => {
+    await fadeOutMusic?.(); // Smoothly fade out before transition
+    onNewGame();
+  }, [fadeOutMusic, onNewGame]);
+
+  const handleContinue = useCallback(async () => {
+    await fadeOutMusic?.(); // Smoothly fade out before transition
+    onContinue();
+  }, [fadeOutMusic, onContinue]);
+
   // Render the main menu UI
   return (
     <div className="main-menu">
@@ -103,10 +127,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           <button
             type="button"
             className="main-menu-button"
-            onClick={() => {
-              stopMusic(); // Stop menu music before resuming gameplay
-              onContinue();
-            }}
+            onClick={handleContinue}
           >
             {t("ui.mainMenu.continue")}
           </button>
@@ -115,10 +136,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={() => {
-            stopMusic(); // Stop menu music before starting a new game
-            onNewGame();
-          }}
+          onClick={handleNewGame}
         >
           {t("ui.mainMenu.newGame")}
         </button>
@@ -150,7 +168,11 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
       {/* Control buttons placed in bottom-right corner */}
       <div className="main-menu-controls">
-        <button type="button" className="main-menu-controls-button" onClick={handleMuteClick}>
+        <button
+          type="button"
+          className="main-menu-controls-button"
+          onClick={handleMuteClick}
+        >
           {isMuted ? "Unmute" : "Mute"}
         </button>
         <button

@@ -1,5 +1,5 @@
 // Provide global audio controls for background music and sound effects
-import { createContext, useContext, useRef, useEffect } from "react";
+import { createContext, useContext, useRef, useEffect, useState } from "react";
 import audioData from "../data/audio.json";
 
 const AudioContext = createContext();
@@ -7,6 +7,15 @@ const AudioContext = createContext();
 export function AudioProvider({ children }) {
   // Hold a single persistent audio element for background music
   const musicRef = useRef(null);
+
+  // Track mute preference across sessions
+  const [isMuted, setIsMuted] = useState(() => {
+    try {
+      return localStorage.getItem("paperbacks_audio_muted") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   // Initialize and preload the main menu track once on mount
   useEffect(() => {
@@ -18,7 +27,7 @@ export function AudioProvider({ children }) {
 
     const audio = new Audio(`/assets/audio/${defaultTrack}`);
     audio.loop = true;
-    audio.volume = 0;
+    audio.volume = isMuted ? 0 : 0.6;
     audio.preload = "auto"; // Request early download during loading
     musicRef.current = audio;
 
@@ -37,7 +46,7 @@ export function AudioProvider({ children }) {
         musicRef.current = null;
       }
     };
-  }, []);
+  }, [isMuted]);
 
   // Smoothly interpolate volume to a target level
   const fade = (targetVolume, duration = 1000) =>
@@ -67,13 +76,12 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    // Reload only if switching tracks
     if (!audio.src.endsWith(file)) {
       audio.src = `/assets/audio/${file}`;
       audio.load();
     }
 
-    audio.volume = 0.6;
+    audio.volume = isMuted ? 0 : 0.6;
     if (audio.paused) await audio.play();
   };
 
@@ -92,6 +100,10 @@ export function AudioProvider({ children }) {
     if (!audio) return;
     await fade(0.0, 400);
     audio.pause();
+    setIsMuted(true);
+    try {
+      localStorage.setItem("paperbacks_audio_muted", "true");
+    } catch {}
   };
 
   // Fade in background music and resume playback
@@ -100,6 +112,10 @@ export function AudioProvider({ children }) {
     if (!audio) return;
     if (audio.paused) await audio.play();
     await fade(0.6, 400);
+    setIsMuted(false);
+    try {
+      localStorage.setItem("paperbacks_audio_muted", "false");
+    } catch {}
   };
 
   // Play a short one-shot sound effect without interrupting music
@@ -110,14 +126,14 @@ export function AudioProvider({ children }) {
       return;
     }
     const sfx = new Audio(`/assets/audio/${file}`);
-    sfx.volume = 0.6;
+    sfx.volume = isMuted ? 0 : 0.6;
     sfx.play();
   };
 
   // Expose controls globally
   return (
     <AudioContext.Provider
-      value={{ playMusic, stopMusic, fadeInMusic, fadeOutMusic, playSfx }}
+      value={{ playMusic, stopMusic, fadeInMusic, fadeOutMusic, playSfx, isMuted }}
     >
       {children}
     </AudioContext.Provider>
