@@ -15,7 +15,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { stopMusic } = useAudio(); // Control background music
+  const { playMusic, stopMusic } = useAudio(); // Control background music
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         }
 
         console.log("Loaded save from file:", data);
-        stopMusic();
+        stopMusic(); // Stop music before loading a save
         onLoadFromFile(data);
       } catch (err) {
         console.error("Failed to read save file:", err);
@@ -69,7 +69,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
             type="button"
             className="main-menu-button"
             onClick={() => {
-              stopMusic();
+              stopMusic(); // Stop menu music before resuming gameplay
               onContinue();
             }}
           >
@@ -81,7 +81,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           type="button"
           className="main-menu-button"
           onClick={() => {
-            stopMusic();
+            stopMusic(); // Stop menu music before starting a new game
             onNewGame();
           }}
         >

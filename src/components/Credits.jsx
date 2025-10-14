@@ -6,7 +6,7 @@ export default function Credits({ onClose }) {
   const { t } = useText();
 
   return (
-    <div className="window credits">
+    <div className="window window-credits">
       {/* Close button in the top-right corner */}
       <button className="window-close" onClick={onClose}>
         ×

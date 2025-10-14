@@ -79,9 +79,8 @@ export default function Loading({ onComplete }) {
   // Handle language selection and transition to main menu
   const handleSelectLanguage = (lang) => {
     if (!ready) return;
-    setLanguage(lang);
-    playMusic();
-    onComplete();
+    setLanguage(lang); // Apply selected language
+    onComplete(); // GameScreen will handle music timing
   };
 
   // Render the loading UI
