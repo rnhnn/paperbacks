@@ -39,3 +39,13 @@
   opacity: 0.4;
   cursor: default;
 }
+
+.main-menu-controls {
+  position: absolute;
+  right: 50px;
+  bottom: 20px;
+}
+
+.main-menu-controls-button + .main-menu-controls-button {
+  margin-left: 10px;
+}

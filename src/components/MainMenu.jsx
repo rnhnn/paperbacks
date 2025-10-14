@@ -64,13 +64,24 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   );
 
   // Toggle mute state and control background music
-  const handleMuteClick = useCallback(() => {
+  const muteLock = useRef(false); // Prevent rapid spamming during fade
+
+  const handleMuteClick = useCallback(async () => {
+    if (muteLock.current) return; // Ignore repeated clicks during transition
+    muteLock.current = true;
+
     if (isMuted) {
-      fadeInMusic?.(); // Resume music if previously faded
+      await fadeInMusic?.(); // Resume music if previously faded
     } else {
-      fadeOutMusic?.(); // Fade out music smoothly
+      await fadeOutMusic?.(); // Fade out music smoothly and pause
     }
+
     setIsMuted(!isMuted);
+
+    // Unlock after fade completes
+    setTimeout(() => {
+      muteLock.current = false;
+    }, 450);
   }, [isMuted, fadeOutMusic, fadeInMusic]);
 
   // Toggle fullscreen mode for the browser
@@ -139,12 +150,12 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
       {/* Control buttons placed in bottom-right corner */}
       <div className="main-menu-controls">
-        <button type="button" className="main-menu-util-button" onClick={handleMuteClick}>
+        <button type="button" className="main-menu-controls-button" onClick={handleMuteClick}>
           {isMuted ? "Unmute" : "Mute"}
         </button>
         <button
           type="button"
-          className="main-menu-util-button"
+          className="main-menu-controls-button"
           onClick={handleFullscreenClick}
         >
           {isFullscreen ? "Windowed" : "Fullscreen"}
