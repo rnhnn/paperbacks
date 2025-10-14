@@ -7,16 +7,13 @@ import icons from "../data/icons.json";
 import "../styles/Loading.css";
 
 export default function Loading({ onComplete }) {
-  // Track asset and transition states
+  // Track asset loading states
   const [fontReady, setFontReady] = useState(false); // True once pixel font is loaded
   const [ready, setReady] = useState(false); // True once assets and min time complete
-  const [fadeOut, setFadeOut] = useState(false); // Triggers fade-out transition
 
   const { setLanguage } = useFlags(); // Control active language
   const { playMusic } = useAudio(); // Control background music
 
-  const FADE_DURATION = 400; // Must match CSS fade timing
-  const BLACK_DELAY = 1000; // Delay before menu appears and music starts
   const MIN_TIME = 1500; // Minimum visible loading time
 
   // Load pixel font before any other assets
@@ -83,24 +80,19 @@ export default function Loading({ onComplete }) {
   const handleSelectLanguage = (lang) => {
     if (!ready) return;
     setLanguage(lang);
-    setFadeOut(true);
-
-    // After fade-out, hold black screen, then start music and menu
-    setTimeout(() => {
-      playMusic();
-      onComplete();
-    }, FADE_DURATION + BLACK_DELAY);
+    playMusic();
+    onComplete();
   };
 
   // Render the loading UI
   return (
-    <div className={`loading ${fadeOut ? "fade-out" : ""}`}>
+    <div className="loading">
       {/* Show "Loading..." until assets are ready */}
       {fontReady && !ready && <p className="loading-text">Loading...</p>}
 
       {/* Show language options once assets are ready */}
       {ready && (
-        <div className="language-select fade-in">
+        <div className="language-select">
           <button
             className="language-button"
             onClick={() => handleSelectLanguage("en")}

@@ -8,13 +8,6 @@
   padding-left: 100px;
   background: var(--black);
   color: var(--white);
-  animation: menuFadeIn 5s ease both;
-}
-
-.main-menu.fade-out {
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
 }
 
 .main-menu-title {

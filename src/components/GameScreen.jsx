@@ -14,7 +14,7 @@ import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 
-export default function GameScreen({ phase, transitionTo, fadeIn, transitioning }) {
+export default function GameScreen({ phase, transitionTo }) {
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
   const [savedStory, setSavedStory] = useState(null); // Holds the current or loaded story
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
@@ -25,21 +25,21 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
   const { setNotes } = useNotes();
   const { setFlags } = useFlags();
 
-  // Registers the snapshot builder provided by StoryFlow
+  // Register the snapshot builder provided by StoryFlow
   const handleStorySnapshotUpdate = (fn) => {
     storySnapshotRef.current = fn;
   };
 
-  // Loads a story from localStorage (used by Continue or Quick Load)
+  // Load story from localStorage (used by Continue or Quick Load)
   const handleQuickLoad = () => {
     const storySlice = quickLoad();
     if (storySlice) {
       setSavedStory(storySlice);
-      setStoryKey((k) => k + 1); // Triggers StoryFlow re-render
+      setStoryKey((k) => k + 1);
     }
   };
 
-  // Saves the current story snapshot to localStorage
+  // Save current story snapshot to localStorage
   const handleQuickSave = () => {
     try {
       const snapshot = storySnapshotRef.current?.();
@@ -54,13 +54,13 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     }
   };
 
-  // Continues a game from the localStorage save
+  // Continue game from localStorage save
   const handleContinue = () => {
     handleQuickLoad();
     transitionTo("game");
   };
 
-  // Loads a save imported from an external file
+  // Load save imported from external file
   const handleLoadFromFile = (data) => {
     console.log("Importing save from file:", data);
     if (data.story) {
@@ -70,61 +70,53 @@ export default function GameScreen({ phase, transitionTo, fadeIn, transitioning 
     transitionTo("game");
   };
 
-  // Resets in-memory states for a new game
+  // Reset in-memory states for a new game
   const resetGameState = () => {
     // Restore inventory and notes from their JSON defaults
     setItems(itemsData.map((it) => ({ ...it, acquired: !!it.acquired })));
     setNotes(notesData.map((n) => ({ ...n, unlocked: !!n.unlocked })));
 
-    setFlags({}); // Clears all flags
-    setSavedStory(null); // Removes story progress
-    setStoryKey((k) => k + 1); // Forces StoryFlow remount
+    setFlags({}); // Clear all flags
+    setSavedStory(null); // Remove story progress
+    setStoryKey((k) => k + 1); // Force StoryFlow remount
 
     console.log("Game state reset to JSON defaults (localStorage preserved)");
   };
 
   return (
     <div className="game-screen">
-      <div
-        className={`game-screen-transition ${fadeIn ? "fade-in" : ""} ${
-          transitioning && !fadeIn ? "fade-out" : ""
-        }`}
-      >
-        {/* Phase 1: Loading assets */}
-        {phase === "loading" && (
-          <Loading onComplete={() => transitionTo("menu")} />
-        )}
+      {/* Phase 1: Loading assets */}
+      {phase === "loading" && <Loading onComplete={() => transitionTo("menu")} />}
 
-        {/* Phase 2: Main menu */}
-        {phase === "menu" && (
-          <MainMenu
-            onNewGame={() => {
-              resetGameState(); // Ensures a clean start
-              transitionTo("game");
-            }}
-            onContinue={handleContinue}
-            onLoadFromFile={handleLoadFromFile}
+      {/* Phase 2: Main menu */}
+      {phase === "menu" && (
+        <MainMenu
+          onNewGame={() => {
+            resetGameState(); // Ensure a clean start
+            transitionTo("game");
+          }}
+          onContinue={handleContinue}
+          onLoadFromFile={handleLoadFromFile}
+        />
+      )}
+
+      {/* Phase 3: Main gameplay */}
+      {phase === "game" && (
+        <div className="game">
+          <StoryFlow
+            key={storyKey}
+            story={storyData}
+            savedStory={savedStory}
+            onStorySnapshot={handleStorySnapshotUpdate}
           />
-        )}
-
-        {/* Phase 3: Main gameplay */}
-        {phase === "game" && (
-          <div className="game">
-            <StoryFlow
-              key={storyKey}
-              story={storyData}
-              savedStory={savedStory}
-              onStorySnapshot={handleStorySnapshotUpdate}
-            />
-            <PlayerMenu
-              onQuickSave={handleQuickSave}
-              onQuickLoad={handleQuickLoad}
-              getStorySnapshot={() => storySnapshotRef.current?.()}
-              onExitToMenu={() => transitionTo("menu")}
-            />
-          </div>
-        )}
-      </div>
+          <PlayerMenu
+            onQuickSave={handleQuickSave}
+            onQuickLoad={handleQuickLoad}
+            getStorySnapshot={() => storySnapshotRef.current?.()}
+            onExitToMenu={() => transitionTo("menu")}
+          />
+        </div>
+      )}
     </div>
   );
 }
