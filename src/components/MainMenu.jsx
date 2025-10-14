@@ -15,7 +15,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { playMusic, stopMusic } = useAudio(); // Control background music
+  const { stopMusic } = useAudio(); // Stop background music before transitions
 
   // Check for an existing quick save once on mount
   useEffect(() => {

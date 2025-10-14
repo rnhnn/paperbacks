@@ -27,7 +27,6 @@ export default function GameScreen({ phase, transitionTo }) {
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
   const storySnapshotRef = useRef(() => null); // Stores a snapshot builder function
   const [transitioning, setTransitioning] = useState(false); // Tracks active screen fade
-  const [nextPhase, setNextPhase] = useState(null); // Temporarily holds the upcoming phase
 
   // Access context setters for full game reset
   const { setItems } = useInventory();
@@ -85,12 +84,11 @@ export default function GameScreen({ phase, transitionTo }) {
   const triggerTransition = async (targetPhase) => {
     if (transitioning) return; // Prevent overlap
     setTransitioning(true);
-    setNextPhase(targetPhase);
 
     // Wait for fade-out to complete
     await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
 
-    // Optional black hold
+    // Optional black hold before switching
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Switch to the new phase (fade-in starts immediately)

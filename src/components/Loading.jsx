@@ -1,6 +1,5 @@
 // Loading screen shown before the main menu
 import { useState, useEffect } from "react";
-import { useAudio } from "../contexts/AudioContext";
 import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
@@ -10,10 +9,7 @@ export default function Loading({ onComplete }) {
   // Track asset loading states
   const [fontReady, setFontReady] = useState(false); // True once pixel font is loaded
   const [ready, setReady] = useState(false); // True once assets and min time complete
-
   const { setLanguage } = useFlags(); // Control active language
-  const { playMusic } = useAudio(); // Control background music
-
   const MIN_TIME = 1500; // Minimum visible loading time
 
   // Load pixel font before any other assets
@@ -70,7 +66,7 @@ export default function Loading({ onComplete }) {
       // Wait remaining time to enforce minimum loading duration
       const elapsed = performance.now() - start;
       const delay = Math.max(0, MIN_TIME - elapsed);
-      setTimeout(() => setReady(true), delay);
+      setTimeout(setReady, delay, true);
     };
 
     preloadAssets();
