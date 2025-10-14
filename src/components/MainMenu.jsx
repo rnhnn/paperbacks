@@ -14,6 +14,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   const [fadeOut, setFadeOut] = useState(false);
   const [hasSave, setHasSave] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false); // Prevent multiple transitions
   const fileInputRef = useRef(null);
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
@@ -32,18 +33,26 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   // Run fade-out transition and stop music before invoking callback
   const runWithFade = useCallback(
     async (callback) => {
-      setFadeOut(true);
-      await stopMusic();
-      const timeout = setTimeout(callback, FADE_DURATION);
+      if (isTransitioning) return; // Ignore if already running
+      setIsTransitioning(true);
+      setFadeOut(true); // Start fade immediately
+      stopMusic(); // Run music fade in parallel
+
+      // Wait for visual fade duration, then perform transition
+      const timeout = setTimeout(() => {
+        callback();
+        setIsTransitioning(false); // Unlock after transition completes
+      }, FADE_DURATION);
+
       return () => clearTimeout(timeout);
     },
-    [stopMusic]
+    [stopMusic, isTransitioning]
   );
 
   // Open hidden file input to choose an external save
   const handleLoadGameClick = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
+    if (!isTransitioning) fileInputRef.current?.click();
+  }, [isTransitioning]);
 
   // Read external save file and validate its structure
   const handleFileChange = useCallback(
@@ -73,7 +82,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   // Render the main menu UI
   return (
-    <div className={`main-menu ${fadeOut ? "fade-out" : ""}`}>
+    <div
+      className={`main-menu ${fadeOut ? "fade-out" : ""}`}
+      style={fadeOut ? { pointerEvents: "none" } : {}}
+    >
       <h1 className="main-menu-title">{t("ui.mainMenu.title")}</h1>
 
       <div className="main-menu-options">
@@ -106,7 +118,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={() => setShowCredits(true)}
+          onClick={() => !isTransitioning && setShowCredits(true)}
         >
           {t("ui.mainMenu.credits")}
         </button>

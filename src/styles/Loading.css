@@ -18,7 +18,8 @@
 .language-select {
   display: flex;
   flex-direction: column;
-  gap: 0.6em;
+  align-items: center;
+  gap: 6px;
 }
 
 .language-button {
