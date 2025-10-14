@@ -28,6 +28,15 @@ export function AudioProvider({ children }) {
     } catch (err) {
       console.warn("Audio preload failed:", err);
     }
+
+    // Clean up audio reference on unmount or hot reload
+    return () => {
+      if (musicRef.current) {
+        musicRef.current.pause();
+        musicRef.current.src = "";
+        musicRef.current = null;
+      }
+    };
   }, []);
 
   // Smoothly interpolate volume to a target level
@@ -77,6 +86,22 @@ export function AudioProvider({ children }) {
     audio.currentTime = 0;
   };
 
+  // Fade out background music and pause at end
+  const fadeOutMusic = async () => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    await fade(0.0, 400);
+    audio.pause();
+  };
+
+  // Fade in background music and resume playback
+  const fadeInMusic = async () => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    if (audio.paused) await audio.play();
+    await fade(0.6, 400);
+  };
+
   // Play a short one-shot sound effect without interrupting music
   const playSfx = (name) => {
     const file = audioData.sfx?.[name];
@@ -89,8 +114,11 @@ export function AudioProvider({ children }) {
     sfx.play();
   };
 
+  // Expose controls globally
   return (
-    <AudioContext.Provider value={{ playMusic, stopMusic, playSfx }}>
+    <AudioContext.Provider
+      value={{ playMusic, stopMusic, fadeInMusic, fadeOutMusic, playSfx }}
+    >
       {children}
     </AudioContext.Provider>
   );

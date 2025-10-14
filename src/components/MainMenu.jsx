@@ -11,11 +11,16 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   // Track quick-save availability and credits visibility
   const [hasSave, setHasSave] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+
+  // Track audio mute and fullscreen states
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const fileInputRef = useRef(null);
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { stopMusic } = useAudio(); // Stop background music before transitions
+  const { stopMusic, fadeOutMusic, fadeInMusic } = useAudio(); // Control background music
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -57,6 +62,25 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     },
     [onLoadFromFile, stopMusic]
   );
+
+  // Toggle mute state and control background music
+  const handleMuteClick = useCallback(() => {
+    if (isMuted) {
+      fadeInMusic?.(); // Resume music if previously faded
+    } else {
+      fadeOutMusic?.(); // Fade out music smoothly
+    }
+    setIsMuted(!isMuted);
+  }, [isMuted, fadeOutMusic, fadeInMusic]);
+
+  // Toggle fullscreen mode for the browser
+  const handleFullscreenClick = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true));
+    } else {
+      document.exitFullscreen().then(() => setIsFullscreen(false));
+    }
+  }, []);
 
   // Render the main menu UI
   return (
@@ -111,6 +135,20 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
+      </div>
+
+      {/* Control buttons placed in bottom-right corner */}
+      <div className="main-menu-controls">
+        <button type="button" className="main-menu-util-button" onClick={handleMuteClick}>
+          {isMuted ? "Unmute" : "Mute"}
+        </button>
+        <button
+          type="button"
+          className="main-menu-util-button"
+          onClick={handleFullscreenClick}
+        >
+          {isFullscreen ? "Windowed" : "Fullscreen"}
+        </button>
       </div>
 
       {showCredits && (
