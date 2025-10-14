@@ -11,14 +11,17 @@ import Loading from "./Loading";
 import MainMenu from "./MainMenu";
 import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
-import ScreenTransition from "./ScreenTransition"; // Visual fade layer
-import "../styles/ScreenTransition.css"; // Transition styles
+import "../styles/ScreenTransition.css";
+import ScreenTransition from "./ScreenTransition";
 import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 
-// Local constant to match CSS fade timing
-const FADE_DURATION = 400;
+// Read CSS variable to stay in sync with transition timing
+const rootStyles = getComputedStyle(document.documentElement);
+const FADE_DURATION = parseFloat(
+  rootStyles.getPropertyValue("--fade-screen-duration")
+);
 
 export default function GameScreen({ phase, transitionTo }) {
   const { playMusic } = useAudio(); // Control background music

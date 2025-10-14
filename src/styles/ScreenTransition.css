@@ -5,7 +5,7 @@
   opacity: 0;
   pointer-events: none;
   z-index: 1000;
-  transition: opacity 0.4s ease-in-out;
+  transition: opacity var(--fade-screen-duration) ease-in-out;
 }
 
 .screen-transition.is-active {

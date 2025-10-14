@@ -1,6 +1,8 @@
 :root {
   --game-base-width: 960px;
   --game-base-height: 540px;
+
+  --fade-screen-duration: 400ms;
   
   --white: #f7f7f7;
   --black: #000000;
