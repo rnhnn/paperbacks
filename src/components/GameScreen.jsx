@@ -112,16 +112,13 @@ export default function GameScreen({ phase, transitionTo }) {
 
   // Transition logic
 
-  // Trigger fade-out → optional hold → phase switch → fade-in
+  // Trigger fade-out → phase switch → fade-in
   const triggerTransition = async (targetPhase) => {
     if (transitioning) return; // Prevent overlap
     setTransitioning(true);
 
     // Wait for fade-out to complete
     await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
-
-    // Optional black hold before switching
-    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Wait for music fade-out before switching phase
     if (phase === "menu") await stopMusic();
