@@ -1,3 +1,27 @@
 .window-credits {
   text-align: center;
+  padding-top: 50px;
+}
+
+/* Scrollable container inside credits window */
+.credits-scroll {
+  overflow-y: auto;
+  padding-right: 8px; /* Space so arrows don’t overlap text */
+  position: relative;
+}
+
+/* Optional fine-tune for inner sections */
+.credits-scroll section {
+  margin-bottom: 20px;
+}
+
+.credits-footer {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.window-credits-section-header {
+  margin: 0;
 }

@@ -85,3 +85,12 @@ ol {
   0px 6px
 );
 }
+
+/* Hide native scrollbars globally but preserve scroll behavior */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}

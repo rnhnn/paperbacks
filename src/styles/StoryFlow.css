@@ -12,7 +12,6 @@
 .story-flow-content {
   position: relative;
   overflow-y: auto;
-  scrollbar-width: none;
   margin-bottom: 30px;
 }
 

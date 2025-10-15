@@ -7,6 +7,8 @@ import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import useText from "../hooks/useText"; // Added: hook for localized text
+import useScrollArrows from "../hooks/useScrollArrows"; // Added
+import "../styles/ScrollArrows.css"; // Added
 
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
@@ -45,6 +47,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
   // Ref to the scrollable container to auto-scroll on new content
   const contentRef = useRef(null);
+
+  // Enable custom scroll arrows for this story log
+  useScrollArrows(contentRef, { step: 24 });
 
   // Access gameplay mutation hooks for inventory, notes, and flags
   const { addItem, removeItem } = useInventory();
@@ -328,7 +333,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
   // Render the story UI with portrait, content feed, and progression controls
   return (
-    <div className="story-flow">
+    <div className="story-flow has-scroll-parent">
       {/* Portrait of the last speaking character */}
       {lastPortraitBlock && (
         <div className="story-flow-portrait">
@@ -346,7 +351,7 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
         </div>
       )}
 
-      <div className="story-flow-content" ref={contentRef}>
+      <div className="story-flow-content has-scroll" ref={contentRef}>
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1; // Mark last block for subtle emphasis
           const cls = `story-flow-node${isCurrent ? " is-current" : ""}`;
