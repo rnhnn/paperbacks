@@ -27,15 +27,39 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return;
     audio.currentTime = 0;
+    audio.volume = 1.0;
     audio.play().catch(() => {});
   };
 
-  // Stop any active background music
+  // Gradually fade out and stop music
   const stopMusic = () => {
     const audio = musicRef.current;
     if (!audio) return;
-    audio.pause();
-    audio.currentTime = 0;
+
+    // Define fade duration and frame rate
+    const FADE_DURATION = 800; // ms
+    const STEP_INTERVAL = 50; // ms between volume steps
+    const steps = FADE_DURATION / STEP_INTERVAL;
+    const volumeStep = audio.volume / steps;
+
+    // Perform fade using interval
+    const fade = setInterval(() => {
+      if (!audio) {
+        clearInterval(fade);
+        return;
+      }
+
+      // Decrease volume until silent
+      audio.volume = Math.max(0, audio.volume - volumeStep);
+
+      // Stop and reset once volume is near zero
+      if (audio.volume <= 0.01) {
+        clearInterval(fade);
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 1.0;
+      }
+    }, STEP_INTERVAL);
   };
 
   return (
