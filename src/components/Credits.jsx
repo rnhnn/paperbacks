@@ -23,30 +23,30 @@ export default function Credits({ onClose }) {
       </button>
 
       {/* Scrollable content area */}
-      <div ref={scrollRef} className="credits-scroll has-scroll">
-        <section className="window-credits-section">
-          <h3 className="window-credits-section-header">{t("credits.sections.writing")}</h3>
-          <p className="window-credits-section-entry">{t("credits.names.rolando")}</p>
+      <div ref={scrollRef} className="window-credits-content has-scroll">
+        <section className="window-credits-content-section">
+          <h3 className="window-credits-content-section-header">{t("credits.sections.writing")}</h3>
+          <p className="window-credits-content-section-entry">{t("credits.names.rolando")}</p>
         </section>
 
-        <section className="window-credits-section">
-          <h3 className="window-credits-section-header">{t("credits.sections.editing")}</h3>
-          <p className="window-credits-section-entry">{t("credits.names.valentina")}</p>
+        <section className="window-credits-content-section">
+          <h3 className="window-credits-content-section-header">{t("credits.sections.editing")}</h3>
+          <p className="window-credits-content-section-entry">{t("credits.names.valentina")}</p>
         </section>
 
-        <section className="window-credits-section">
-          <h3 className="window-credits-section-header">{t("credits.sections.music")}</h3>
-          <p className="window-credits-section-entry">{t("credits.musicInfo.title")}</p>
-          <p className="window-credits-section-entry">{t("credits.musicInfo.site")}</p>
-          <p className="window-credits-section-entry">{t("credits.musicInfo.license")}</p>
+        <section className="window-credits-content-section">
+          <h3 className="window-credits-content-section-header">{t("credits.sections.music")}</h3>
+          <p className="window-credits-content-section-entry">{t("credits.musicInfo.title")}</p>
+          <p className="window-credits-content-section-entry">{t("credits.musicInfo.site")}</p>
+          <p className="window-credits-content-section-entry">{t("credits.musicInfo.license")}</p>
         </section>
 
-        <section className="window-credits-section">
-          <h3 className="window-credits-section-header">{t("credits.sections.specialThanks")}</h3>
-          <p className="window-credits-section-entry">{t("credits.specialThanks")}</p>
+        <section className="window-credits-content-section">
+          <h3 className="window-credits-content-section-header">{t("credits.sections.specialThanks")}</h3>
+          <p className="window-credits-content-section-entry">{t("credits.specialThanks")}</p>
         </section>
 
-        <p className="credits-footer">{t("credits.copyright")}</p>
+        <p className="window-credits-content-footer">{t("credits.copyright")}</p>
       </div>
     </div>
   );
