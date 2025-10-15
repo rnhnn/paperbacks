@@ -42,7 +42,9 @@ export default function Options({
 
           {/* Toggle fullscreen mode */}
           <button onClick={toggleFullscreen} className="window-buttons-item">
-            {isFullscreen ? "Windowed" : "Fullscreen"}
+            {isFullscreen
+              ? t("ui.optionsWindow.windowed")
+              : t("ui.optionsWindow.fullscreen")}
           </button>
         </div>
       </div>

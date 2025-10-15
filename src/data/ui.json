@@ -44,7 +44,10 @@
     "quickSave": "Quick Save",
     "quickLoad": "Quick Load",
     "exportSave": "Export Save File",
-    "importSave": "Import Save File"
+    "importSave": "Import Save File",
+    "fullscreen": "Fullscreen",
+    "windowed": "Windowed"
+
   },
   "exitWindow": {
     "title": "Exit Game",

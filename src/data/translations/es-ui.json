@@ -30,6 +30,8 @@
   "optionsWindow.quickLoad": "Cargar rápido",
   "optionsWindow.exportSave": "Exportar partida",
   "optionsWindow.importSave": "Importar partida",
+  "optionsWindow.fullscreen": "Pantalla completa",
+  "optionsWindow.windowed": "Ventana",
   "exitWindow.title": "Salir del juego",
   "exitWindow.message": "¿Seguro que quieres volver al menú principal?",
   "exitWindow.confirm": "Sí",
