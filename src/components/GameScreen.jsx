@@ -56,7 +56,8 @@ export default function GameScreen({ phase, transitionTo }) {
 
     // Clear pending timeout when leaving menu early
     return () => clearTimeout(timeoutId);
-  }, [phase, playMainMenuMusic, stopMusic]);
+  // Intentionally depend only on phase to avoid restarting music on mute toggles
+  }, [phase]); 
 
   // Game setup helpers
 
