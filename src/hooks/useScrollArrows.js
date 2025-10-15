@@ -1,53 +1,44 @@
-// Add scroll arrows to a scrollable element
+// Add vertical scroll arrows to a scrollable element
 import { useEffect } from "react";
 
 export default function useScrollArrows(ref, options = {}) {
-  // Configure scroll step and hold timing
-  const step = options.step || 24;
-  const holdDelay = options.holdDelay || 150;
-  const speed = options.speed || 220; // Pixels per second while holding
-  const initDelay = options.initDelay || 400; // Wait before first visibility check
+  // Configuration
+  const {
+    step = 24, // Distance for single click
+    holdDelay = 150, // Delay before continuous scroll
+    speed = 220, // Pixels per second while holding
+    initDelay = 400, // Wait before first visibility check
+  } = options;
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // Find nearest scroll parent (has-scroll-parent)
+    // Locate visual parent (arrows stay fixed relative to it)
     const scrollParent = el.closest(".has-scroll-parent") || el.parentElement;
     if (!scrollParent) return;
 
-    // Create arrow elements
-    const upBtn = document.createElement("button");
-    const downBtn = document.createElement("button");
-
-    // Apply shared classes
-    upBtn.className = "has-scroll-arrow has-scroll-arrow--up";
-    downBtn.className = "has-scroll-arrow has-scroll-arrow--down";
-    upBtn.setAttribute("aria-label", "Scroll up");
-    downBtn.setAttribute("aria-label", "Scroll down");
-
-    // Start hidden to prevent flash before first update
-    upBtn.style.display = "none";
-    downBtn.style.display = "none";
-
-    // Append to scroll parent (not the scrolling content)
-    scrollParent.appendChild(upBtn);
-    scrollParent.appendChild(downBtn);
-
-    // Scroll instantly by offset (used during hold)
-    const scrollInstant = (offset) => {
-      el.scrollTop = el.scrollTop + offset;
+    // Helper: create arrow button
+    const makeArrow = (cls, label) => {
+      const btn = document.createElement("button");
+      btn.className = `has-scroll-arrow ${cls}`;
+      btn.setAttribute("aria-label", label);
+      btn.style.display = "none"; // Start hidden to avoid flash
+      scrollParent.appendChild(btn);
+      return btn;
     };
 
-    // Scroll smoothly by offset (used for single click)
-    const scrollSmooth = (offset) => {
+    const upBtn = makeArrow("has-scroll-arrow--up", "Scroll up");
+    const downBtn = makeArrow("has-scroll-arrow--down", "Scroll down");
+
+    // Helper: instant and smooth scrolling
+    const scrollInstant = (offset) => (el.scrollTop += offset);
+    const scrollSmooth = (offset) =>
       el.scrollBy({ top: offset, behavior: "smooth" });
-    };
 
-    // Attach pointer-driven click and hold behavior
-    const attachPointerScroll = (btn, direction) => {
-      let rafId = null;
-      let holdTimer = null;
+    // Attach pointer and hold behavior
+    const attachHoldScroll = (btn, direction) => {
+      let rafId, holdTimer;
       let holding = false;
       let lastTs = 0;
       let downTs = 0;
@@ -57,79 +48,70 @@ export default function useScrollArrows(ref, options = {}) {
         if (!lastTs) lastTs = ts;
         const dt = (ts - lastTs) / 1000;
         lastTs = ts;
-        const delta = direction * speed * dt;
-        scrollInstant(delta);
+        scrollInstant(direction * speed * dt);
         rafId = requestAnimationFrame(tick);
       };
 
-      const onPointerDown = (e) => {
+      const stop = () => {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+        if (holding) cancelAnimationFrame(rafId);
+        holding = false;
+      };
+
+      const onDown = (e) => {
         e.preventDefault();
         downTs = performance.now();
-        lastTs = 0;
         holding = false;
-
         holdTimer = setTimeout(() => {
           holding = true;
+          lastTs = 0;
           rafId = requestAnimationFrame(tick);
         }, holdDelay);
 
-        window.addEventListener("pointerup", onPointerUp, { passive: true });
-        window.addEventListener("pointercancel", onPointerUp, { passive: true });
-        window.addEventListener("blur", onPointerUp, { passive: true });
+        window.addEventListener("pointerup", onUp, { passive: true });
+        window.addEventListener("pointercancel", onUp, { passive: true });
+        window.addEventListener("blur", onUp, { passive: true });
       };
 
-      const onPointerUp = () => {
-        clearTimeout(holdTimer);
-        holdTimer = null;
-
-        if (holding) {
-          holding = false;
-          if (rafId) cancelAnimationFrame(rafId);
-          rafId = null;
-        } else {
-          const elapsed = performance.now() - downTs;
-          if (elapsed < holdDelay + 50) {
-            scrollSmooth(direction * step);
-          }
-        }
-
-        window.removeEventListener("pointerup", onPointerUp);
-        window.removeEventListener("pointercancel", onPointerUp);
-        window.removeEventListener("blur", onPointerUp);
+      const onUp = () => {
+        const elapsed = performance.now() - downTs;
+        stop();
+        if (elapsed < holdDelay + 50) scrollSmooth(direction * step);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointercancel", onUp);
+        window.removeEventListener("blur", onUp);
       };
 
-      btn.addEventListener("pointerdown", onPointerDown);
-      btn.addEventListener("pointerleave", () => {
-        if (holding) onPointerUp();
-      });
+      btn.addEventListener("pointerdown", onDown);
+      btn.addEventListener("pointerleave", stop);
 
+      // Cleanup
       return () => {
-        btn.removeEventListener("pointerdown", onPointerDown);
-        btn.removeEventListener("pointerleave", onPointerUp);
-        window.removeEventListener("pointerup", onPointerUp);
-        window.removeEventListener("pointercancel", onPointerUp);
-        window.removeEventListener("blur", onPointerUp);
-        if (rafId) cancelAnimationFrame(rafId);
-        if (holdTimer) clearTimeout(holdTimer);
+        btn.removeEventListener("pointerdown", onDown);
+        btn.removeEventListener("pointerleave", stop);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointercancel", onUp);
+        window.removeEventListener("blur", onUp);
+        stop();
       };
     };
 
-    // Attach scrolling logic
-    const cleanupUp = attachPointerScroll(upBtn, -1);
-    const cleanupDown = attachPointerScroll(downBtn, +1);
+    const cleanupUp = attachHoldScroll(upBtn, -1);
+    const cleanupDown = attachHoldScroll(downBtn, +1);
 
-    // Update arrow visibility
+    // Update visibility based on scroll position
     const updateArrows = () => {
       const { scrollTop, scrollHeight, clientHeight } = el;
       const hasScroll = scrollHeight > clientHeight + 1;
-      const atTop = scrollTop <= 0;
-      const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
       if (!hasScroll) {
         upBtn.style.display = "none";
         downBtn.style.display = "none";
         return;
       }
+
+      const atTop = scrollTop <= 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
       upBtn.style.display = "flex";
       downBtn.style.display = "flex";
@@ -141,16 +123,17 @@ export default function useScrollArrows(ref, options = {}) {
       downBtn.style.opacity = atBottom ? "0" : "1";
     };
 
-    // Observe scroll and layout
+    // Observe scroll, resize, and mutations
     el.addEventListener("scroll", updateArrows);
     const resizeObs = new ResizeObserver(updateArrows);
-    resizeObs.observe(el);
     const mutationObs = new MutationObserver(updateArrows);
+    resizeObs.observe(el);
     mutationObs.observe(el, { childList: true, subtree: true });
 
-    // Delay first visibility update to avoid startup flash
+    // Initial delayed visibility check to avoid flash
     const initTimer = setTimeout(updateArrows, initDelay);
 
+    // Cleanup everything
     return () => {
       clearTimeout(initTimer);
       el.removeEventListener("scroll", updateArrows);
@@ -161,5 +144,5 @@ export default function useScrollArrows(ref, options = {}) {
       upBtn.remove();
       downBtn.remove();
     };
-  }, [ref, step, holdDelay, speed]);
+  }, [ref, step, holdDelay, speed, initDelay]);
 }
