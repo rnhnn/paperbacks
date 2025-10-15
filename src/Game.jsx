@@ -9,7 +9,6 @@ import { InventoryProvider } from "./contexts/InventoryContext";
 import { NotesProvider } from "./contexts/NotesContext";
 import { FlagsProvider } from "./contexts/FlagsContext";
 import { SaveSystemProvider } from "./contexts/SaveSystemContext";
-import { AudioProvider } from "./contexts/AudioContext";
 
 // Hooks and components
 import useGameScale from "./hooks/useGameScale";
@@ -31,9 +30,7 @@ export default function Game() {
       <InventoryProvider>
         <NotesProvider>
           <SaveSystemProvider>
-            <AudioProvider>
-              <GameScreen phase={phase} transitionTo={transitionTo} />
-            </AudioProvider>
+            <GameScreen phase={phase} transitionTo={transitionTo} />
           </SaveSystemProvider>
         </NotesProvider>
       </InventoryProvider>

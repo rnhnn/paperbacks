@@ -4,7 +4,6 @@ import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
-import { useAudio } from "../contexts/AudioContext";
 
 // Components and data
 import Loading from "./Loading";
@@ -24,7 +23,6 @@ const FADE_DURATION = parseFloat(
 );
 
 export default function GameScreen({ phase, transitionTo }) {
-  const { playMusic } = useAudio(); // Control background music
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
   const [savedStory, setSavedStory] = useState(null); // Holds the current or loaded story
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
@@ -102,17 +100,6 @@ export default function GameScreen({ phase, transitionTo }) {
 
     setTransitioning(false); // Allow new transitions
   };
-
-  // --- Delayed music start just for main menu --------------------------------
-  useEffect(() => {
-    if (phase === "menu") {
-      // Run AFTER the menu is visible; delay can be adjusted freely
-      const timer = setTimeout(() => {
-        playMusic("mainMenu");
-      }, 350); // <-- Control this delay directly
-      return () => clearTimeout(timer);
-    }
-  }, [phase, playMusic]);
 
   // --- Render phases ---------------------------------------------------------
   return (

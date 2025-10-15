@@ -1,7 +1,6 @@
 // Main menu displayed after the loading screen
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
-import { useAudio } from "../contexts/AudioContext";
 import useText from "../hooks/useText";
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
@@ -12,16 +11,13 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   const [hasSave, setHasSave] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
 
-  // Track audio mute and fullscreen states
-  const [isMuted, setIsMuted] = useState(false);
+  // Track fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const fileInputRef = useRef(null);
-  const muteLock = useRef(false); // Prevent rapid spamming during fade
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { stopMusic, fadeOutMusic, fadeInMusic, isMuted: contextMuted } = useAudio(); // Control background music
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -30,20 +26,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     } catch (err) {
       console.warn("Could not access localStorage:", err);
     }
-
-    // Read mute preference from localStorage
-    try {
-      const savedMute = localStorage.getItem("paperbacks_audio_muted") === "true";
-      setIsMuted(savedMute);
-    } catch {
-      console.warn("Could not read mute preference");
-    }
   }, [storageKey]);
-
-  // Keep local mute state in sync with global audio context
-  useEffect(() => {
-    setIsMuted(contextMuted);
-  }, [contextMuted]);
 
   // Open hidden file input to choose an external save
   const handleLoadGameClick = useCallback(() => {
@@ -66,7 +49,6 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         }
 
         console.log("Loaded save from file:", data);
-        await fadeOutMusic?.(true); // Fade out music before loading
         onLoadFromFile(data);
       } catch (err) {
         console.error("Failed to read save file:", err);
@@ -74,35 +56,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         e.target.value = ""; // Allow selecting the same file again
       }
     },
-    [onLoadFromFile, fadeOutMusic]
+    [onLoadFromFile]
   );
 
-  // Toggle mute state and control background music
-  const handleMuteClick = useCallback(async () => {
-    if (muteLock.current) return; // Ignore repeated clicks during transition
-    muteLock.current = true;
-
-    if (isMuted) {
-      await fadeInMusic?.(); // Resume music if previously faded
-      setIsMuted(false);
-      try {
-        localStorage.setItem("paperbacks_audio_muted", "false");
-      } catch {}
-    } else {
-      await fadeOutMusic?.(); // Fade out music smoothly and pause
-      setIsMuted(true);
-      try {
-        localStorage.setItem("paperbacks_audio_muted", "true");
-      } catch {}
-    }
-
-    // Unlock after fade completes
-    setTimeout(() => {
-      muteLock.current = false;
-    }, 450);
-  }, [isMuted, fadeOutMusic, fadeInMusic]);
-
-  // Toggle fullscreen mode for the browser
+  // Handle fullscreen mode for the browser
   const handleFullscreenClick = useCallback(() => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().then(() => setIsFullscreen(true));
@@ -110,17 +67,6 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       document.exitFullscreen().then(() => setIsFullscreen(false));
     }
   }, []);
-
-  // Handle transitions that require stopping or fading out music
-  const handleNewGame = useCallback(async () => {
-    await fadeOutMusic?.(true); // Smoothly fade out before transition
-    onNewGame();
-  }, [fadeOutMusic, onNewGame]);
-
-  const handleContinue = useCallback(async () => {
-    await fadeOutMusic?.(true); // Smoothly fade out before transition
-    onContinue();
-  }, [fadeOutMusic, onContinue]);
 
   // Render the main menu UI
   return (
@@ -132,7 +78,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           <button
             type="button"
             className="main-menu-button"
-            onClick={handleContinue}
+            onClick={onContinue}
           >
             {t("ui.mainMenu.continue")}
           </button>
@@ -141,7 +87,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={handleNewGame}
+          onClick={onNewGame}
         >
           {t("ui.mainMenu.newGame")}
         </button>
@@ -176,9 +122,9 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-controls-button"
-          onClick={handleMuteClick}
+          // Mute button currently inactive (to be wired later)
         >
-          {isMuted ? "Unmute" : "Mute"}
+          Mute
         </button>
         <button
           type="button"
