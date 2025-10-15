@@ -4,6 +4,7 @@ import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
+import { useAudio } from "../contexts/AudioContext"; // Access global audio control
 
 // Components and data
 import Loading from "./Loading";
@@ -34,12 +35,26 @@ export default function GameScreen({ phase, transitionTo }) {
   const { setNotes } = useNotes();
   const { setFlags } = useFlags();
 
-  // --- Game setup helpers -----------------------------------------------------
+  // Access global audio control
+  const { playMainMenuMusic, stopMusic } = useAudio();
 
+  // Play or stop main menu music based on current phase
+  useEffect(() => {
+    if (phase === "menu") {
+      playMainMenuMusic();
+    } else {
+      stopMusic();
+    }
+  }, [phase, playMainMenuMusic, stopMusic]);
+
+  // Game setup helpers
+
+  // Store StoryFlow snapshot builder reference
   const handleStorySnapshotUpdate = (fn) => {
     storySnapshotRef.current = fn;
   };
 
+  // Load story from quick save
   const handleQuickLoad = () => {
     const storySlice = quickLoad();
     if (storySlice) {
@@ -48,6 +63,7 @@ export default function GameScreen({ phase, transitionTo }) {
     }
   };
 
+  // Save current story snapshot
   const handleQuickSave = () => {
     try {
       const snapshot = storySnapshotRef.current?.();
@@ -57,11 +73,13 @@ export default function GameScreen({ phase, transitionTo }) {
     }
   };
 
+  // Continue game from quick save
   const handleContinue = () => {
     handleQuickLoad();
     triggerTransition("game");
   };
 
+  // Load external save file
   const handleLoadFromFile = (data) => {
     if (data.story) {
       setSavedStory(data.story);
@@ -70,6 +88,7 @@ export default function GameScreen({ phase, transitionTo }) {
     triggerTransition("game");
   };
 
+  // Reset game state to JSON defaults
   const resetGameState = () => {
     setItems(itemsData.map((it) => ({ ...it, acquired: !!it.acquired })));
     setNotes(notesData.map((n) => ({ ...n, unlocked: !!n.unlocked })));
@@ -79,7 +98,7 @@ export default function GameScreen({ phase, transitionTo }) {
     console.log("Game state reset to JSON defaults (localStorage preserved)");
   };
 
-  // --- Transition logic ------------------------------------------------------
+  // Transition logic
 
   // Trigger fade-out → optional hold → phase switch → fade-in
   const triggerTransition = async (targetPhase) => {
@@ -101,7 +120,7 @@ export default function GameScreen({ phase, transitionTo }) {
     setTransitioning(false); // Allow new transitions
   };
 
-  // --- Render phases ---------------------------------------------------------
+  // Render phases
   return (
     <div className="game-screen">
       {/* Phase 1: Loading assets */}

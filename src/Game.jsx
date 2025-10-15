@@ -12,6 +12,7 @@ import { SaveSystemProvider } from "./contexts/SaveSystemContext";
 
 // Hooks and components
 import useGameScale from "./hooks/useGameScale";
+import { AudioProvider } from "./contexts/AudioContext";
 import GameScreen from "./components/GameScreen";
 
 export default function Game() {
@@ -26,14 +27,16 @@ export default function Game() {
 
   // Wrap app with all global state providers
   return (
-    <FlagsProvider>
-      <InventoryProvider>
-        <NotesProvider>
-          <SaveSystemProvider>
-            <GameScreen phase={phase} transitionTo={transitionTo} />
-          </SaveSystemProvider>
-        </NotesProvider>
-      </InventoryProvider>
-    </FlagsProvider>
+    <AudioProvider>
+      <FlagsProvider>
+        <InventoryProvider>
+          <NotesProvider>
+            <SaveSystemProvider>
+              <GameScreen phase={phase} transitionTo={transitionTo} />
+            </SaveSystemProvider>
+          </NotesProvider>
+        </InventoryProvider>
+      </FlagsProvider>
+    </AudioProvider>
   );
 }
