@@ -29,6 +29,12 @@ export function AudioProvider({ children }) {
     audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     musicRef.current = audio;
+
+    // Clean up on unmount
+    return () => {
+      audio.pause();
+      musicRef.current = null;
+    };
   }, []);
 
   // Update volume and persist mute setting when state changes
