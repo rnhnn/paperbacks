@@ -1,5 +1,5 @@
 // Provide global audio access and playback control
-import { createContext, useContext, useRef, useEffect } from "react";
+import { createContext, useContext, useRef, useEffect, useState } from "react";
 import audioData from "../data/audio.json";
 
 const AudioContext = createContext();
@@ -7,6 +7,15 @@ const AudioContext = createContext();
 export function AudioProvider({ children }) {
   // Keep a single Audio object for background music
   const musicRef = useRef(null);
+
+  // Track mute state and persist in localStorage
+  const [isMuted, setIsMuted] = useState(() => {
+    try {
+      return localStorage.getItem("audioMuted") === "true";
+    } catch {
+      return false;
+    }
+  });
 
   // Load the main menu track once
   useEffect(() => {
@@ -17,17 +26,28 @@ export function AudioProvider({ children }) {
     }
     const audio = new Audio(`/assets/audio/${track}`);
     audio.loop = true;
-    audio.volume = 1.0;
+    audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     musicRef.current = audio;
   }, []);
+
+  // Update volume and persist mute setting when state changes
+  useEffect(() => {
+    const audio = musicRef.current;
+    if (audio) {
+      audio.volume = isMuted ? 0 : 1.0;
+    }
+    try {
+      localStorage.setItem("audioMuted", isMuted);
+    } catch {}
+  }, [isMuted]);
 
   // Start playing main menu track from the beginning
   const playMainMenuMusic = () => {
     const audio = musicRef.current;
     if (!audio) return;
     audio.currentTime = 0;
-    audio.volume = 1.0;
+    audio.volume = isMuted ? 0 : 1.0;
     audio.play().catch(() => {});
   };
 
@@ -59,15 +79,22 @@ export function AudioProvider({ children }) {
           clearInterval(fade);
           audio.pause();
           audio.currentTime = 0;
-          audio.volume = 1.0;
+          audio.volume = isMuted ? 0 : 1.0;
           resolve();
         }
       }, STEP_INTERVAL);
     });
   };
 
+  // Toggle mute on or off
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+  };
+
   return (
-    <AudioContext.Provider value={{ playMainMenuMusic, stopMusic }}>
+    <AudioContext.Provider
+      value={{ playMainMenuMusic, stopMusic, isMuted, toggleMute }}
+    >
       {children}
     </AudioContext.Provider>
   );

@@ -1,6 +1,7 @@
 // Main menu displayed after the loading screen
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
+import { useAudio } from "../contexts/AudioContext"; // Access global audio mute control
 import useText from "../hooks/useText";
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
@@ -18,6 +19,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
+  const { isMuted, toggleMute } = useAudio(); // Track and toggle global mute state
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -122,9 +124,9 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-controls-button"
-          // Mute button currently inactive (to be wired later)
+          onClick={toggleMute}
         >
-          Mute
+          {isMuted ? "Unmute" : "Mute"}
         </button>
         <button
           type="button"
