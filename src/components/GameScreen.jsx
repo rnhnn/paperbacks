@@ -23,6 +23,9 @@ const FADE_DURATION = parseFloat(
   rootStyles.getPropertyValue("--fade-screen-duration")
 );
 
+// Define delay before main menu music starts
+const MUSIC_DELAY = 350; // ms
+
 export default function GameScreen({ phase, transitionTo }) {
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
   const [savedStory, setSavedStory] = useState(null); // Holds the current or loaded story
@@ -40,11 +43,19 @@ export default function GameScreen({ phase, transitionTo }) {
 
   // Play or stop main menu music based on current phase
   useEffect(() => {
+    let timeoutId;
+
     if (phase === "menu") {
-      playMainMenuMusic();
+      // Delay main menu music start
+      timeoutId = setTimeout(() => {
+        playMainMenuMusic();
+      }, MUSIC_DELAY);
     } else {
       stopMusic();
     }
+
+    // Clear pending timeout when leaving menu early
+    return () => clearTimeout(timeoutId);
   }, [phase, playMainMenuMusic, stopMusic]);
 
   // Game setup helpers
