@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useAudio } from "../contexts/AudioContext"; // Access global audio mute control
+import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
 import useText from "../hooks/useText";
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
@@ -12,14 +13,12 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   const [hasSave, setHasSave] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
 
-  // Track fullscreen state
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
   const fileInputRef = useRef(null);
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
   const { isMuted, toggleMute } = useAudio(); // Track and toggle global mute state
+  const { isFullscreen, toggleFullscreen } = useFullscreen(); // Track and toggle fullscreen state
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -61,16 +60,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
     [onLoadFromFile]
   );
 
-  // Handle fullscreen mode for the browser
-  const handleFullscreenClick = useCallback(() => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true));
-    } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false));
-    }
-  }, []);
-
-  // Render the main menu UI
+  // Render main menu interface
   return (
     <div className="main-menu">
       <h1 className="main-menu-title">{t("ui.mainMenu.title")}</h1>
@@ -119,7 +109,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         />
       </div>
 
-      {/* Control buttons placed in bottom-right corner */}
+      {/* Place control buttons in bottom-right corner */}
       <div className="main-menu-controls">
         <button
           type="button"
@@ -131,7 +121,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-controls-button"
-          onClick={handleFullscreenClick}
+          onClick={toggleFullscreen}
         >
           {isFullscreen ? "Windowed" : "Fullscreen"}
         </button>

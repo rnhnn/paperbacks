@@ -1,6 +1,7 @@
 // Options window with save and load controls
 import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
+import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
 import "../styles/Options.css";
 
 export default function Options({
@@ -11,6 +12,7 @@ export default function Options({
   onImportSave,
 }) {
   const { t } = useText();
+  const { isFullscreen, toggleFullscreen } = useFullscreen(); // Track and toggle fullscreen state
 
   // Render a modal window with quick save, load, and file management options
   return (
@@ -36,6 +38,11 @@ export default function Options({
           </button>
           <button onClick={onImportSave} className="window-buttons-item">
             {t("ui.optionsWindow.importSave")}
+          </button>
+
+          {/* Toggle fullscreen mode */}
+          <button onClick={toggleFullscreen} className="window-buttons-item">
+            {isFullscreen ? "Windowed" : "Fullscreen"}
           </button>
         </div>
       </div>
