@@ -111,6 +111,9 @@ export default function GameScreen({ phase, transitionTo }) {
     // Optional black hold before switching
     await new Promise((resolve) => setTimeout(resolve, 300));
 
+    // Wait for music fade-out before switching phase
+    if (phase === "menu") await stopMusic();
+
     // Switch to the new phase (fade-in starts immediately)
     transitionTo(targetPhase);
 
