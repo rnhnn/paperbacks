@@ -45,11 +45,14 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
   // Gate user input when a choice is visible to prevent accidental progression
   const [waitingChoice, setWaitingChoice] = useState(false);
 
+  // Track whether autoscrolling is in progress
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+
   // Ref to the scrollable container to auto-scroll on new content
   const contentRef = useRef(null);
 
   // Enable custom scroll arrows for this story log
-  useScrollArrows(contentRef, { step: 24 });
+  useScrollArrows(contentRef, { step: 24, isAutoScrolling });
 
   // Access gameplay mutation hooks for inventory, notes, and flags
   const { addItem, removeItem } = useInventory();
@@ -223,9 +226,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     const frozenBlock =
       nodeToRender.type === "characterDialogue"
         ? {
-            ...nodeToRender,
-            _frozenCharacter: resolveCharacter(nodeToRender.character),
-          }
+          ...nodeToRender,
+          _frozenCharacter: resolveCharacter(nodeToRender.character),
+        }
         : nodeToRender;
 
     // Append block while keeping only the last N items for performance
@@ -309,13 +312,21 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     }
   };
 
-  // Keep the latest content in view by scrolling to bottom on new render
+  // Auto-scroll to bottom when new blocks are rendered
   useEffect(() => {
-    if (contentRef.current)
-      contentRef.current.scrollTo({
-        top: contentRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (!contentRef.current) return;
+
+    // Mark autoscrolling as active to hide bottom arrow
+    setIsAutoScrolling(true);
+
+    contentRef.current.scrollTo({
+      top: contentRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+
+    // Restore arrow visibility after scroll settles
+    const timer = setTimeout(() => setIsAutoScrolling(false), 600);
+    return () => clearTimeout(timer);
   }, [renderedBlocks]);
 
   // Pick the most recent block with a portrait to display in the side panel
