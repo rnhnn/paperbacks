@@ -31,14 +31,12 @@ export function AudioProvider({ children }) {
     audio.preload = "auto"; // Request early download during loading
     musicRef.current = audio;
 
-    // Force immediate buffering for extra reliability
     try {
       audio.load(); // Starts network request even before play()
     } catch (err) {
       console.warn("Audio preload failed:", err);
     }
 
-    // Clean up audio reference on unmount or hot reload
     return () => {
       if (musicRef.current) {
         musicRef.current.pause();
@@ -46,6 +44,14 @@ export function AudioProvider({ children }) {
         musicRef.current = null;
       }
     };
+    // Run once: do NOT depend on isMuted
+  }, []);
+
+  // Keep volume in sync with mute preference without recreating the element
+  useEffect(() => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    audio.volume = isMuted ? 0 : 0.6;
   }, [isMuted]);
 
   // Smoothly interpolate volume to a target level
@@ -76,13 +82,26 @@ export function AudioProvider({ children }) {
       return;
     }
 
+    // Always reset when switching or resuming menu
     if (!audio.src.endsWith(file)) {
       audio.src = `/assets/audio/${file}`;
       audio.load();
+      audio.currentTime = 0;
+    } else if (name === "mainMenu") {
+      audio.currentTime = 0;
     }
 
+    // Respect mute state before playing
     audio.volume = isMuted ? 0 : 0.6;
-    if (audio.paused) await audio.play();
+
+    // Only start playback if not muted
+    if (!isMuted && audio.paused) {
+      try {
+        await audio.play();
+      } catch (err) {
+        console.warn("Audio play failed:", err);
+      }
+    }
   };
 
   // Fade out and stop current background track
@@ -94,28 +113,23 @@ export function AudioProvider({ children }) {
     audio.currentTime = 0;
   };
 
-  // Fade out background music and pause at end
-  const fadeOutMusic = async () => {
+  // Fade out background music (used for transitions, not muting)
+  const fadeOutMusic = async (resetAfter = false) => {
     const audio = musicRef.current;
     if (!audio) return;
     await fade(0.0, 400);
-    audio.pause();
-    setIsMuted(true);
-    try {
-      localStorage.setItem("paperbacks_audio_muted", "true");
-    } catch {}
+    if (resetAfter) {
+      audio.pause();
+      audio.currentTime = 0; // Ensures restart next time
+    }
   };
 
-  // Fade in background music and resume playback
+  // Fade in background music (used when resuming or returning to menu)
   const fadeInMusic = async () => {
     const audio = musicRef.current;
     if (!audio) return;
     if (audio.paused) await audio.play();
     await fade(0.6, 400);
-    setIsMuted(false);
-    try {
-      localStorage.setItem("paperbacks_audio_muted", "false");
-    } catch {}
   };
 
   // Play a short one-shot sound effect without interrupting music

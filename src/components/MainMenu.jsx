@@ -21,7 +21,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { stopMusic, fadeOutMusic, fadeInMusic } = useAudio(); // Control background music
+  const { stopMusic, fadeOutMusic, fadeInMusic, isMuted: contextMuted } = useAudio(); // Control background music
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -39,6 +39,11 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       console.warn("Could not read mute preference");
     }
   }, [storageKey]);
+
+  // Keep local mute state in sync with global audio context
+  useEffect(() => {
+    setIsMuted(contextMuted);
+  }, [contextMuted]);
 
   // Open hidden file input to choose an external save
   const handleLoadGameClick = useCallback(() => {
@@ -61,7 +66,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         }
 
         console.log("Loaded save from file:", data);
-        await fadeOutMusic?.(); // Fade out music before loading
+        await fadeOutMusic?.(true); // Fade out music before loading
         onLoadFromFile(data);
       } catch (err) {
         console.error("Failed to read save file:", err);
@@ -108,12 +113,12 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
   // Handle transitions that require stopping or fading out music
   const handleNewGame = useCallback(async () => {
-    await fadeOutMusic?.(); // Smoothly fade out before transition
+    await fadeOutMusic?.(true); // Smoothly fade out before transition
     onNewGame();
   }, [fadeOutMusic, onNewGame]);
 
   const handleContinue = useCallback(async () => {
-    await fadeOutMusic?.(); // Smoothly fade out before transition
+    await fadeOutMusic?.(true); // Smoothly fade out before transition
     onContinue();
   }, [fadeOutMusic, onContinue]);
 
