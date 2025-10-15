@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useFlags } from "../contexts/FlagsContext";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
+import audioData from "../data/audio.json"; // Added: main menu audio manifest
 import "../styles/Loading.css";
 
 export default function Loading({ onComplete }) {
@@ -31,7 +32,7 @@ export default function Loading({ onComplete }) {
     loadFont();
   }, []);
 
-  // Preload portraits and icons once the font is ready
+  // Preload portraits, icons, and music once the font is ready
   useEffect(() => {
     if (!fontReady) return;
 
@@ -46,6 +47,20 @@ export default function Loading({ onComplete }) {
         img.src = src;
       });
 
+    // Preload main menu music into cache
+    const preloadAudio = async () => {
+      const track = audioData.music?.mainMenu;
+      if (!track) return;
+      try {
+        await fetch(`/assets/audio/${track}`, {
+          method: "GET",
+          cache: "force-cache",
+        });
+      } catch (err) {
+        console.warn("Audio preload failed:", err);
+      }
+    };
+
     const preloadAssets = async () => {
       // Collect portrait paths from character data
       const portraits = Object.values(characters)
@@ -57,8 +72,12 @@ export default function Loading({ onComplete }) {
       const iconPaths = icons.map((f) => `/assets/icons/${f}`);
 
       try {
-        // Load all assets in parallel
-        await Promise.all([...portraits, ...iconPaths].map(preloadImage));
+        // Load all assets and audio in parallel
+        await Promise.all([
+          ...portraits.map(preloadImage),
+          ...iconPaths.map(preloadImage),
+          preloadAudio(),
+        ]);
       } catch (err) {
         console.error("Asset preload failed:", err);
       }
