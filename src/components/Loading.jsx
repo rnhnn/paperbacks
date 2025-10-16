@@ -1,9 +1,16 @@
-// Loading screen shown before the main menu
+// React and context hooks
 import { useState, useEffect } from "react";
 import { useFlags } from "../contexts/FlagsContext";
+
+// Core helpers
+import { isDebugMode } from "../helpers/isDebugMode";
+
+// Data
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
 import audioData from "../data/audio.json"; // Added: main menu audio manifest
+
+// Styles
 import "../styles/Loading.css";
 
 export default function Loading({ onComplete }) {
@@ -98,6 +105,14 @@ export default function Loading({ onComplete }) {
     onComplete(); // GameScreen will handle music timing
   };
 
+  // Handle quick shortcut that skips menu and title card
+  // Available only when debug mode is active
+  const handleSkipToGame = () => {
+    if (!ready) return;
+    setLanguage("en"); // Force English for testing
+    onComplete("skip"); // Signal debug mode to GameScreen
+  };
+
   // Render the loading UI
   return (
     <div className="loading">
@@ -119,6 +134,13 @@ export default function Loading({ onComplete }) {
           >
             Español
           </button>
+
+          {/* Show skip button only when debug mode is active */}
+          {isDebugMode() && (
+            <button className="language-button" onClick={handleSkipToGame}>
+              Skip to Game
+            </button>
+          )}
         </div>
       )}
     </div>

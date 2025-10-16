@@ -8,17 +8,24 @@ import { useAudio } from "../contexts/AudioContext";
 import useFadeDuration from "../hooks/useFadeDuration";
 import useText from "../hooks/useText"; // Added: translation hook for localized title text
 
-// Components and data
+// Core helpers
+import { isDebugMode } from "../helpers/isDebugMode";
+
+// Components
 import Loading from "./Loading";
 import MainMenu from "./MainMenu";
 import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
-import "../styles/ScreenTransition.css";
 import ScreenTransition from "./ScreenTransition";
-import TitleCard from "./TitleCard"; // Added: temporary scene intro card
+import TitleCard from "./TitleCard";
+
+// Data
 import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
+
+// Styles
+import "../styles/ScreenTransition.css";
 
 // Define delay before main menu music starts
 const MUSIC_DELAY = 350; // ms
@@ -140,7 +147,17 @@ export default function GameScreen({ phase, transitionTo }) {
     <div className="game-screen">
       {/* Phase 1: Loading assets */}
       {phase === "loading" && (
-        <Loading onComplete={() => triggerTransition("menu")} />
+        <Loading
+          onComplete={(mode) => {
+            // Skip full flow when launched in debug mode (local or ?debug=1)
+            if (mode === "skip" && isDebugMode()) {
+              resetGameState(); // Initialize default data instantly
+              transitionTo("game"); // Jump directly to gameplay (no fade)
+            } else {
+              triggerTransition("menu"); // Normal fade transition to main menu
+            }
+          }}
+        />
       )}
 
       {/* Phase 2: Main menu */}
