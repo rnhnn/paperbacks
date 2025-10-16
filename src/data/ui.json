@@ -6,6 +6,9 @@
     "loadGame": "Load Game",
     "credits": "Credits"
   },
+  "titleCard": {
+    "burescaMorning": "Somewhere in Buresca – 09:30 a.m."
+  },
   "storyFlow": {
     "begin": "Begin",
     "continue": "Continue"

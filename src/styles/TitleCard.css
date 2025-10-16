@@ -1,0 +1,20 @@
+.title-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--black);
+  color: var(--white);
+  font-size: var(--font-size-regular);
+  transition: opacity var(--title-fade-duration, 400ms) ease-in-out;
+  z-index: 20;
+}
+
+.title-card-visible {
+  opacity: 1;
+}
+
+.title-card-hidden {
+  opacity: 0;
+}

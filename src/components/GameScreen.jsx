@@ -6,6 +6,7 @@ import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import { useAudio } from "../contexts/AudioContext";
 import useFadeDuration from "../hooks/useFadeDuration";
+import useText from "../hooks/useText"; // Added: translation hook for localized title text
 
 // Components and data
 import Loading from "./Loading";
@@ -14,6 +15,7 @@ import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
 import "../styles/ScreenTransition.css";
 import ScreenTransition from "./ScreenTransition";
+import TitleCard from "./TitleCard"; // Added: temporary scene intro card
 import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
@@ -30,6 +32,9 @@ export default function GameScreen({ phase, transitionTo }) {
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
   const storySnapshotRef = useRef(() => null); // Stores a snapshot builder function
   const [transitioning, setTransitioning] = useState(false); // Tracks active screen fade
+
+  // Access translation function
+  const { t } = useText();
 
   // Access context setters for full game reset
   const { setItems } = useInventory();
@@ -143,14 +148,26 @@ export default function GameScreen({ phase, transitionTo }) {
         <MainMenu
           onNewGame={() => {
             resetGameState();
-            triggerTransition("game");
+            triggerTransition("titleCard"); // Show title card before gameplay
           }}
           onContinue={handleContinue}
           onLoadFromFile={handleLoadFromFile}
         />
       )}
 
-      {/* Phase 3: Main gameplay */}
+      {/* Phase 3: Title card intro */}
+      {phase === "titleCard" && (
+        <TitleCard
+          startDelay={fadeDuration} // Time delay before fade-in
+          fadeInDuration={1500} // Fade-in duration
+          holdDuration={2500} // Text remains visible
+          fadeOutDuration={1500} // Fade-out
+          text={t("ui.titleCard.burescaMorning")}
+          onComplete={() => triggerTransition("game")}
+        />
+      )}
+
+      {/* Phase 4: Main gameplay */}
       {phase === "game" && (
         <div className="game">
           <StoryFlow
