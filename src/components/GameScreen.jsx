@@ -17,11 +17,12 @@ import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 
-// Read CSS variable to stay in sync with transition timing
+// Read CSS variable and convert to milliseconds
 const rootStyles = getComputedStyle(document.documentElement);
-const FADE_DURATION = parseFloat(
-  rootStyles.getPropertyValue("--fade-screen-duration")
-);
+const rawValue = rootStyles.getPropertyValue("--fade-screen-duration").trim();
+const FADE_DURATION = rawValue.endsWith("ms")
+  ? parseFloat(rawValue)
+  : parseFloat(rawValue) * 1000;
 
 // Define delay before main menu music starts
 const MUSIC_DELAY = 350; // ms
