@@ -4,7 +4,8 @@ import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
-import { useAudio } from "../contexts/AudioContext"; // Access global audio control
+import { useAudio } from "../contexts/AudioContext";
+import useFadeDuration from "../hooks/useFadeDuration";
 
 // Components and data
 import Loading from "./Loading";
@@ -17,17 +18,13 @@ import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 
-// Read CSS variable and convert to milliseconds
-const rootStyles = getComputedStyle(document.documentElement);
-const rawValue = rootStyles.getPropertyValue("--fade-screen-duration").trim();
-const FADE_DURATION = rawValue.endsWith("ms")
-  ? parseFloat(rawValue)
-  : parseFloat(rawValue) * 1000;
-
 // Define delay before main menu music starts
 const MUSIC_DELAY = 350; // ms
 
 export default function GameScreen({ phase, transitionTo }) {
+  // Normalize fade duration from CSS in milliseconds
+  const fadeDuration = useFadeDuration(400);
+
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
   const [savedStory, setSavedStory] = useState(null); // Holds the current or loaded story
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
@@ -58,7 +55,7 @@ export default function GameScreen({ phase, transitionTo }) {
     // Clear pending timeout when leaving menu early
     return () => clearTimeout(timeoutId);
   // Intentionally depend only on phase to avoid restarting music on mute toggles
-  }, [phase]); 
+  }, [phase]);
 
   // Game setup helpers
 
@@ -119,7 +116,7 @@ export default function GameScreen({ phase, transitionTo }) {
     setTransitioning(true);
 
     // Wait for fade-out to complete
-    await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
+    await new Promise((resolve) => setTimeout(resolve, fadeDuration));
 
     // Wait for music fade-out before switching phase
     if (phase === "menu") await stopMusic();
@@ -128,7 +125,7 @@ export default function GameScreen({ phase, transitionTo }) {
     transitionTo(targetPhase);
 
     // Wait for fade-in to complete
-    await new Promise((resolve) => setTimeout(resolve, FADE_DURATION));
+    await new Promise((resolve) => setTimeout(resolve, fadeDuration));
 
     setTransitioning(false); // Allow new transitions
   };
