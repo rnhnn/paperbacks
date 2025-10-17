@@ -2,5 +2,9 @@
   "icon-inventory.png",
   "icon-notes.png",
   "icon-options.png",
-  "icon-exit.png"
+  "icon-exit.png",
+  "icon-speaker-on.png",
+  "icon-speaker-off.png",
+  "icon-fullscreen.png",
+  "icon-windowed.png"
 ]
