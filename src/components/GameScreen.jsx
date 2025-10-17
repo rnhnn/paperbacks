@@ -86,6 +86,13 @@ export default function GameScreen({ phase, transitionTo }) {
     }
   }, [phase, stopAmbience]);
 
+  // Ensure PlayerMenu is shown when resuming from a saved game after reload
+  useEffect(() => {
+    if (phase === "game" && savedStory && !showPlayerMenu) {
+      setShowPlayerMenu(true);
+    }
+  }, [phase, savedStory, showPlayerMenu]);
+
   // Game setup helpers
 
   // Store StoryFlow snapshot builder reference
@@ -221,7 +228,7 @@ export default function GameScreen({ phase, transitionTo }) {
             onAmbienceChange={handleAmbienceChange} // Added: handle ambience changes
           />
 
-          {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked
+          {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked or resumed from save
             <PlayerMenu
               onQuickSave={handleQuickSave}
               onQuickLoad={handleQuickLoad}
