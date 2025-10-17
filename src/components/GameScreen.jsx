@@ -50,7 +50,15 @@ export default function GameScreen({ phase, transitionTo }) {
   const { setFlags } = useFlags();
 
   // Access global audio control
-  const { playMainMenuMusic, stopMusic } = useAudio();
+  const {
+    playMainMenuMusic,
+    stopMusic,
+    playAmbience, // Added
+    stopAmbience, // Added
+  } = useAudio();
+
+  // Track which ambience is currently playing to avoid restarts
+  const currentAmbienceRef = useRef(null);
 
   // Play or stop main menu music based on current phase
   useEffect(() => {
@@ -67,14 +75,29 @@ export default function GameScreen({ phase, transitionTo }) {
 
     // Clear pending timeout when leaving menu early
     return () => clearTimeout(timeoutId);
-  // Intentionally depend only on phase to avoid restarting music on mute toggles
+    // Intentionally depend only on phase to avoid restarting music on mute toggles
   }, [phase]);
+
+  // Stop ambience when leaving gameplay
+  useEffect(() => {
+    if (phase !== "game") {
+      stopAmbience();
+      currentAmbienceRef.current = null;
+    }
+  }, [phase, stopAmbience]);
 
   // Game setup helpers
 
   // Store StoryFlow snapshot builder reference
   const handleStorySnapshotUpdate = (fn) => {
     storySnapshotRef.current = fn;
+  };
+
+  // Handle ambience updates emitted from StoryFlow
+  const handleAmbienceChange = (ambienceKey) => {
+    if (!ambienceKey || ambienceKey === currentAmbienceRef.current) return;
+    currentAmbienceRef.current = ambienceKey;
+    playAmbience(ambienceKey);
   };
 
   // Load story from quick save
@@ -195,6 +218,7 @@ export default function GameScreen({ phase, transitionTo }) {
             savedStory={savedStory}
             onStorySnapshot={handleStorySnapshotUpdate}
             onBegin={() => setShowPlayerMenu(true)} // Added callback for Begin
+            onAmbienceChange={handleAmbienceChange} // Added: handle ambience changes
           />
 
           {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked

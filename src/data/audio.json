@@ -1,5 +1,10 @@
 {
   "music": {
     "mainMenu": "the-snow-queen.mp3"
-  }
+  },
+  "ambience": {
+    "street": "ambience-street.mp3",
+    "rain": "ambience-rain.mp3"
+  },
+  "sfx": {}
 }

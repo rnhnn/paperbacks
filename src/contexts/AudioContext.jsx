@@ -8,6 +8,12 @@ export function AudioProvider({ children }) {
   // Keep a single Audio object for background music
   const musicRef = useRef(null);
 
+  // Keep a separate Audio object for ambience layer
+  const ambienceRef = useRef(null);
+
+  // Keep reference to running fade interval for ambience
+  const ambienceFadeRef = useRef(null);
+
   // Track mute state and persist in localStorage
   const [isMuted, setIsMuted] = useState(() => {
     try {
@@ -39,10 +45,10 @@ export function AudioProvider({ children }) {
 
   // Update volume and persist mute setting when state changes
   useEffect(() => {
-    const audio = musicRef.current;
-    if (audio) {
-      audio.volume = isMuted ? 0 : 1.0;
-    }
+    const music = musicRef.current;
+    const ambience = ambienceRef.current;
+    if (music) music.volume = isMuted ? 0 : 1.0;
+    if (ambience) ambience.volume = isMuted ? 0 : 1.0;
     try {
       localStorage.setItem("audioMuted", isMuted);
     } catch {}
@@ -50,6 +56,9 @@ export function AudioProvider({ children }) {
 
   // Start playing main menu track from the beginning
   const playMainMenuMusic = () => {
+    // Ensure ambience is completely stopped when menu music begins
+    stopAmbience(true); // Immediate stop, no fade
+
     const audio = musicRef.current;
     if (!audio) return;
     audio.currentTime = 0;
@@ -92,6 +101,79 @@ export function AudioProvider({ children }) {
     });
   };
 
+  // Play ambience layer by key name
+  const playAmbience = async (key) => {
+    const file = audioData.ambience?.[key];
+    if (!file) {
+      console.warn(`AudioContext: Missing ambience key '${key}'`);
+      return;
+    }
+
+    // Wait for any previous ambience to fade out before replacing
+    if (ambienceRef.current) {
+      await stopAmbience();
+    }
+
+    // Create and start new ambience loop
+    const audio = new Audio(`/assets/audio/${file}`);
+    audio.loop = true;
+    audio.volume = isMuted ? 0 : 1.0;
+    audio.preload = "auto";
+    ambienceRef.current = audio;
+    audio.play().catch(() => {});
+  };
+
+  // Gradually fade out and stop ambience
+  const stopAmbience = (immediate = false) => {
+    const audio = ambienceRef.current;
+    if (!audio) return Promise.resolve();
+
+    // Cancel any previous fade before starting a new one
+    if (ambienceFadeRef.current) {
+      clearInterval(ambienceFadeRef.current);
+      ambienceFadeRef.current = null;
+    }
+
+    // Immediate stop option (used when switching to main menu)
+    if (immediate) {
+      audio.pause();
+      audio.currentTime = 0;
+      ambienceRef.current = null;
+      return Promise.resolve();
+    }
+
+    // Define fade duration and frame rate
+    const FADE_DURATION = 800; // ms
+    const STEP_INTERVAL = 50; // ms between volume steps
+    const steps = FADE_DURATION / STEP_INTERVAL;
+    const volumeStep = audio.volume / steps;
+
+    // Return a Promise that resolves after fade completes
+    return new Promise((resolve) => {
+      ambienceFadeRef.current = setInterval(() => {
+        if (!audio) {
+          clearInterval(ambienceFadeRef.current);
+          ambienceFadeRef.current = null;
+          resolve();
+          return;
+        }
+
+        // Decrease volume until silent
+        audio.volume = Math.max(0, audio.volume - volumeStep);
+
+        // Stop and reset once volume is near zero
+        if (audio.volume <= 0.01) {
+          clearInterval(ambienceFadeRef.current);
+          ambienceFadeRef.current = null;
+          audio.pause();
+          audio.currentTime = 0;
+          ambienceRef.current = null;
+          resolve();
+        }
+      }, STEP_INTERVAL);
+    });
+  };
+
   // Toggle mute on or off
   const toggleMute = () => {
     setIsMuted((prev) => !prev);
@@ -99,7 +181,14 @@ export function AudioProvider({ children }) {
 
   return (
     <AudioContext.Provider
-      value={{ playMainMenuMusic, stopMusic, isMuted, toggleMute }}
+      value={{
+        playMainMenuMusic,
+        stopMusic,
+        playAmbience,
+        stopAmbience,
+        isMuted,
+        toggleMute,
+      }}
     >
       {children}
     </AudioContext.Provider>

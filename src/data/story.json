@@ -2,6 +2,7 @@
   "id": "story",
   "title": "Monsello 188",
   "description": "A strange evening on a lonely street.",
+  "initialAmbience": "street",
   "nodes": [
     {
       "id": "lonelyStreet",
@@ -13,7 +14,8 @@
       "id": "threeStoryBuilding",
       "type": "singleParagraph",
       "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Monsello 188.",
-      "next": "doubtAboutNumber"
+      "next": "doubtAboutNumber",
+      "setAmbience": "rain"
     },
     {
       "id": "doubtAboutNumber",
@@ -27,16 +29,12 @@
       "choices": [
         {
           "text": "“It’s here.”",
-          "effects": {
-            "wasSureItWasHere": true
-          },
+          "effects": { "wasSureItWasHere": true },
           "next": "kirbyRelief"
         },
         {
           "text": "“It’s… here?”",
-          "effects": {
-            "wasUnsureItWasHere": true
-          },
+          "effects": { "wasUnsureItWasHere": true },
           "next": "kirbyNotConvinced"
         }
       ]
@@ -65,21 +63,15 @@
       "id": "findingAShoe",
       "type": "singleParagraph",
       "text": "An old shoe?!",
-      "inventoryAdd": [
-        "old_shoe"
-      ],
-      "effects": {
-        "foundOldShoe": true
-      },
+      "inventoryAdd": ["old_shoe"],
+      "effects": { "foundOldShoe": true },
       "next": "findingAShoppingList"
     },
     {
       "id": "findingAShoppingList",
       "type": "singleParagraph",
       "text": "And inside the shoe you find a shopping list.",
-      "notesAdd": [
-        "shopping_list_home"
-      ],
+      "notesAdd": ["shopping_list_home"],
       "next": "flagChecker"
     },
     {
@@ -89,15 +81,11 @@
       "text": "Great, you are both sure of yourself and lucky.",
       "nextIf": [
         {
-          "conditions": {
-            "wasSureItWasHere": true
-          },
+          "conditions": { "wasSureItWasHere": true },
           "next": "conditionalResponse"
         },
         {
-          "conditions": {
-            "wasUnsureItWasHere": true
-          },
+          "conditions": { "wasUnsureItWasHere": true },
           "next": "someOtherStory"
         }
       ],
@@ -134,9 +122,7 @@
       "type": "characterDialogue",
       "character": "agnes",
       "text": "“Ah, where are my manners. I’m Agnes.”",
-      "effects": {
-        "knowsAgnesName": true
-      },
+      "effects": { "knowsAgnesName": true },
       "next": "finalAgnes"
     },
     {

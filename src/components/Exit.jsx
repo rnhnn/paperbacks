@@ -1,10 +1,12 @@
 // Exit confirmation window
 import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
+import { useAudio } from "../contexts/AudioContext"; // Added
 import "../styles/Exit.css";
 
 export default function Exit({ onConfirm, onClose }) {
   const { t } = useText();
+  const { stopAmbience } = useAudio(); // Added
 
   // Render confirmation modal asking the player if they want to exit to the main menu
   return (
@@ -17,6 +19,7 @@ export default function Exit({ onConfirm, onClose }) {
           {/* Confirm and close buttons */}
           <button
             onClick={() => {
+              stopAmbience(); // Stop any ongoing ambience before exiting
               onClose(); // Close the modal immediately
               onConfirm?.(); // Notify parent (PlayerMenu → GameScreen)
             }}

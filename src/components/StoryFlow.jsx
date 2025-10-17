@@ -13,7 +13,13 @@ import "../styles/ScrollArrows.css"; // Added
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
-export default function StoryFlow({ story, savedStory, onStorySnapshot, onBegin }) {
+export default function StoryFlow({
+  story,
+  savedStory,
+  onStorySnapshot,
+  onBegin,
+  onAmbienceChange, // Added: optional callback for ambience updates
+}) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
   const characters = textData.characters;
@@ -64,6 +70,38 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot, onBegin 
 
   // Resolve the live node object for the current node id
   const currentNode = currentNodeId ? nodeMap[currentNodeId] : null;
+
+  // Track if initial ambience has been triggered to avoid double-playing
+  const hasTriggeredInitialAmbience = useRef(false);
+
+  // Initialize ambience layer when story starts or when loading a save
+  useEffect(() => {
+    if (
+      !hasTriggeredInitialAmbience.current &&
+      onAmbienceChange &&
+      localizedStory.initialAmbience
+    ) {
+      // Determine whether the current node already defines its own ambience
+      const startingNodeId =
+        savedStory?.currentNodeId ?? localizedStory.nodes[0]?.id;
+      const startingNode = startingNodeId ? nodeMap[startingNodeId] : null;
+
+      const nodeHasOwnAmbience = startingNode?.setAmbience;
+
+      // Trigger story-level ambience only if the starting node doesn’t override it
+      if (!nodeHasOwnAmbience) {
+        onAmbienceChange(localizedStory.initialAmbience);
+        hasTriggeredInitialAmbience.current = true;
+      }
+    }
+  }, [onAmbienceChange, localizedStory.initialAmbience, savedStory, nodeMap]);
+
+  // Detect ambience changes when the current node defines a new ambience key
+  useEffect(() => {
+    if (onAmbienceChange && currentNode?.setAmbience) {
+      onAmbienceChange(currentNode.setAmbience);
+    }
+  }, [onAmbienceChange, currentNode]);
 
   // Return true if a node has no conditions or all required flags match
   const checkConditions = (node, flagSet = flags) =>
