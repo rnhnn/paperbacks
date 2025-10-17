@@ -1,11 +1,15 @@
-// Main menu displayed after the loading screen
+// React and context hooks
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
-import { useAudio } from "../contexts/AudioContext"; // Access global audio mute control
-import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
+import { useAudio } from "../contexts/AudioContext";
+import useFullscreen from "../hooks/useFullscreen";
 import useText from "../hooks/useText";
+
+// Components
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
+
+// Styles
 import "../styles/MainMenu.css";
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
@@ -66,15 +70,14 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       <h1 className="main-menu-title">{t("ui.mainMenu.title")}</h1>
 
       <div className="main-menu-options">
-        {hasSave && (
-          <button
-            type="button"
-            className="main-menu-button"
-            onClick={onContinue}
-          >
-            {t("ui.mainMenu.continue")}
-          </button>
-        )}
+        <button
+          type="button"
+          className="main-menu-button"
+          onClick={hasSave ? onContinue : undefined}
+          disabled={!hasSave}
+        >
+          {t("ui.mainMenu.continue")}
+        </button>
 
         <button
           type="button"
@@ -113,14 +116,19 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       <div className="main-menu-controls">
         <button
           type="button"
-          className="main-menu-controls-button"
+          className={`main-menu-controls-button main-menu-controls-button-volume ${
+            isMuted ? "main-menu-controls-button-volume-off" : ""
+          }`}
           onClick={toggleMute}
         >
           {isMuted ? "Unmute" : "Mute"}
         </button>
+
         <button
           type="button"
-          className="main-menu-controls-button"
+          className={`main-menu-controls-button main-menu-controls-button-window ${
+            isFullscreen ? "main-menu-controls-button-window-windowed" : ""
+          }`}
           onClick={toggleFullscreen}
         >
           {isFullscreen ? "Windowed" : "Fullscreen"}
