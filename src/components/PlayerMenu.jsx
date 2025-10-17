@@ -1,5 +1,5 @@
 // React and context hooks
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
@@ -34,6 +34,9 @@ export default function PlayerMenu({
   const [saveMsg, setSaveMsg] = useState("");
   const [openNoteId, setOpenNoteId] = useState(null);
 
+  // Track fade-in activation on mount
+  const [isActive, setIsActive] = useState(false);
+
   // Ref for hidden input element used to import save files
   const fileInputRef = useRef(null);
 
@@ -44,6 +47,12 @@ export default function PlayerMenu({
 
   // Load localized text utility
   const { t } = useText();
+
+  // Activate fade-in on mount (bulletproof against Safari paint issues)
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setIsActive(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   // Toggle the open state of a note entry by id
   const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
@@ -168,7 +177,7 @@ export default function PlayerMenu({
   return (
     <>
       {/* Display main player menu */}
-      <div className="player-menu">
+      <div className={`player-menu ${isActive ? "is-active" : ""}`}>
         {/* Show feedback message for quick actions */}
         {saveMsg && <span className="player-menu-toast">{saveMsg}</span>}
 

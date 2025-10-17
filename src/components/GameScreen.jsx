@@ -39,6 +39,7 @@ export default function GameScreen({ phase, transitionTo }) {
   const [storyKey, setStoryKey] = useState(0); // Forces StoryFlow to remount when changed
   const storySnapshotRef = useRef(() => null); // Stores a snapshot builder function
   const [transitioning, setTransitioning] = useState(false); // Tracks active screen fade
+  const [showPlayerMenu, setShowPlayerMenu] = useState(false); // Tracks if the PlayerMenu should be visible
 
   // Access translation function
   const { t } = useText();
@@ -117,6 +118,7 @@ export default function GameScreen({ phase, transitionTo }) {
     setFlags({});
     setSavedStory(null);
     setStoryKey((k) => k + 1);
+    setShowPlayerMenu(false);
     console.log("Game state reset to JSON defaults (localStorage preserved)");
   };
 
@@ -192,13 +194,17 @@ export default function GameScreen({ phase, transitionTo }) {
             story={storyData}
             savedStory={savedStory}
             onStorySnapshot={handleStorySnapshotUpdate}
+            onBegin={() => setShowPlayerMenu(true)} // Added callback for Begin
           />
-          <PlayerMenu
-            onQuickSave={handleQuickSave}
-            onQuickLoad={handleQuickLoad}
-            getStorySnapshot={() => storySnapshotRef.current?.()}
-            onExitToMenu={() => triggerTransition("menu")}
-          />
+
+          {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked
+            <PlayerMenu
+              onQuickSave={handleQuickSave}
+              onQuickLoad={handleQuickLoad}
+              getStorySnapshot={() => storySnapshotRef.current?.()}
+              onExitToMenu={() => triggerTransition("menu")}
+            />
+          )}
         </div>
       )}
 

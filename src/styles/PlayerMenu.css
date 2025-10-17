@@ -111,3 +111,12 @@
 .player-menu-buttons-item-exit {
   background-image: url("/assets/icons/icon-exit.png");
 }
+
+.player-menu {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.player-menu.is-active {
+  opacity: 1;
+}

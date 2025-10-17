@@ -13,7 +13,7 @@ import "../styles/ScrollArrows.css"; // Added
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
-export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
+export default function StoryFlow({ story, savedStory, onStorySnapshot, onBegin }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
   const characters = textData.characters;
@@ -50,6 +50,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
   // Ref to the scrollable container to auto-scroll on new content
   const contentRef = useRef(null);
+
+  // Track if Begin was already pressed (prevents multiple onBegin calls)
+  const hasBegunRef = useRef(false);
 
   // Enable custom scroll arrows for this story log
   useScrollArrows(contentRef, { step: 24, isAutoScrolling });
@@ -226,9 +229,9 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
     const frozenBlock =
       nodeToRender.type === "characterDialogue"
         ? {
-          ...nodeToRender,
-          _frozenCharacter: resolveCharacter(nodeToRender.character),
-        }
+            ...nodeToRender,
+            _frozenCharacter: resolveCharacter(nodeToRender.character),
+          }
         : nodeToRender;
 
     // Append block while keeping only the last N items for performance
@@ -251,6 +254,15 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
 
     // Persist current position so the next click advances from here
     setCurrentNodeId(nodeToRender.id);
+  };
+
+  // Handle Begin button press (fires onBegin once, then renders first node)
+  const handleBegin = () => {
+    if (!hasBegunRef.current) {
+      hasBegunRef.current = true;
+      if (onBegin) onBegin();
+    }
+    renderNext();
   };
 
   // Handle a selected choice by rendering player line, reactions, and next node
@@ -432,7 +444,10 @@ export default function StoryFlow({ story, savedStory, onStorySnapshot }) {
       {/* Continue button is hidden when a choice is on-screen or the story ended */}
       <div className="story-flow-button-area">
         {!waitingChoice && currentNodeId !== null && (
-          <button onClick={renderNext} className="story-flow-button">
+          <button
+            onClick={renderedBlocks.length === 0 ? handleBegin : renderNext}
+            className="story-flow-button"
+          >
             {renderedBlocks.length === 0
               ? t("ui.storyFlow.begin")
               : t("ui.storyFlow.continue")}
