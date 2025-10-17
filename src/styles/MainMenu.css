@@ -3,9 +3,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-left: 100px;
   background: var(--black);
   color: var(--white);
 }
@@ -15,7 +14,7 @@
   font-size: var(--font-size-main-title);
   font-weight: normal;
   margin-top: 0;
-  margin-bottom: 45px;
+  margin-bottom: 50px;
 }
 
 .main-menu-options {
