@@ -14,6 +14,10 @@ export default function Credits({ onClose }) {
   // Enable custom scroll arrows
   useScrollArrows(scrollRef, { step: 24 });
 
+  // Get arrays safely from translation data
+  const specialThanks = t("credits.specialThanks", { returnObjects: true }) || [];
+  const playtesters = t("credits.playtesters", { returnObjects: true }) || [];
+
   return (
     // Outer container stays fixed size, inner content scrolls
     <div className="window window-credits has-scroll-parent">
@@ -42,11 +46,33 @@ export default function Credits({ onClose }) {
         </section>
 
         <section className="window-credits-content-section">
-          <h3 className="window-credits-content-section-header">{t("credits.sections.specialThanks")}</h3>
-          <p className="window-credits-content-section-entry">{t("credits.specialThanks")}</p>
+          <h3 className="window-credits-content-section-header">{t("credits.sections.playtesters")}</h3>
+          {playtesters.map((name, i) => (
+            <p key={i} className="window-credits-content-section-entry">
+              {name}
+            </p>
+          ))}
         </section>
 
-        <p className="window-credits-content-footer">{t("credits.copyright")}</p>
+        <section className="window-credits-content-section">
+          <h3 className="window-credits-content-section-header">{t("credits.sections.specialThanks")}</h3>
+          {specialThanks.map((name, i) => (
+            <p key={i} className="window-credits-content-section-entry">
+              {name}
+            </p>
+          ))}
+        </section>
+
+        <p className="window-credits-content-footer">
+          © 2025 Rolando Hernández — {" "}
+          <a
+            href="https://indoorprince.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            indoorprince.com
+          </a>
+        </p>
       </div>
     </div>
   );

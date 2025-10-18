@@ -1,16 +1,19 @@
 {
-  "sections.writing": "Historia, Graficos y Programación",
+  "sections.writing": "Historia, Gráficos y Programación",
   "sections.editing": "Edición y Corrección",
   "sections.music": "Música",
   "sections.specialThanks": "Agradecimientos Especiales",
+  "sections.playtesters": "Playtesters",
 
-  "names.rolando": "Rolando Hernández",
-  "names.valentina": "Valentina Lamazon",
-
-  "musicInfo.title": "“The Snow Queen” de Kevin MacLeod",
-  "musicInfo.site": "Incompetech.com",
-  "musicInfo.license": "Licencia Creative Commons: Atribución 3.0",
-
-  "specialThanks": "A todos los que apoyaron este proyecto con su ánimo, curiosidad y amabilidad.",
+  "playtesters": [
+    "Alfredo Pérez",
+    "Fabiana Hernández",
+    "Victor Fernández",
+    "Walther Graciano"
+  ],
+  "specialThanks": [
+    "The Beatles",
+    "Zinedine Zidane"
+  ],
   "copyright": "© 2025 Rolando Hernández"
 }

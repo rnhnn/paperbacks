@@ -3,17 +3,27 @@
     "writing": "Story, Graphics & Programming",
     "editing": "Editor & Proofreader",
     "music": "Music",
-    "specialThanks": "Special Thanks"
+    "specialThanks": "Special Thanks",
+    "playtesters": "Playtesters"
   },
   "names": {
     "rolando": "Rolando Hernández",
     "valentina": "Valentina Lamazon"
   },
+  "playtesters": [
+    "Alfredo Pérez",
+    "Fabiana Hernández",
+    "Victor Fernández",
+    "Walther Graciano"
+  ],
   "musicInfo": {
     "title": "“The Snow Queen” by Kevin MacLeod",
     "site": "Incompetech.com",
     "license": "Licensed under Creative Commons: By Attribution 3.0 License"
   },
-  "specialThanks": "The Beatles",
-  "copyright": "© 2025 Rolando Hernández"
+  "specialThanks": [
+    "The Beatles",
+    "Zinedine Zidane"
+  ],
+  "copyright": "© 2025 Rolando Hernández — https://indoorprince.com"
 }

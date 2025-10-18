@@ -1,6 +1,7 @@
 .window-credits {
-  height: 325px;
+  height: 330px;
   text-align: center;
+  padding: 0 40px;
 }
 
 .window-credits .has-scroll-arrow--up {
