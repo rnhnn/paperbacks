@@ -14,6 +14,9 @@ export function AudioProvider({ children }) {
   // Keep reference to running fade interval for ambience
   const ambienceFadeRef = useRef(null);
 
+  // Keep a Set of active one-shot SFX Audio objects
+  const sfxRefs = useRef(new Set());
+
   // Track mute state and persist in localStorage
   const [isMuted, setIsMuted] = useState(() => {
     try {
@@ -174,6 +177,41 @@ export function AudioProvider({ children }) {
     });
   };
 
+  // Play a short sound effect once, no loop or fade
+  const playSFX = (key) => {
+    const file = audioData.sfx?.[key];
+    if (!file) {
+      console.warn(`AudioContext: Missing SFX key '${key}'`);
+      return;
+    }
+
+    // Create a temporary audio instance
+    const audio = new Audio(`/assets/audio/${file}`);
+    audio.volume = isMuted ? 0 : 1.0;
+    audio.preload = "auto";
+    audio.loop = false;
+
+    // Track this instance to avoid leaks
+    sfxRefs.current.add(audio);
+
+    // Play and clean up when done
+    audio.play().catch(() => {});
+    audio.addEventListener("ended", () => {
+      sfxRefs.current.delete(audio);
+    });
+    audio.addEventListener("error", () => {
+      sfxRefs.current.delete(audio);
+    });
+  };
+
+  // Clean up all SFX when unmounting
+  useEffect(() => {
+    return () => {
+      sfxRefs.current.forEach((a) => a.pause());
+      sfxRefs.current.clear();
+    };
+  }, []);
+
   // Toggle mute on or off
   const toggleMute = () => {
     setIsMuted((prev) => !prev);
@@ -186,6 +224,7 @@ export function AudioProvider({ children }) {
         stopMusic,
         playAmbience,
         stopAmbience,
+        playSFX,
         isMuted,
         toggleMute,
       }}

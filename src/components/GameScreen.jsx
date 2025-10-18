@@ -55,6 +55,7 @@ export default function GameScreen({ phase, transitionTo }) {
     stopMusic,
     playAmbience, // Added
     stopAmbience, // Added
+    playSFX, // Added
   } = useAudio();
 
   // Track which ambience is currently playing to avoid restarts
@@ -105,6 +106,12 @@ export default function GameScreen({ phase, transitionTo }) {
     if (!ambienceKey || ambienceKey === currentAmbienceRef.current) return;
     currentAmbienceRef.current = ambienceKey;
     playAmbience(ambienceKey);
+  };
+
+  // Handle one-shot sound effects emitted from StoryFlow
+  const handleSFXChange = (sfxKey) => {
+    if (!sfxKey) return;
+    playSFX(sfxKey);
   };
 
   // Load story from quick save
@@ -226,6 +233,7 @@ export default function GameScreen({ phase, transitionTo }) {
             onStorySnapshot={handleStorySnapshotUpdate}
             onBegin={() => setShowPlayerMenu(true)} // Added callback for Begin
             onAmbienceChange={handleAmbienceChange} // Added: handle ambience changes
+            onSFX={handleSFXChange} // Added: handle one-shot SFX triggers
           />
 
           {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked or resumed from save

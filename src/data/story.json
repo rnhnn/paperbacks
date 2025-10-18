@@ -15,13 +15,15 @@
       "type": "singleParagraph",
       "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Monsello 188.",
       "next": "doubtAboutNumber",
-      "setAmbience": "rain"
+      "setAmbience": "rain",
+      "playSFX": "wind-whiff"
     },
     {
       "id": "doubtAboutNumber",
       "type": "singleParagraph",
       "text": "Or is it 189?",
-      "next": "reactingToTheBuilding"
+      "next": "reactingToTheBuilding",
+      "playSFX": "wind-whiff"
     },
     {
       "id": "reactingToTheBuilding",
@@ -57,7 +59,8 @@
       "id": "theStoryResumes",
       "type": "singleParagraph",
       "text": "You look at the sidewalk and find...",
-      "next": "findingAShoe"
+      "next": "findingAShoe",
+      "playSFX": "wind-whiff"
     },
     {
       "id": "findingAShoe",

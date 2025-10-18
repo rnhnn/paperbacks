@@ -18,7 +18,8 @@ export default function StoryFlow({
   savedStory,
   onStorySnapshot,
   onBegin,
-  onAmbienceChange, // Added: optional callback for ambience updates
+  onAmbienceChange,
+  onSFX,
 }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
@@ -263,6 +264,11 @@ export default function StoryFlow({
     // Apply node effects before freezing, so UI reflects stateful consequences
     applyEffects(nodeToRender);
 
+    // Trigger one-shot SFX when node defines playSFX
+    if (onSFX && nodeToRender.playSFX) {
+      onSFX(nodeToRender.playSFX);
+    }
+
     // Freeze character at render-time so later flag changes do not rewrite history
     const frozenBlock =
       nodeToRender.type === "characterDialogue"
@@ -326,6 +332,11 @@ export default function StoryFlow({
 
     // Apply next node effects early to keep state consistent with what will render
     applyEffects(nextNode);
+
+    // Trigger one-shot SFX when next node defines playSFX
+    if (onSFX && nextNode?.playSFX) {
+      onSFX(nextNode.playSFX);
+    }
 
     // Freeze all blocks that show characters so names/portraits stay consistent
     const freezeBlock = (b) =>

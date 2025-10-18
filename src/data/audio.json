@@ -6,5 +6,7 @@
     "street": "ambience-street.mp3",
     "rain": "ambience-rain.mp3"
   },
-  "sfx": {}
+  "sfx": {
+    "wind-whiff": "sfx-wind-whiff.mp3"
+  }
 }
