@@ -116,22 +116,22 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       <div className="main-menu-controls">
         <button
           type="button"
-          className={`main-menu-controls-button main-menu-controls-button-volume ${
-            isMuted ? "main-menu-controls-button-volume-off" : ""
-          }`}
-          onClick={toggleMute}
-        >
-          {isMuted ? "Unmute" : "Mute"}
-        </button>
-
-        <button
-          type="button"
           className={`main-menu-controls-button main-menu-controls-button-window ${
             isFullscreen ? "main-menu-controls-button-window-windowed" : ""
           }`}
           onClick={toggleFullscreen}
         >
           {isFullscreen ? "Windowed" : "Fullscreen"}
+        </button>
+        
+        <button
+          type="button"
+          className={`main-menu-controls-button main-menu-controls-button-volume ${
+            isMuted ? "main-menu-controls-button-volume-off" : ""
+          }`}
+          onClick={toggleMute}
+        >
+          {isMuted ? "Unmute" : "Mute"}
         </button>
       </div>
 
