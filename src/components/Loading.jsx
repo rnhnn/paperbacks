@@ -8,7 +8,7 @@ import { isDebugMode } from "../helpers/isDebugMode";
 // Data
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
-import audioData from "../data/audio.json"; // Added: main menu audio manifest
+import audioData from "../data/audio.json"; // Added: audio manifest for music, ambience, and SFX
 
 // Styles
 import "../styles/Loading.css";
@@ -39,7 +39,7 @@ export default function Loading({ onComplete }) {
     loadFont();
   }, []);
 
-  // Preload portraits, icons, and music once the font is ready
+  // Preload portraits, icons, and all audio once the font is ready
   useEffect(() => {
     if (!fontReady) return;
 
@@ -54,18 +54,67 @@ export default function Loading({ onComplete }) {
         img.src = src;
       });
 
-    // Preload main menu music into cache
-    const preloadAudio = async () => {
-      const track = audioData.music?.mainMenu;
-      if (!track) return;
-      try {
-        await fetch(`/assets/audio/${track}`, {
-          method: "GET",
-          cache: "force-cache",
-        });
-      } catch (err) {
-        console.warn("Audio preload failed:", err);
+    // Preload all audio files (music, ambience, and SFX) using smart cache
+    const preloadAllAudio = async () => {
+      const groups = ["music", "ambience", "sfx"];
+      const requests = [];
+      const cacheName = "paperbacks-audio-cache-v1";
+
+      // Try to open browser cache, fallback to null when unavailable
+      const cache = "caches" in window ? await caches.open(cacheName) : null;
+
+      for (const group of groups) {
+        const entries = audioData[group];
+        if (!entries) continue;
+
+        for (const [key, file] of Object.entries(entries)) {
+          const path = `/assets/audio/${file}`;
+
+          // Log each audio file being preloaded in debug mode
+          if (isDebugMode()) {
+            console.log(`[Audio Preload] ${group}/${key}: ${path}`);
+          }
+
+          if (cache) {
+            // Check cache before fetching
+            const match = await cache.match(path);
+            if (match) {
+              if (isDebugMode()) {
+                console.log(`[Audio Preload] Cache hit: ${path}`);
+              }
+              continue; // Skip already cached files
+            }
+
+            // Fetch and store file in cache if missing
+            requests.push(
+              fetch(path)
+                .then((response) => {
+                  if (response.ok) {
+                    cache.put(path, response.clone());
+                    if (isDebugMode()) {
+                      console.log(`[Audio Preload] Cached: ${path}`);
+                    }
+                  }
+                })
+                .catch((err) => {
+                  console.warn(`[Audio Preload] Failed to fetch ${path}`, err);
+                })
+            );
+          } else {
+            // Fallback: use standard fetch when Cache API is unavailable
+            requests.push(
+              fetch(path, { method: "GET", cache: "force-cache" }).catch(
+                (err) => {
+                  console.warn(`[Audio Preload] Failed to load ${path}`, err);
+                }
+              )
+            );
+          }
+        }
       }
+
+      // Wait for all pending requests to finish
+      await Promise.all(requests);
     };
 
     const preloadAssets = async () => {
@@ -83,7 +132,7 @@ export default function Loading({ onComplete }) {
         await Promise.all([
           ...portraits.map(preloadImage),
           ...iconPaths.map(preloadImage),
-          preloadAudio(),
+          preloadAllAudio(), // Updated: now preloads all audio with cache support
         ]);
       } catch (err) {
         console.error("Asset preload failed:", err);

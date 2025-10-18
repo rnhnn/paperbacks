@@ -1,5 +1,6 @@
 // Provide global audio access and playback control
 import { createContext, useContext, useRef, useEffect, useState } from "react";
+import { isDebugMode } from "../helpers/isDebugMode";
 import audioData from "../data/audio.json";
 
 const AudioContext = createContext();
@@ -33,7 +34,13 @@ export function AudioProvider({ children }) {
       console.warn("AudioContext: Missing mainMenu track");
       return;
     }
-    const audio = new Audio(`/assets/audio/${track}`);
+
+    const path = `/assets/audio/${track}`;
+    if (isDebugMode()) {
+      console.log(`[Audio] Preparing main menu music: ${path}`);
+    }
+
+    const audio = new Audio(path);
     audio.loop = true;
     audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
@@ -54,19 +61,26 @@ export function AudioProvider({ children }) {
     if (ambience) ambience.volume = isMuted ? 0 : 1.0;
     try {
       localStorage.setItem("audioMuted", isMuted);
-    } catch {}
+    } catch { }
+
+    if (isDebugMode()) {
+      console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
+    }
   }, [isMuted]);
 
   // Start playing main menu track from the beginning
   const playMainMenuMusic = () => {
-    // Ensure ambience is completely stopped when menu music begins
     stopAmbience(true); // Immediate stop, no fade
-
     const audio = musicRef.current;
     if (!audio) return;
+
+    if (isDebugMode()) {
+      console.log("[Audio] Playing main menu music");
+    }
+
     audio.currentTime = 0;
     audio.volume = isMuted ? 0 : 1.0;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
   };
 
   // Gradually fade out and stop music
@@ -74,13 +88,15 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return Promise.resolve();
 
-    // Define fade duration and frame rate
+    if (isDebugMode()) {
+      console.log("[Audio] Fading out main menu music");
+    }
+
     const FADE_DURATION = 800; // ms
-    const STEP_INTERVAL = 50; // ms between volume steps
+    const STEP_INTERVAL = 50;
     const steps = FADE_DURATION / STEP_INTERVAL;
     const volumeStep = audio.volume / steps;
 
-    // Return a Promise that resolves after fade completes
     return new Promise((resolve) => {
       const fade = setInterval(() => {
         if (!audio) {
@@ -89,15 +105,16 @@ export function AudioProvider({ children }) {
           return;
         }
 
-        // Decrease volume until silent
         audio.volume = Math.max(0, audio.volume - volumeStep);
 
-        // Stop and reset once volume is near zero
         if (audio.volume <= 0.01) {
           clearInterval(fade);
           audio.pause();
           audio.currentTime = 0;
           audio.volume = isMuted ? 0 : 1.0;
+          if (isDebugMode()) {
+            console.log("[Audio] Main menu music stopped");
+          }
           resolve();
         }
       }, STEP_INTERVAL);
@@ -112,24 +129,39 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    // Wait for any previous ambience to fade out before replacing
+    const path = `/assets/audio/${file}`;
+    if (isDebugMode()) {
+      console.log(`[Audio] Starting ambience: ${key} (${path})`);
+    }
+
+    // Fade out previous ambience if one is already playing
     if (ambienceRef.current) {
       await stopAmbience();
     }
 
     // Create and start new ambience loop
-    const audio = new Audio(`/assets/audio/${file}`);
+    const audio = new Audio(path);
     audio.loop = true;
     audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     ambienceRef.current = audio;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
   };
 
   // Gradually fade out and stop ambience
   const stopAmbience = (immediate = false) => {
     const audio = ambienceRef.current;
     if (!audio) return Promise.resolve();
+
+    const name = audio.src.split("/").pop();
+
+    if (isDebugMode()) {
+      if (immediate) {
+        console.log(`[Audio] Stopping ambience immediately: ${name}`);
+      } else {
+        console.log(`[Audio] Fading out ambience: ${name}`);
+      }
+    }
 
     // Cancel any previous fade before starting a new one
     if (ambienceFadeRef.current) {
@@ -142,16 +174,17 @@ export function AudioProvider({ children }) {
       audio.pause();
       audio.currentTime = 0;
       ambienceRef.current = null;
+      if (isDebugMode()) {
+        console.log(`[Audio] Ambience ${name} stopped instantly`);
+      }
       return Promise.resolve();
     }
 
-    // Define fade duration and frame rate
-    const FADE_DURATION = 800; // ms
-    const STEP_INTERVAL = 50; // ms between volume steps
+    const FADE_DURATION = 800;
+    const STEP_INTERVAL = 50;
     const steps = FADE_DURATION / STEP_INTERVAL;
     const volumeStep = audio.volume / steps;
 
-    // Return a Promise that resolves after fade completes
     return new Promise((resolve) => {
       ambienceFadeRef.current = setInterval(() => {
         if (!audio) {
@@ -161,16 +194,17 @@ export function AudioProvider({ children }) {
           return;
         }
 
-        // Decrease volume until silent
         audio.volume = Math.max(0, audio.volume - volumeStep);
 
-        // Stop and reset once volume is near zero
         if (audio.volume <= 0.01) {
           clearInterval(ambienceFadeRef.current);
           ambienceFadeRef.current = null;
           audio.pause();
           audio.currentTime = 0;
           ambienceRef.current = null;
+          if (isDebugMode()) {
+            console.log(`[Audio] Ambience ${name} fully stopped`);
+          }
           resolve();
         }
       }, STEP_INTERVAL);
@@ -185,23 +219,20 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    // Create a temporary audio instance
-    const audio = new Audio(`/assets/audio/${file}`);
+    const path = `/assets/audio/${file}`;
+    if (isDebugMode()) {
+      console.log(`[Audio] Playing SFX: ${key} (${path})`);
+    }
+
+    const audio = new Audio(path);
     audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     audio.loop = false;
 
-    // Track this instance to avoid leaks
     sfxRefs.current.add(audio);
-
-    // Play and clean up when done
-    audio.play().catch(() => {});
-    audio.addEventListener("ended", () => {
-      sfxRefs.current.delete(audio);
-    });
-    audio.addEventListener("error", () => {
-      sfxRefs.current.delete(audio);
-    });
+    audio.play().catch(() => { });
+    audio.addEventListener("ended", () => sfxRefs.current.delete(audio));
+    audio.addEventListener("error", () => sfxRefs.current.delete(audio));
   };
 
   // Clean up all SFX when unmounting

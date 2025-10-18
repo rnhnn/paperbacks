@@ -70,8 +70,6 @@ export default function GameScreen({ phase, transitionTo }) {
       timeoutId = setTimeout(() => {
         playMainMenuMusic();
       }, MUSIC_DELAY);
-    } else {
-      stopMusic();
     }
 
     // Clear pending timeout when leaving menu early

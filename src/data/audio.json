@@ -1,12 +1,12 @@
 {
   "music": {
-    "mainMenu": "the-snow-queen.mp3"
+    "mainMenu": "music/the-snow-queen.mp3"
   },
   "ambience": {
-    "street": "ambience-street.mp3",
-    "rain": "ambience-rain.mp3"
+    "street": "ambience/street.mp3",
+    "rain": "ambience/rain.mp3"
   },
   "sfx": {
-    "wind-whiff": "sfx-wind-whiff.mp3"
+    "wind-whiff": "sfx/wind-whiff.mp3"
   }
 }
