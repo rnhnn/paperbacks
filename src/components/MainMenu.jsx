@@ -1,28 +1,26 @@
 // React and context hooks
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
-import { useAudio } from "../contexts/AudioContext";
-import useFullscreen from "../hooks/useFullscreen";
 import useText from "../hooks/useText";
 
 // Components
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
+import Options from "./Options"; // Added: shared options window component
 
 // Styles
 import "../styles/MainMenu.css";
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
-  // Track quick-save availability and credits visibility
+  // Track quick-save availability and window visibility
   const [hasSave, setHasSave] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+  const [showOptions, setShowOptions] = useState(false); // Added: track options window state
 
   const fileInputRef = useRef(null);
 
   const { storageKey } = useSaveSystem(); // Identify save slot key
   const { t } = useText(); // Access translation function
-  const { isMuted, toggleMute } = useAudio(); // Track and toggle global mute state
-  const { isFullscreen, toggleFullscreen } = useFullscreen(); // Track and toggle fullscreen state
 
   // Check for an existing quick save once on mount
   useEffect(() => {
@@ -95,6 +93,15 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           {t("ui.mainMenu.loadGame")}
         </button>
 
+        {/* Open options window */}
+        <button
+          type="button"
+          className="main-menu-button"
+          onClick={() => setShowOptions(true)}
+        >
+          {t("ui.mainMenu.options")}
+        </button>
+
         <button
           type="button"
           className="main-menu-button"
@@ -103,6 +110,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
           {t("ui.mainMenu.credits")}
         </button>
 
+        {/* Hidden input for external save import */}
         <input
           type="file"
           accept=".json,application/json"
@@ -112,29 +120,15 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         />
       </div>
 
-      {/* Place control buttons in bottom-right corner */}
-      <div className="main-menu-controls">
-        <button
-          type="button"
-          className={`main-menu-controls-button main-menu-controls-button-window ${
-            isFullscreen ? "main-menu-controls-button-window-windowed" : ""
-          }`}
-          onClick={toggleFullscreen}
-        >
-          {isFullscreen ? "Windowed" : "Fullscreen"}
-        </button>
-        
-        <button
-          type="button"
-          className={`main-menu-controls-button main-menu-controls-button-volume ${
-            isMuted ? "main-menu-controls-button-volume-off" : ""
-          }`}
-          onClick={toggleMute}
-        >
-          {isMuted ? "Unmute" : "Mute"}
-        </button>
-      </div>
+      {/* Show options window with only fullscreen and mute controls */}
+      {showOptions && (
+        <Options
+          context="mainMenu"
+          onClose={() => setShowOptions(false)}
+        />
+      )}
 
+      {/* Show credits window */}
       {showCredits && (
         <WindowOverlay onClose={() => setShowCredits(false)}>
           <Credits onClose={() => setShowCredits(false)} />

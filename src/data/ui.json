@@ -4,6 +4,7 @@
     "continue": "Continue",
     "newGame": "New Game",
     "loadGame": "Load Game",
+    "options": "Options",
     "credits": "Credits"
   },
   "titleCard": {
@@ -49,7 +50,9 @@
     "exportSave": "Export Save File",
     "importSave": "Import Save File",
     "fullscreen": "Fullscreen",
-    "windowed": "Windowed"
+    "windowed": "Windowed",
+    "mute": "Mute",
+    "unmute": "Unmute"
 
   },
   "exitWindow": {
