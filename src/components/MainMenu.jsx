@@ -4,7 +4,6 @@ import { useSaveSystem } from "../contexts/SaveSystemContext";
 import useText from "../hooks/useText";
 
 // Components
-import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
 import Options from "./Options"; // Added: shared options window component
 import { playClickSound } from "../helpers/uiSound";
