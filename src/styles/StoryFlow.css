@@ -7,6 +7,7 @@
   height: 100%;
   width: 360px;
   padding: 30px;
+  color: var(--black);
 }
 
 .story-flow-content {
