@@ -1,9 +1,8 @@
-// Options window with save and load controls
-import WindowOverlay from "./WindowOverlay";
+// React & styles
+import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
 import useText from "../hooks/useText";
 import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
 import { useAudio } from "../contexts/AudioContext"; // Control global mute state
-import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 import "../styles/Options.css";
 
 export default function Options({
@@ -21,21 +20,11 @@ export default function Options({
   // Detect if options are opened from main menu
   const isMainMenu = context === "mainMenu";
 
-  // Render a modal window with context-sensitive options
+  // Render options inside window overlay
   return (
     <WindowOverlay onClose={onClose}>
+      {/* Outer container stays fixed size */}
       <div className="window window-options">
-        {/* Close button in the top-right corner */}
-        <button
-          className="window-close"
-          onClick={() => {
-            playClickSound();
-            onClose();
-          }}
-        >
-          ×
-        </button>
-
         <h2 className="window-title">{t("ui.optionsWindow.title")}</h2>
 
         {/* Action buttons for save, load, export, and import */}

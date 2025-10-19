@@ -1,8 +1,7 @@
-// Inventory window displaying all acquired items
+// React & styles
 import { useMemo } from "react";
-import WindowOverlay from "./WindowOverlay";
+import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
 import useText from "../hooks/useText";
-import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 import "../styles/Inventory.css";
 
 export default function Inventory({ items, onClose }) {
@@ -15,21 +14,11 @@ export default function Inventory({ items, onClose }) {
     return map;
   }, [textData.items]);
 
-  // Render a modal showing the player’s current inventory
+  // Render inventory inside window overlay
   return (
     <WindowOverlay onClose={onClose}>
+      {/* Outer container stays fixed size */}
       <div className="window window-inventory">
-        {/* Close button in the top-right corner */}
-        <button
-          className="window-close"
-          onClick={() => {
-            playClickSound();
-            onClose();
-          }}
-        >
-          ×
-        </button>
-
         <h2 className="window-title">{t("ui.inventoryWindow.title")}</h2>
 
         {/* List all acquired items or show an empty message */}

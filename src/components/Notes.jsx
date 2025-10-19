@@ -1,8 +1,7 @@
-// Notes window displaying all unlocked notes
+// React & styles
 import { useMemo } from "react";
-import WindowOverlay from "./WindowOverlay";
+import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
 import useText from "../hooks/useText";
-import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 import "../styles/Notes.css";
 
 export default function Notes({ notes, onClose }) {
@@ -15,21 +14,11 @@ export default function Notes({ notes, onClose }) {
     return map;
   }, [textData.notes]);
 
-  // Render a modal listing all unlocked story notes
+  // Render notes inside window overlay
   return (
     <WindowOverlay onClose={onClose}>
+      {/* Outer container stays fixed size */}
       <div className="window window-notes">
-        {/* Close button in the top-right corner */}
-        <button
-          className="window-close"
-          onClick={() => {
-            playClickSound();
-            onClose();
-          }}
-        >
-          ×
-        </button>
-
         <h2 className="window-title">{t("ui.notesWindow.title")}</h2>
 
         {/* List all unlocked notes or show an empty message */}

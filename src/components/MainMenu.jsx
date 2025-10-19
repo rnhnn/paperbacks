@@ -146,9 +146,7 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
 
       {/* Show credits window */}
       {showCredits && (
-        <WindowOverlay onClose={() => setShowCredits(false)}>
-          <Credits onClose={() => setShowCredits(false)} />
-        </WindowOverlay>
+        <Credits onClose={() => setShowCredits(false)} />
       )}
     </div>
   );
