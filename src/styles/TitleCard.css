@@ -8,7 +8,6 @@
   color: var(--white);
   font-size: var(--font-size-regular);
   transition: opacity var(--title-fade-duration, 400ms) ease-in-out;
-  z-index: 20;
 }
 
 .title-card-visible {

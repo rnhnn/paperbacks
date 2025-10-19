@@ -1,3 +1,5 @@
+// Display main menu with new game, continue, load, options, and credits
+
 // React and context hooks
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";

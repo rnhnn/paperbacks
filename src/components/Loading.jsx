@@ -1,3 +1,5 @@
+// Preload all fonts, images, and audio before showing language selection
+
 // React and context hooks
 import { useState, useEffect } from "react";
 import { useFlags } from "../contexts/FlagsContext";
