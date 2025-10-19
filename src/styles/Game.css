@@ -28,12 +28,11 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    content: "Paperbacks is designed for desktop or tablet screens.\A Paperbacks está diseñado para pantallas de computadora o tablets.";
+    content: "Paperbacks is designed and optimized for desktop or tablet screens.";
     white-space: pre-line;
     background: var(--black);
     color: var(--white);
-    font-size: 25px;
-    line-height: 2.6;
+    font-size: 35px;
     padding: 0 20px;
     z-index: 9999;
   }
