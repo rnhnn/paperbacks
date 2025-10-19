@@ -167,8 +167,18 @@ export default function GameScreen({ phase, transitionTo }) {
     // Wait for fade-out to complete
     await new Promise((resolve) => setTimeout(resolve, fadeDuration));
 
-    // Wait for music fade-out before switching phase
-    if (phase === "menu") await stopMusic();
+    // Try to fade out menu music, but don't block transition on mobile
+    if (phase === "menu") {
+      const stopPromise = stopMusic();
+      // Detect iOS Safari/Chrome (WebKit)
+      const isIOS = /iP(hone|od)/.test(navigator.userAgent);
+      if (isIOS) {
+        // Let fade run in background; don't await it
+        stopPromise.catch(() => {});
+      } else {
+        await stopPromise;
+      }
+    }
 
     // Switch to the new phase (fade-in starts immediately)
     transitionTo(targetPhase);
