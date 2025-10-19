@@ -1,3 +1,5 @@
+// Drive the narrative flow, rendering story nodes, choices, and player progression
+
 // React and styles
 import "../styles/StoryFlow.css";
 import { useState, useEffect, useRef, useMemo } from "react";

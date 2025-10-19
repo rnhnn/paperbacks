@@ -1,3 +1,5 @@
+// Control all major game phases and transitions between loading, menu, and gameplay
+
 // React and context hooks
 import { useState, useRef, useEffect } from "react";
 import { useSaveSystem } from "../contexts/SaveSystemContext";
