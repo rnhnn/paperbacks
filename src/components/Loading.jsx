@@ -175,7 +175,7 @@ export default function Loading({ onComplete }) {
             className="language-button"
             onClick={() => handleSelectLanguage("en")}
           >
-            English!
+            English
           </button>
           <button
             className="language-button"

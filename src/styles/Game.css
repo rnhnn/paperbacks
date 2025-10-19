@@ -19,3 +19,22 @@
   padding-bottom: 30px;
   background-color: var(--black);
 }
+
+@media (max-width: 800px) {
+  .game-screen::after {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    content: "Paperbacks is designed for desktop or tablet screens.\A Paperbacks está diseñado para pantallas de computadora o tablets.";
+    white-space: pre-line;
+    background: var(--black);
+    color: var(--white);
+    font-size: 25px;
+    line-height: 2.6;
+    padding: 0 20px;
+    z-index: 9999;
+  }
+}
