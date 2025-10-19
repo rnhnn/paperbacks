@@ -7,7 +7,7 @@ import useText from "../hooks/useText";
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
 import Options from "./Options"; // Added: shared options window component
-import { playClickSound, playHoverSound } from "../helpers/uiSound";
+import { playClickSound } from "../helpers/uiSound";
 
 // Styles
 import "../styles/MainMenu.css";

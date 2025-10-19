@@ -7,10 +7,10 @@ export function playHoverSound() {
   if (playUISound) playUISound("hover");
 }
 
-// Play click sound effect
-export function playClickSound() {
+// Play click sound effect, with optional variant key
+export function playClickSound(variant = "click") {
   const playUISound = getPlayUISound();
-  if (playUISound) playUISound("click");
+  if (playUISound) playUISound(variant);
 }
 
 // Play any custom UI sound by key

@@ -10,6 +10,9 @@ import Inventory from "./Inventory";
 import Notes from "./Notes";
 import Exit from "./Exit";
 
+// UI sound helpers
+import { playClickSound } from "../helpers/uiSound";
+
 // Data and styles
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
@@ -195,25 +198,37 @@ export default function PlayerMenu({
           {/* Render main action buttons */}
           <div className="player-menu-buttons">
             <button
-              onClick={() => setShowInventory(true)}
+              onClick={() => {
+                playClickSound();
+                setShowInventory(true);
+              }}
               className="player-menu-buttons-item player-menu-buttons-item-inventory"
             >
               {t("ui.playerMenu.buttons.inventory")}
             </button>
             <button
-              onClick={() => setShowNotes(true)}
+              onClick={() => {
+                playClickSound("click-paper");
+                setShowNotes(true);
+              }}
               className="player-menu-buttons-item player-menu-buttons-item-notes"
             >
               {t("ui.playerMenu.buttons.notes")}
             </button>
             <button
-              onClick={() => setShowOptions(true)}
+              onClick={() => {
+                playClickSound();
+                setShowOptions(true);
+              }}
               className="player-menu-buttons-item player-menu-buttons-item-options"
             >
               {t("ui.playerMenu.buttons.options")}
             </button>
             <button
-              onClick={() => setShowExitConfirm(true)}
+              onClick={() => {
+                playClickSound();
+                setShowExitConfirm(true);
+              }}
               className="player-menu-buttons-item player-menu-buttons-item-exit"
             >
               {t("ui.playerMenu.buttons.exit")}

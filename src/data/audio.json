@@ -11,6 +11,7 @@
   },
   "ui": {
     "hover": "ui/hover-wood.mp3",
-    "click": "ui/hover-wood.mp3"
+    "click": "ui/hover-wood.mp3",
+    "click-paper": "ui/click-paper.mp3"
   }
 }
