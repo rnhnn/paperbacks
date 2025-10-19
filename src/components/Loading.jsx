@@ -172,13 +172,13 @@ export default function Loading({ onComplete }) {
       {ready && (
         <div className="language-select">
           <button
-            className="language-button"
+            className="language-select-button"
             onClick={() => handleSelectLanguage("en")}
           >
             English
           </button>
           <button
-            className="language-button"
+            className="language-select-button"
             onClick={() => handleSelectLanguage("es")}
           >
             Español
@@ -186,7 +186,7 @@ export default function Loading({ onComplete }) {
 
           {/* Show skip button only when debug mode is active */}
           {isDebugMode() && (
-            <button className="language-button" onClick={handleSkipToGame}>
+            <button className="language-select-button" onClick={handleSkipToGame}>
               Skip to Game
             </button>
           )}

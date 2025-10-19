@@ -2,17 +2,10 @@
   width: 100%;
   height: 100%;
   display: flex;
-  background: var(--black);
   align-items: center;
   justify-content: center;
-  user-select: none;
-  cursor: default;
-}
-
-.loading p {
-  color: var(--white);
-  font-size: var(--font-size-regular);
   text-align: center;
+  font-size: var(--font-size-regular);
 }
 
 .language-select {
@@ -22,12 +15,9 @@
   gap: 6px;
 }
 
-.language-button {
-  text-align: left;
-  font-size: var(--font-size-regular);
-  padding: 0;
-  background-color: transparent;
-  color: var(--white);
+.language-select-button {
   cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 0;
+  color: var(--white);
+  background-color: transparent;
 }
