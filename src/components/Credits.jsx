@@ -4,6 +4,7 @@ import "../styles/Credits.css";
 import "../styles/ScrollArrows.css";
 import useText from "../hooks/useText";
 import useScrollArrows from "../hooks/useScrollArrows";
+import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 
 export default function Credits({ onClose }) {
   const { t } = useText();
@@ -22,7 +23,13 @@ export default function Credits({ onClose }) {
     // Outer container stays fixed size, inner content scrolls
     <div className="window window-credits has-scroll-parent">
       {/* Close button in the top-right corner */}
-      <button className="window-close" onClick={onClose}>
+      <button
+        className="window-close"
+        onClick={() => {
+          playClickSound();
+          onClose();
+        }}
+      >
         ×
       </button>
 
@@ -64,7 +71,7 @@ export default function Credits({ onClose }) {
         </section>
 
         <p className="window-credits-content-footer">
-          © 2025 Rolando Hernández — {" "}
+          © 2025 Rolando Hernández —{" "}
           <a
             href="https://indoorprince.com"
             target="_blank"

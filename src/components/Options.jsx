@@ -3,6 +3,7 @@ import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
 import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
 import { useAudio } from "../contexts/AudioContext"; // Control global mute state
+import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 import "../styles/Options.css";
 
 export default function Options({
@@ -25,7 +26,13 @@ export default function Options({
     <WindowOverlay onClose={onClose}>
       <div className="window window-options">
         {/* Close button in the top-right corner */}
-        <button className="window-close" onClick={onClose}>
+        <button
+          className="window-close"
+          onClick={() => {
+            playClickSound();
+            onClose();
+          }}
+        >
           ×
         </button>
 

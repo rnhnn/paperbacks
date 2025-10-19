@@ -5,6 +5,9 @@ import audioData from "../data/audio.json";
 
 const AudioContext = createContext();
 
+// Keep an external reference so helpers can trigger UI sounds outside React
+let externalPlayUISound = () => {};
+
 export function AudioProvider({ children }) {
   // Keep a single Audio object for background music
   const musicRef = useRef(null);
@@ -17,6 +20,9 @@ export function AudioProvider({ children }) {
 
   // Keep a Set of active one-shot SFX Audio objects
   const sfxRefs = useRef(new Set());
+
+  // Keep a dictionary of preloaded UI Audio bases (cloned at play time)
+  const uiRefs = useRef({});
 
   // Track mute state and persist in localStorage
   const [isMuted, setIsMuted] = useState(() => {
@@ -53,6 +59,27 @@ export function AudioProvider({ children }) {
     };
   }, []);
 
+  // Preload UI sounds for instant playback
+  useEffect(() => {
+    const entries = Object.entries(audioData.ui || {});
+    if (entries.length === 0) return;
+
+    entries.forEach(([key, file]) => {
+      const path = `/assets/audio/${file}`;
+      const base = new Audio(path);
+      base.preload = "auto";
+      uiRefs.current[key] = base;
+      if (isDebugMode()) {
+        console.log(`[Audio] Preloaded UI sound: ${key} (${path})`);
+      }
+    });
+
+    // Clean up base refs on unmount
+    return () => {
+      uiRefs.current = {};
+    };
+  }, []);
+
   // Update volume and persist mute setting when state changes
   useEffect(() => {
     const music = musicRef.current;
@@ -61,7 +88,7 @@ export function AudioProvider({ children }) {
     if (ambience) ambience.volume = isMuted ? 0 : 1.0;
     try {
       localStorage.setItem("audioMuted", isMuted);
-    } catch { }
+    } catch {}
 
     if (isDebugMode()) {
       console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
@@ -80,7 +107,7 @@ export function AudioProvider({ children }) {
 
     audio.currentTime = 0;
     audio.volume = isMuted ? 0 : 1.0;
-    audio.play().catch(() => { });
+    audio.play().catch(() => {});
   };
 
   // Gradually fade out and stop music
@@ -145,7 +172,7 @@ export function AudioProvider({ children }) {
     audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     ambienceRef.current = audio;
-    audio.play().catch(() => { });
+    audio.play().catch(() => {});
   };
 
   // Gradually fade out and stop ambience
@@ -230,9 +257,24 @@ export function AudioProvider({ children }) {
     audio.loop = false;
 
     sfxRefs.current.add(audio);
-    audio.play().catch(() => { });
+    audio.play().catch(() => {});
     audio.addEventListener("ended", () => sfxRefs.current.delete(audio));
     audio.addEventListener("error", () => sfxRefs.current.delete(audio));
+  };
+
+  // Play a UI sound by key (e.g., "hover" or "click")
+  const playUISound = (key) => {
+    const base = uiRefs.current[key];
+    if (!base) {
+      console.warn(`AudioContext: Missing UI sound key '${key}'`);
+      return;
+    }
+    if (isDebugMode()) {
+      console.log(`[Audio] UI sound: ${key}`);
+    }
+    const node = base.cloneNode();
+    node.volume = isMuted ? 0 : 0.4;
+    node.play().catch(() => {});
   };
 
   // Clean up all SFX when unmounting
@@ -248,6 +290,9 @@ export function AudioProvider({ children }) {
     setIsMuted((prev) => !prev);
   };
 
+  // Expose UI player to external helpers
+  externalPlayUISound = playUISound;
+
   return (
     <AudioContext.Provider
       value={{
@@ -256,6 +301,7 @@ export function AudioProvider({ children }) {
         playAmbience,
         stopAmbience,
         playSFX,
+        playUISound,
         isMuted,
         toggleMute,
       }}
@@ -267,4 +313,9 @@ export function AudioProvider({ children }) {
 
 export function useAudio() {
   return useContext(AudioContext);
+}
+
+// Get a callable UI player for helper modules
+export function getPlayUISound() {
+  return externalPlayUISound;
 }

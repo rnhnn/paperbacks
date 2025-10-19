@@ -56,7 +56,7 @@ export default function Loading({ onComplete }) {
 
     // Preload all audio files (music, ambience, and SFX) using smart cache
     const preloadAllAudio = async () => {
-      const groups = ["music", "ambience", "sfx"];
+      const groups = ["music", "ambience", "sfx", "ui"];
       const requests = [];
       const cacheName = "paperbacks-audio-cache-v1";
 

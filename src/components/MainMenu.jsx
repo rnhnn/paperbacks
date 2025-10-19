@@ -7,6 +7,7 @@ import useText from "../hooks/useText";
 import WindowOverlay from "./WindowOverlay";
 import Credits from "./Credits";
 import Options from "./Options"; // Added: shared options window component
+import { playClickSound, playHoverSound } from "../helpers/uiSound";
 
 // Styles
 import "../styles/MainMenu.css";
@@ -71,7 +72,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={hasSave ? onContinue : undefined}
+          onClick={(e) => {
+            playClickSound();
+            if (hasSave) onContinue(e);
+          }}
           disabled={!hasSave}
         >
           {t("ui.mainMenu.continue")}
@@ -80,7 +84,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={onNewGame}
+          onClick={(e) => {
+            playClickSound();
+            onNewGame(e);
+          }}
         >
           {t("ui.mainMenu.newGame")}
         </button>
@@ -88,7 +95,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={handleLoadGameClick}
+          onClick={(e) => {
+            playClickSound();
+            handleLoadGameClick(e);
+          }}
         >
           {t("ui.mainMenu.loadGame")}
         </button>
@@ -97,7 +107,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={() => setShowOptions(true)}
+          onClick={(e) => {
+            playClickSound();
+            setShowOptions(true);
+          }}
         >
           {t("ui.mainMenu.options")}
         </button>
@@ -105,7 +118,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
         <button
           type="button"
           className="main-menu-button"
-          onClick={() => setShowCredits(true)}
+          onClick={(e) => {
+            playClickSound();
+            setShowCredits(true);
+          }}
         >
           {t("ui.mainMenu.credits")}
         </button>

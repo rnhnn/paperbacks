@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
+import { playClickSound } from "../helpers/uiSound"; // Added: play sound on close
 import "../styles/Notes.css";
 
 export default function Notes({ notes, onClose }) {
@@ -19,7 +20,13 @@ export default function Notes({ notes, onClose }) {
     <WindowOverlay onClose={onClose}>
       <div className="window window-notes">
         {/* Close button in the top-right corner */}
-        <button className="window-close" onClick={onClose}>
+        <button
+          className="window-close"
+          onClick={() => {
+            playClickSound();
+            onClose();
+          }}
+        >
           ×
         </button>
 

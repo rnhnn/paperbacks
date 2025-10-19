@@ -8,5 +8,9 @@
   },
   "sfx": {
     "wind-whiff": "sfx/wind-whiff.mp3"
+  },
+  "ui": {
+    "hover": "ui/hover-wood.mp3",
+    "click": "ui/hover-wood.mp3"
   }
 }
