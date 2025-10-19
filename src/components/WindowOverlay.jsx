@@ -1,29 +1,29 @@
-// Reusable overlay for modal windows
-import { useEffect, useRef, Children, isValidElement, cloneElement } from "react";
+// Provide a reusable overlay layer for modal windows
+import { useEffect, Children, isValidElement, cloneElement } from "react";
 import { playClickSound } from "../helpers/uiSound";
 import "../styles/WindowOverlay.css";
 
 export default function WindowOverlay({ onClose, children, autoCloseButton = true }) {
-  const contentRef = useRef(null);
-
-  // Close on Escape
+  // Close window when the Escape key is pressed
   useEffect(() => {
     const handleKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose]);
 
-  // Handle overlay clicks
+  // Close overlay when clicking outside the window
   const handleOverlayClick = () => onClose();
+
+  // Prevent click events inside window from closing it
   const handleContentClick = (e) => e.stopPropagation();
 
-  // Handle close click
+  // Play sound and close window when pressing the X button
   const handleCloseClick = () => {
     playClickSound();
     onClose();
   };
 
-  // Inject close button by cloning .window child only (no full tree replacement)
+  // Automatically insert a close button at the top of any .window element
   const enhancedChildren = Children.map(children, (child) => {
     if (
       isValidElement(child) &&
@@ -45,14 +45,10 @@ export default function WindowOverlay({ onClose, children, autoCloseButton = tru
     return child;
   });
 
-  // Render overlay
+  // Render a darkened overlay behind the modal window
   return (
     <div className="window-overlay" onClick={handleOverlayClick}>
-      <div
-        ref={contentRef}
-        className="window-content pixelated-corners"
-        onClick={handleContentClick}
-      >
+      <div className="window-content pixelated-corners" onClick={handleContentClick}>
         {enhancedChildren}
       </div>
     </div>
