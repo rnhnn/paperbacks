@@ -7,6 +7,51 @@
   font-display: block;
 }
 
+@font-face {
+    font-family: 'basis33';
+    src: url('/assets/fonts/basis33.woff2') format('woff2'),
+        url('/assets/fonts/basis33.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ThemeVCK Text';
+    src: url('/assets/fonts/ThemeVCKText.woff2') format('woff2'),
+        url('/assets/fonts/ThemeVCKText.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'PF Ronda Seven';
+    src: url('/assets/fonts/PFRondaSeven.woff2') format('woff2'),
+        url('/assets/fonts/PFRondaSeven.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Volter (Goldfish)';
+    src: url('/assets/fonts/VolterGoldfish.woff2') format('woff2'),
+        url('/assets/fonts/VolterGoldfish.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Fiery Turk';
+    src: url('/assets/fonts/FieryTurk.woff2') format('woff2'),
+        url('/assets/fonts/FieryTurk.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 *,
 *::before,
 *::after {
@@ -28,6 +73,7 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: 'Grand9K Pixel';
+  font-size: var(--font-size-regular);
   background-color: var(--black);
   color: var(--white);
 }

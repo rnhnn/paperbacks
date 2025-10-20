@@ -4,11 +4,21 @@
     "editing": "Editor & Proofreader",
     "music": "Music",
     "specialThanks": "Special Thanks",
-    "playtesters": "Playtesters"
+    "playtesters": "Playtesters",
+    "font": "Font"
   },
   "names": {
     "rolando": "Rolando Hernández",
     "valentina": "Valentina Lamazon"
+  },
+  "fontInfo": {
+    "note": "“Grand9K Pixel” by Jayvee D. Enaguas (Grand Chaos). Modified by Rolando Hernández.",
+    "license": "Licensed under Creative Commons: CC-BY-SA 3.0"
+  },
+  "musicInfo": {
+    "title": "“The Snow Queen” by Kevin MacLeod",
+    "site": "Incompetech.com",
+    "license": "Licensed under Creative Commons: By Attribution 3.0 License"
   },
   "playtesters": [
     "Alfredo Pérez",
@@ -16,11 +26,6 @@
     "Victor Fernández",
     "Walther Graciano"
   ],
-  "musicInfo": {
-    "title": "“The Snow Queen” by Kevin MacLeod",
-    "site": "Incompetech.com",
-    "license": "Licensed under Creative Commons: By Attribution 3.0 License"
-  },
   "specialThanks": [
     "The Beatles",
     "Zinedine Zidane"

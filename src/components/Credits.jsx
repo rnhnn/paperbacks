@@ -59,6 +59,20 @@ export default function Credits({ onClose }) {
             </p>
           </section>
 
+          {/* Font section */}
+          <section className="window-credits-content-section">
+            <h3 className="window-credits-content-section-header">
+              {t("credits.sections.font")}
+            </h3>
+            
+            <p className="window-credits-content-section-entry">
+              {t("credits.fontInfo.note")}
+            </p>
+            <p className="window-credits-content-section-entry">
+              {t("credits.fontInfo.license")}
+            </p>
+          </section>
+
           <section className="window-credits-content-section">
             <h3 className="window-credits-content-section-header">
               {t("credits.sections.playtesters")}
