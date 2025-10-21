@@ -14,7 +14,6 @@ import Exit from "./Exit";
 import { playClickSound } from "../helpers/uiSound";
 
 // Data and styles
-import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 import useText from "../hooks/useText";
 import "../styles/PlayerMenu.css";
@@ -43,12 +42,12 @@ export default function PlayerMenu({
   // Ref for hidden input element used to import save files
   const fileInputRef = useRef(null);
 
-  // Access context data from gameplay systems
-  const { inventory } = useInventory();
+  // Access gameplay systems
+  const { items } = useInventory();
   const { notes } = useNotes();
   const { flags } = useFlags();
 
-  // Load localized text utility
+  // Load translation utility
   const { t } = useText();
 
   // Activate fade-in on mount (bulletproof against Safari paint issues)
@@ -66,7 +65,7 @@ export default function PlayerMenu({
     setTimeout(() => setSaveMsg(""), 1500);
   };
 
-  // Trigger quick save via context and show confirmation
+  // Handle quick save and show toast
   const handleQuickSave = () => {
     if (onQuickSave) {
       onQuickSave();
@@ -75,7 +74,7 @@ export default function PlayerMenu({
     }
   };
 
-  // Trigger quick load via context and close options menu afterward
+  // Handle quick load and show toast
   const handleQuickLoad = () => {
     if (onQuickLoad) {
       onQuickLoad();
@@ -84,7 +83,7 @@ export default function PlayerMenu({
     }
   };
 
-  // Export current game state as a JSON file and close the options window
+  // Export current game state to a JSON file
   const handleExportSave = () => {
     try {
       const storyData =
@@ -94,7 +93,7 @@ export default function PlayerMenu({
         version: 1,
         timestamp: Date.now(),
         story: storyData,
-        inventoryIds: [...inventory],
+        inventoryIds: items.filter((i) => i.acquired).map((i) => i.id),
         noteIds: notes.filter((n) => n.unlocked).map((n) => n.id),
         flags: { ...flags },
       };
@@ -117,12 +116,12 @@ export default function PlayerMenu({
     }
   };
 
-  // Trigger hidden file input to import save data
+  // Trigger hidden input to import save data
   const handleImportSave = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  // Read and validate an imported save file, then load it into localStorage
+  // Read and validate an imported save file
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -131,7 +130,7 @@ export default function PlayerMenu({
       const text = await file.text();
       const data = JSON.parse(text);
 
-      // Validate basic save structure before applying
+      // Validate basic save structure
       if (!data || typeof data !== "object" || !data.version) {
         console.warn("Invalid save file");
         flashMsg(t("ui.playerMenu.toast.invalidFile"));
@@ -150,15 +149,6 @@ export default function PlayerMenu({
       e.target.value = ""; // Reset input so same file can be re-imported
     }
   };
-
-  // Build inventory items from current IDs
-  const inventoryItems = useMemo(
-    () =>
-      inventory
-        .map((id) => itemsData.find((item) => item.id === id))
-        .filter(Boolean),
-    [inventory]
-  );
 
   // Build unlocked notes with fallback content
   const unlockedNotes = useMemo(
@@ -260,7 +250,7 @@ export default function PlayerMenu({
       {/* Show inventory window */}
       {showInventory && (
         <Inventory
-          items={inventoryItems}
+          items={items}
           onClose={() => setShowInventory(false)}
         />
       )}

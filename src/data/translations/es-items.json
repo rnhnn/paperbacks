@@ -1,9 +1,34 @@
-{
-  "beckys_keys.name": "Llaves de Becky",
-  "beckys_keys.description": "Me las dio después del trabajo.",
-  "toothbrush.name": "Cepillo de dientes",
-  "toothbrush.description": "Apesta. Mucho. ¡Apesta muchísimo! Pero bueno, así es la vida.",
-  
-  "old_shoe.name": "Zapato viejo",
-  "old_shoe.description": "Apesta *de verdad*. Te recuerda a una tarde en casa de tu abuela."
-}
+[
+  {
+    "id": "beckys_keys",
+    "name": "Llaves de Becky",
+    "description": [
+      "Me las dio después del trabajo.",
+      "Todavía huelen a <em>café y metal</em>."
+    ]
+  },
+  {
+    "id": "golden-card",
+    "name": "Tarjeta Dorada",
+    "description": [
+      "Brilla con un tono dorado, casi demasiado perfecto.",
+      "El reverso dice: <em>“Válida solo cuando llegue la hora.”</em>"
+    ]
+  },
+  {
+    "id": "toothbrush",
+    "name": "Cepillo de dientes",
+    "description": [
+      "Apesta. Mucho. <em>Apesta muchísimo.</em>",
+      "Pero bueno, así es la vida."
+    ]
+  },
+  {
+    "id": "old_shoe",
+    "name": "Zapato viejo",
+    "description": [
+      "Apesta de verdad.",
+      "Te recuerda a una tarde en casa de tu abuela."
+    ]
+  }
+]

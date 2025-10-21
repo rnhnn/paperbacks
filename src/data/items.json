@@ -2,19 +2,29 @@
   {
     "id": "beckys_keys",
     "name": "Keys to Becky's",
-    "description": "She gave them to me after work.",
+    "icon": "/assets/items/keys-to-beckys.png",
+    "description": [
+      "She gave them to me after work."
+    ],
     "acquired": true
   },
   {
-    "id": "toothbrush",
-    "name": "A toothbrush",
-    "description": "It stinks. Badly. It super stinks! But well, such is life.",
-    "acquired": false
+    "id": "golden-card",
+    "name": "Golden Card",
+    "icon": "/assets/items/golden-card.png",
+    "description": [
+      "A shiny card that glimmers under the light, almost too perfect.",
+      "The back reads <em>“Admit one, when the hour is right.”</em>"
+    ],
+    "acquired": true
   },
   {
     "id": "old_shoe",
     "name": "Old Shoe",
-    "description": "It *really* stinks. It reminds you of an afternoon at yoru grandmas place.",
+    "icon": "/assets/items/golden-card.png",
+    "description": [
+      "A stinky shoe."
+    ],
     "acquired": false
   }
 ]
