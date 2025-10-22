@@ -1,6 +1,6 @@
 // React & styles
-import { useMemo } from "react";
-import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
+import { useState, useMemo, useEffect } from "react";
+import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
 import "../styles/Notes.css";
 
@@ -14,37 +14,75 @@ export default function Notes({ notes, onClose }) {
     return map;
   }, [textData.notes]);
 
-  // Render notes inside window overlay
+  // Sort unlocked notes by most recently unlocked first
+  const sortedNotes = useMemo(() => {
+    return [...notes].reverse();
+  }, [notes]);
+
+  // Track the active note being viewed
+  const [activeNoteId, setActiveNoteId] = useState(null);
+
+  // Auto-select the most recently unlocked note when opened
+  useEffect(() => {
+    if (sortedNotes.length > 0) {
+      setActiveNoteId(sortedNotes[0].id);
+    }
+  }, [sortedNotes]);
+
+  // Find currently active note for display
+  const activeNote = useMemo(() => {
+    if (!activeNoteId) return null;
+    const note = sortedNotes.find((n) => n.id === activeNoteId);
+    const loc = localizedById[note?.id] || note;
+    return loc || null;
+  }, [activeNoteId, sortedNotes, localizedById]);
+
+  // Render notes window
   return (
     <WindowOverlay onClose={onClose}>
-      {/* Outer container stays fixed size */}
       <div className="window window-notes">
         <h2 className="window-title">{t("ui.notesWindow.title")}</h2>
 
-        {/* List all unlocked notes or show an empty message */}
-        {notes.length > 0 ? (
-          <ul className="notes-list">
-            {notes.map((note) => {
-              // Prefer localized note if available, fall back to base
-              const loc = localizedById[note.id] || note;
+        {sortedNotes.length > 0 ? (
+          <div className="notes-container">
+            {/* Sidebar with note titles */}
+            <div className="notes-sidebar">
+              {sortedNotes.map((note) => {
+                const loc = localizedById[note.id] || note;
+                const isActive = note.id === activeNoteId;
 
-              return (
-                <li key={note.id} className="notes-item">
-                  {/* Note title */}
-                  <div className="notes-item-title">
+                return (
+                  <button
+                    key={note.id}
+                    className={`notes-sidebar-item ${
+                      isActive ? "is-active" : ""
+                    }`}
+                    onClick={() => setActiveNoteId(note.id)}
+                  >
                     {loc.title || t("ui.notesWindow.noTitle")}
-                  </div>
+                  </button>
+                );
+              })}
+            </div>
 
-                  {/* Note text content rendered as paragraphs */}
-                  <div className="notes-item-content">
-                    {(loc.content || []).map((p, i) => (
+            {/* Content area for active note */}
+            <div className="notes-content">
+              {activeNote ? (
+                <>
+                  <h3 className="notes-content-title">
+                    {activeNote.title || t("ui.notesWindow.noTitle")}
+                  </h3>
+                  <div className="notes-content-body">
+                    {(activeNote.content || []).map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
-                </li>
-              );
-            })}
-          </ul>
+                </>
+              ) : (
+                <p className="notes-empty">{t("ui.notesWindow.empty")}</p>
+              )}
+            </div>
+          </div>
         ) : (
           <p>{t("ui.notesWindow.empty")}</p>
         )}

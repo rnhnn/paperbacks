@@ -265,8 +265,6 @@ export default function PlayerMenu({
       {showNotes && (
         <Notes
           notes={unlockedNotes}
-          openNoteId={openNoteId}
-          onToggleNote={toggleNote}
           onClose={() => setShowNotes(false)}
         />
       )}
