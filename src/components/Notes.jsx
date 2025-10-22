@@ -1,8 +1,10 @@
 // React & styles
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
+import useScrollArrows from "../hooks/useScrollArrows";
 import "../styles/Notes.css";
+import "../styles/ScrollArrows.css";
 
 export default function Notes({ notes, onClose }) {
   const { t, textData } = useText();
@@ -21,6 +23,12 @@ export default function Notes({ notes, onClose }) {
 
   // Track the active note being viewed
   const [activeNoteId, setActiveNoteId] = useState(null);
+
+  // Ref for sidebar scroll area
+  const scrollRef = useRef(null);
+
+  // Enable custom scroll arrows for sidebar
+  useScrollArrows(scrollRef, { step: 24 });
 
   // Auto-select the most recently unlocked note when opened
   useEffect(() => {
@@ -45,24 +53,26 @@ export default function Notes({ notes, onClose }) {
 
         {sortedNotes.length > 0 ? (
           <div className="notes-container">
-            {/* Sidebar with note titles */}
-            <div className="notes-sidebar">
-              {sortedNotes.map((note) => {
-                const loc = localizedById[note.id] || note;
-                const isActive = note.id === activeNoteId;
+            {/* Sidebar wrapper with scroll arrows */}
+            <div className="notes-sidebar-wrapper has-scroll-parent">
+              <div ref={scrollRef} className="notes-sidebar has-scroll">
+                {sortedNotes.map((note) => {
+                  const loc = localizedById[note.id] || note;
+                  const isActive = note.id === activeNoteId;
 
-                return (
-                  <button
-                    key={note.id}
-                    className={`notes-sidebar-item ${
-                      isActive ? "is-active" : ""
-                    }`}
-                    onClick={() => setActiveNoteId(note.id)}
-                  >
-                    {loc.title || t("ui.notesWindow.noTitle")}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={note.id}
+                      className={`notes-sidebar-item ${
+                        isActive ? "is-active" : ""
+                      }`}
+                      onClick={() => setActiveNoteId(note.id)}
+                    >
+                      {loc.title || t("ui.notesWindow.noTitle")}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Content area for active note */}
