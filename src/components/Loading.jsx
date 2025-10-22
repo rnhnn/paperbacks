@@ -10,7 +10,8 @@ import { isDebugMode } from "../helpers/isDebugMode";
 // Data
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
-import audioData from "../data/audio.json"; // Added: audio manifest for music, ambience, and SFX
+import items from "../data/items.json";
+import audioData from "../data/audio.json";
 
 // Styles
 import "../styles/Loading.css";
@@ -41,7 +42,7 @@ export default function Loading({ onComplete }) {
     loadFont();
   }, []);
 
-  // Preload portraits, icons, and all audio once the font is ready
+  // Preload portraits, icons, items, and all audio once the font is ready
   useEffect(() => {
     if (!fontReady) return;
 
@@ -73,17 +74,13 @@ export default function Loading({ onComplete }) {
           const path = `/assets/audio/${file}`;
 
           // Log each audio file being preloaded in debug mode
-          if (isDebugMode()) {
-            console.log(`[Audio Preload] ${group}/${key}: ${path}`);
-          }
+          if (isDebugMode()) console.log(`[Audio Preload] ${group}/${key}: ${path}`);
 
           if (cache) {
             // Check cache before fetching
             const match = await cache.match(path);
             if (match) {
-              if (isDebugMode()) {
-                console.log(`[Audio Preload] Cache hit: ${path}`);
-              }
+              if (isDebugMode()) console.log(`[Audio Preload] Cache hit: ${path}`);
               continue; // Skip already cached files
             }
 
@@ -93,22 +90,18 @@ export default function Loading({ onComplete }) {
                 .then((response) => {
                   if (response.ok) {
                     cache.put(path, response.clone());
-                    if (isDebugMode()) {
-                      console.log(`[Audio Preload] Cached: ${path}`);
-                    }
+                    if (isDebugMode()) console.log(`[Audio Preload] Cached: ${path}`);
                   }
                 })
-                .catch((err) => {
-                  console.warn(`[Audio Preload] Failed to fetch ${path}`, err);
-                })
+                .catch((err) =>
+                  console.warn(`[Audio Preload] Failed to fetch ${path}`, err)
+                )
             );
           } else {
             // Fallback: use standard fetch when Cache API is unavailable
             requests.push(
-              fetch(path, { method: "GET", cache: "force-cache" }).catch(
-                (err) => {
-                  console.warn(`[Audio Preload] Failed to load ${path}`, err);
-                }
+              fetch(path, { method: "GET", cache: "force-cache" }).catch((err) =>
+                console.warn(`[Audio Preload] Failed to load ${path}`, err)
               )
             );
           }
@@ -126,15 +119,26 @@ export default function Loading({ onComplete }) {
         .filter(Boolean)
         .map((f) => `/assets/portraits/${f}`);
 
-      // Collect icon paths from icons.json
+      // Collect UI icon paths from icons.json
       const iconPaths = icons.map((f) => `/assets/icons/${f}`);
+
+      // Collect item icon paths from items.json
+      const itemIcons = items.map((it) => it.icon).filter(Boolean);
+
+      // Log preloading details when debug mode is active
+      if (isDebugMode()) {
+        portraits.forEach((p) => console.log(`[Image Preload] Portrait: ${p}`));
+        iconPaths.forEach((p) => console.log(`[Image Preload] Icon: ${p}`));
+        itemIcons.forEach((p) => console.log(`[Image Preload] Item: ${p}`));
+      }
 
       try {
         // Load all assets and audio in parallel
         await Promise.all([
           ...portraits.map(preloadImage),
           ...iconPaths.map(preloadImage),
-          preloadAllAudio(), // Updated: now preloads all audio with cache support
+          ...itemIcons.map(preloadImage),
+          preloadAllAudio(),
         ]);
       } catch (err) {
         console.error("Asset preload failed:", err);
@@ -156,8 +160,7 @@ export default function Loading({ onComplete }) {
     onComplete(); // GameScreen will handle music timing
   };
 
-  // Handle quick shortcut that skips menu and title card
-  // Available only when debug mode is active
+  // Handle quick shortcut that skips menu and title card (debug only)
   const handleSkipToGame = () => {
     if (!ready) return;
     setLanguage("en"); // Force English for testing
@@ -188,7 +191,10 @@ export default function Loading({ onComplete }) {
 
           {/* Show skip button only when debug mode is active */}
           {isDebugMode() && (
-            <button className="language-select-button" onClick={handleSkipToGame}>
+            <button
+              className="language-select-button"
+              onClick={handleSkipToGame}
+            >
               Skip to Game
             </button>
           )}
