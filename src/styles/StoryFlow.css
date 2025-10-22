@@ -58,7 +58,6 @@
   cursor: pointer;
   background-color: transparent;
   border: 0;
-  font-size: initial;
   color: var(--red);
 }
 

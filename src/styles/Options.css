@@ -8,6 +8,11 @@
   flex-direction: column;
 }
 
+.window-buttons-item {
+  height: 40px;
+  background-color: #767787;
+}
+
 .window-buttons-item + .window-buttons-item {
   margin-top: 10px;
 }

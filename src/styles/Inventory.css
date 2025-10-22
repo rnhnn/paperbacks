@@ -19,7 +19,6 @@
 /* Description takes bottom half */
 .inventory-description {
   flex: 1;
-  border-top: 1px solid var(--white);
   padding: 8px;
   overflow-y: auto;
   text-align: left;
@@ -30,7 +29,7 @@
   width: 48px;
   height: 48px;
   background: var(--black);
-  border: 1px solid var(--white);
+  border: 2px solid var(--black);
   image-rendering: pixelated;
   cursor: pointer;
   display: flex;
@@ -40,7 +39,7 @@
 
 /* Selected slot highlight */
 .inventory-slot.selected {
-  border-color: var(--accent, var(--white));
+  border-color: var(--white)
 }
 
 /* Item icon image */
