@@ -1,51 +1,40 @@
-/* Layout container for sidebar and content */
+.window-notes {
+  width: 550px;
+}
+
 .notes-container {
   display: flex;
-  flex-direction: row;
-  height: 260px;
-  border: 1px solid var(--white);
+  height: 100%;
   background: var(--black);
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
-/* Sidebar for note titles */
 .notes-sidebar {
-  width: 120px;
+  width: 150px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--white);
   overflow-y: auto;
-  height: 100%; /* Force internal scroll area */
+  height: 100%;
 }
 
-/* Individual sidebar buttons */
 .notes-sidebar-item {
   display: block;
   width: 100%;
   padding-block: 6px;
   padding-inline: 8px;
   text-align: left;
-  color: var(--white);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-pixel);
-  font-size: 12px;
-  line-height: 1.3;
+  font-size: var(--font-size-small);
 }
 
-/* Highlight active note title */
 .notes-sidebar-item.is-active {
   background: var(--white);
   color: var(--black);
 }
 
-/* Add subtle hover feedback */
 .notes-sidebar-item:hover:not(.is-active) {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Scrollbar styling for sidebar */
 .notes-sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -54,42 +43,25 @@
   background: var(--white);
 }
 
-/* Content area for selected note */
 .notes-content {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  color: var(--white);
-  font-family: var(--font-pixel);
-  font-size: 12px;
-  line-height: 1.4;
+  padding: 3px 10px;
 }
 
-/* Title inside content area */
 .notes-content-title {
   margin-top: 0;
   margin-bottom: 8px;
-  font-size: 14px;
   color: var(--white);
 }
 
-/* Paragraph styling for note text */
 .notes-content-body p {
   margin-bottom: 6px;
 }
 
-/* Message when no note is available */
 .notes-empty {
   padding: 12px;
   text-align: center;
   color: var(--white);
   opacity: 0.8;
-}
-
-/* Ensure smooth scrolling for both columns */
-.notes-sidebar,
-.notes-content {
-  scrollbar-gutter: stable;
 }
 
 .notes-sidebar-wrapper {
