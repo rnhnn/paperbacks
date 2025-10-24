@@ -11,11 +11,11 @@
   --window: #4e4f64;
   --pink: #ffc0cb;
 
-  --font-size-tiny: 10px;
-  --font-size-small: 12px;
-  --font-size-regular: 16px;
-  --font-size-large: 18px;
-  --font-size-title: 24px;
-  --font-size-huge: 32px;
-  --font-size-main-title: 70px;
+  --font-size-tiny: 15px;
+  --font-size-small: 18px;
+  --font-size-regular: 24px;
+  --font-size-large: 27px;
+  --font-size-title: 36px;
+  --font-size-huge: 48px;
+  --font-size-main-title: 105px;
 }
