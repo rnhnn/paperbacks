@@ -10,7 +10,7 @@
 .main-menu-title {
   margin-top: 0;
   margin-bottom: 50px;
-  line-height: 1;
+  line-height: 80px;
   font-size: var(--font-size-main-title);
   font-weight: normal;
 }
