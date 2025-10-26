@@ -10,6 +10,7 @@
 
 .window-buttons-item {
   height: 40px;
+  padding-bottom: 4px;
   background-color: #767787;
 }
 
