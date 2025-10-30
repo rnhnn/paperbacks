@@ -1,7 +1,5 @@
 {
   "id": "story",
-  "title": "Monsello 188",
-  "description": "A strange evening on a lonely street.",
   "initialAmbience": "street",
   "nodes": [
     {
