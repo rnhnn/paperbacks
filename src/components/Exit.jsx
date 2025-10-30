@@ -15,9 +15,10 @@ export default function Exit({ onConfirm, onClose }) {
         <h2 className="window-title">{t("ui.exitWindow.title")}</h2>
         <p className="window-message">{t("ui.exitWindow.message")}</p>
 
-        <div>
+        <div className="window-exit-buttons">
           {/* Confirm and close buttons */}
           <button
+            className="window-buttons-item"
             onClick={() => {
               stopAmbience(); // Stop any ongoing ambience before exiting
               onClose(); // Close the modal immediately
@@ -27,7 +28,10 @@ export default function Exit({ onConfirm, onClose }) {
             {t("ui.exitWindow.confirm")}
           </button>
 
-          <button onClick={onClose}>{t("ui.exitWindow.cancel")}</button>
+          <button 
+            className="window-buttons-item" 
+            onClick={onClose}>{t("ui.exitWindow.cancel")}
+          </button>
         </div>
       </div>
     </WindowOverlay>

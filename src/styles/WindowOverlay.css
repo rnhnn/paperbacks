@@ -21,6 +21,7 @@
 
 .window-title {
   margin-top: 0;
+  margin-bottom: 15px;
   text-align: center;
   font-weight: normal;
   font-size: var(--font-size-large);
