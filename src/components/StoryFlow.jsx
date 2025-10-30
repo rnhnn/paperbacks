@@ -434,7 +434,7 @@ export default function StoryFlow({
           if (block.type === "singleParagraph")
             return (
               <div key={block.id || i} className={cls}>
-                <p dangerouslySetInnerHTML={{ __html: block.text }} />
+                <p className="story-flow-node-pargraph" dangerouslySetInnerHTML={{ __html: block.text }} />
               </div>
             );
 
@@ -479,7 +479,9 @@ export default function StoryFlow({
                 <ol className="story-flow-dialogue-list">
                   {safeChoices.map((c, j) => (
                     <li key={j} className="story-flow-dialogue-list-option">
-                      <button onClick={() => handleChoice(c)}>{c.text}</button>
+                      <button onClick={() => handleChoice(c)} className="story-flow-dialogue-list-option-button">
+                        <span className="story-flow-option-number">{j + 1}.</span> {c.text}
+                      </button>
                     </li>
                   ))}
                 </ol>

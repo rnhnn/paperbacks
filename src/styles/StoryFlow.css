@@ -3,22 +3,17 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 30px;
-  height: 100%;
   width: 360px;
-  background-color: var(--white);
+  height: 100%;
+  padding: 30px;
   color: var(--black);
+  background-color: var(--white);
 }
 
 .story-flow-content {
   position: relative;
   overflow-y: auto;
   margin-bottom: 30px;
-}
-
-.story-flow p {
-  margin-top: 0;
-  margin-bottom: 20px;
 }
 
 .story-flow-portrait {
@@ -34,31 +29,25 @@
 }
 
 .story-flow-node.is-current {
-  opacity: 0;
-  animation: nodeSoftFade 0.4s ease-in-out forwards;
+  opacity: 1;
 }
 
-@keyframes nodeSoftFade {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+.story-flow-node + .story-flow-node {
+  margin-top: 20px;
 }
 
-.story-flow-dialogue-list {
-  counter-reset: dialogue-counter;
-}
-
-.story-flow-dialogue-list-option::before {
-  counter-increment: dialogue-counter;
-  content: counter(dialogue-counter) ". ";
-  display: inline-block;
-  min-width: 1.5ch;
-}
-
-.story-flow-dialogue-list-option button {
-  cursor: pointer;
-  background-color: transparent;
+.story-flow-dialogue-list-option-button {
+  text-align: left;
   border: 0;
   color: var(--red);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.story-flow-option-number {
+  display: inline-block;
+  min-width: 1.5ch;
+  color: var(--black);
 }
 
 .story-flow-dialogue-list-option button:hover {
@@ -71,12 +60,12 @@
 }
 
 .story-flow-button {
-  cursor: pointer;
   width: 100%;
   height: 35px;
   padding-bottom: 4px;
-  background-color: var(--red);
   color: var(--white);
+  background-color: var(--red);
+  cursor: pointer;
 }
 
 .story-flow-button:hover {
@@ -85,13 +74,13 @@
 
 .story-flow::before,
 .story-flow::after {
-  content: "";
   position: absolute;
   left: 0;
   width: 100%;
   height: 9px;
   pointer-events: none;
   z-index: 2;
+  content: "";
 }
 
 .story-flow::before {
@@ -104,6 +93,6 @@
   background: linear-gradient(to top, var(--white) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.story-flow .has-scroll-arrow  {
+.story-flow .has-scroll-arrow {
   background-image: url("/assets/icons/icon-arrow-story-flow.png");
 }
