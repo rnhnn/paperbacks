@@ -11,7 +11,7 @@
     {
       "id": "threeStoryBuilding",
       "type": "singleParagraph",
-      "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Monsello 188.",
+      "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Narcissus 188.",
       "next": "doubtAboutNumber",
       "setAmbience": "rain",
       "playSFX": "wind-whiff"

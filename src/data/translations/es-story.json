@@ -1,6 +1,4 @@
 {
-  "title": "Monsello 188",
-  "description": "A strange evening on a lonely street.",
   "nodes.lonelyStreet.text": "Al final de la calle ventosa y solitaria, <em>eventualmente</em> encuentras el edificio correcto.",
   "nodes.threeStoryBuilding.text": "Una reliquia de tres pisos hecha en los 40, con una placa oxidada que dice: Monsello 188.",
   "nodes.doubtAboutNumber.text": "¿O 189?"
