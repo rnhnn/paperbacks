@@ -48,7 +48,8 @@ export default function TitleCard({
           : `${fadeOutDuration}ms`,
       }}
     >
-      <p>{text}</p>
+      {/* Render HTML-formatted text */}
+      <p dangerouslySetInnerHTML={{ __html: text }} />
     </div>
   );
 }

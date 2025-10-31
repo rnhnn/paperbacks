@@ -8,7 +8,7 @@
     "credits": "Credits"
   },
   "titleCard": {
-    "burescaMorning": "Somewhere in Buresca — 09:30 a.m."
+    "burescaMorning": "<em>09:30 a.m.</em><br>Somewhere in Buresca..."
   },
   "storyFlow": {
     "begin": "Begin",

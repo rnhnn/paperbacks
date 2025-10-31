@@ -17,3 +17,9 @@
 .title-card-hidden {
   opacity: 0;
 }
+
+.title-card em {
+  line-height: 1;
+  font-style: normal;
+  font-size: var(--font-size-small);
+}

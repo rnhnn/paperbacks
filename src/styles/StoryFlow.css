@@ -24,12 +24,14 @@
   border: 3px solid var(--white);
 }
 
-.story-flow-node {
-  opacity: 0.3;
+@keyframes nodeSoftFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .story-flow-node.is-current {
-  opacity: 1;
+ opacity: 0;
+ animation: nodeSoftFade 0.4s ease-in-out forwards;
 }
 
 .story-flow-node + .story-flow-node {
