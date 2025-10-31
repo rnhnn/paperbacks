@@ -1,7 +1,4 @@
-/* Layout container split into two equal areas */
 .inventory-container {
-  display: flex;
-  flex-direction: column;
   height: 100%;
 }
 
@@ -11,9 +8,7 @@
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(2, 1fr);
   gap: 4px;
-  flex: 1;
-  justify-items: center;
-  align-items: center;
+  row-gap: 10px;
 }
 
 /* Description takes bottom half */
