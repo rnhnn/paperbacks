@@ -11,6 +11,7 @@ import { isDebugMode } from "../helpers/isDebugMode";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
 import items from "../data/items.json";
+import branding from "../data/branding.json";
 import audioData from "../data/audio.json";
 
 // Styles
@@ -125,26 +126,30 @@ export default function Loading({ onComplete }) {
       // Collect item icon paths from items.json
       const itemIcons = items.map((it) => it.icon).filter(Boolean);
 
+      // Collect branding image paths from branding.json
+      const brandingPaths = branding.map((f) => `/assets/branding/${f}`);
+
       // Log preloading details when debug mode is active
       if (isDebugMode()) {
         portraits.forEach((p) => console.log(`[Image Preload] Portrait: ${p}`));
         iconPaths.forEach((p) => console.log(`[Image Preload] Icon: ${p}`));
         itemIcons.forEach((p) => console.log(`[Image Preload] Item: ${p}`));
+        brandingPaths.forEach((p) => console.log(`[Image Preload] Branding: ${p}`));
       }
 
       try {
         // Load all assets and audio in parallel
         await Promise.all([
-          ...portraits.map(preloadImage),
+          ...brandingPaths.map(preloadImage),
           ...iconPaths.map(preloadImage),
           ...itemIcons.map(preloadImage),
+          ...portraits.map(preloadImage),
           preloadAllAudio(),
         ]);
       } catch (err) {
         console.error("Asset preload failed:", err);
       }
 
-      // Wait remaining time to enforce minimum loading duration
       const elapsed = performance.now() - start;
       const delay = Math.max(0, MIN_TIME - elapsed);
       setTimeout(setReady, delay, true);

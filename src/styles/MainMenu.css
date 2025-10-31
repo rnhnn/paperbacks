@@ -14,7 +14,7 @@
   font-size: var(--font-size-main-title);
   font-weight: normal;
   image-rendering: pixelated;
-  background-image: url("/assets/logo.png");
+  background-image: url("/assets/branding/logo.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
