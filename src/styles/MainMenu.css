@@ -9,10 +9,17 @@
 
 .main-menu-title {
   margin-top: 0;
-  margin-bottom: 50px;
+  margin-bottom: 17px;
   line-height: 80px;
   font-size: var(--font-size-main-title);
   font-weight: normal;
+  image-rendering: pixelated;
+  background-image: url("/assets/logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: transparent;
+  height: 119px;
 }
 
 .main-menu-options {

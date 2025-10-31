@@ -1,5 +1,5 @@
 // Provide a reusable overlay layer for modal windows
-import { useEffect, Children, isValidElement, cloneElement } from "react";
+import { useEffect } from "react";
 import { playClickSound } from "../helpers/uiSound";
 import "../styles/WindowOverlay.css";
 
@@ -15,7 +15,7 @@ export default function WindowOverlay({ onClose, children, autoCloseButton = tru
   const handleOverlayClick = () => onClose();
 
   // Prevent click events inside window from closing it
-  const handleContentClick = (e) => e.stopPropagation();
+  const handleFrameClick = (e) => e.stopPropagation();
 
   // Play sound and close window when pressing the X button
   const handleCloseClick = () => {
@@ -23,33 +23,23 @@ export default function WindowOverlay({ onClose, children, autoCloseButton = tru
     onClose();
   };
 
-  // Automatically insert a close button at the top of any .window element
-  const enhancedChildren = Children.map(children, (child) => {
-    if (
-      isValidElement(child) &&
-      typeof child.props.className === "string" &&
-      child.props.className.includes("window") &&
-      autoCloseButton
-    ) {
-      return cloneElement(child, {
-        children: (
-          <>
-            <button className="window-close" onClick={handleCloseClick}>
-              ×
-            </button>
-            {child.props.children}
-          </>
-        ),
-      });
-    }
-    return child;
-  });
-
-  // Render a darkened overlay behind the modal window
   return (
     <div className="window-overlay" onClick={handleOverlayClick}>
-      <div className="window-content pixelated-corners" onClick={handleContentClick}>
-        {enhancedChildren}
+      {/* Make a positioning context that wraps the clipped window */}
+      <div className="window-frame" onClick={handleFrameClick}>
+        {/* Keep pixelated corners as the outer clipped box */}
+        <div className="window-content pixelated-corners">{children}</div>
+
+        {/* Place close button as sibling so it is not clipped */}
+        {autoCloseButton && (
+          <button
+            className="window-close"
+            aria-label="Close"
+            onClick={handleCloseClick}
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   );
