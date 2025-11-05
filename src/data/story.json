@@ -6,22 +6,19 @@
       "id": "lonelyStreet",
       "type": "singleParagraph",
       "text": "At the end of the desolate and windy street, you <em>eventually</em> find the right building.",
-      "next": "threeStoryBuilding"
+      "next": "threeStoryRelic"
     },
     {
-      "id": "threeStoryBuilding",
+      "id": "threeStoryRelic",
       "type": "singleParagraph",
       "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Narcissus 188.",
-      "next": "doubtAboutNumber",
-      "setAmbience": "rain",
-      "playSFX": "wind-whiff"
+      "next": "doubtAboutNumber"
     },
     {
       "id": "doubtAboutNumber",
       "type": "singleParagraph",
       "text": "Or is it 189?",
-      "next": "reactingToTheBuilding",
-      "playSFX": "wind-whiff"
+      "next": "reactingToTheBuilding"
     },
     {
       "id": "reactingToTheBuilding",
@@ -29,122 +26,27 @@
       "choices": [
         {
           "text": "“It’s here.”",
-          "effects": { "wasSureItWasHere": true },
-          "next": "kirbyRelief"
+          "next": "mariaRelief"
         },
         {
           "text": "“It’s… here?”",
-          "effects": { "wasUnsureItWasHere": true },
-          "next": "kirbyNotConvinced"
+          "next": "mariaNotConvinced"
         }
       ]
     },
     {
-      "id": "kirbyRelief",
+      "id": "mariaRelief",
       "type": "characterDialogue",
-      "character": "tim-kirby",
+      "character": "maria-monsell",
       "text": "“Freaking finally.”",
       "next": "theStoryResumes"
     },
     {
-      "id": "kirbyNotConvinced",
+      "id": "mariaNotConvinced",
       "type": "characterDialogue",
-      "character": "tim-kirby",
+      "character": "maria-monsell",
       "text": "“You don't sound too sure.”",
       "next": "theStoryResumes"
-    },
-    {
-      "id": "theStoryResumes",
-      "type": "singleParagraph",
-      "text": "You look at the sidewalk and find...",
-      "next": "findingAShoe",
-      "playSFX": "wind-whiff"
-    },
-    {
-      "id": "findingAShoe",
-      "type": "singleParagraph",
-      "text": "An old shoe?!",
-      "inventoryAdd": ["old_shoe"],
-      "effects": { "foundOldShoe": true },
-      "next": "findingAShoppingList"
-    },
-    {
-      "id": "findingAShoppingList",
-      "type": "singleParagraph",
-      "text": "And inside the shoe you find a shopping list.",
-      "notesAdd": ["shopping_list_home"],
-      "next": "flagChecker"
-    },
-    {
-      "id": "flagChecker",
-      "type": "characterDialogue",
-      "character": "tim-kirby",
-      "text": "Great, you are both sure of yourself and lucky.",
-      "nextIf": [
-        {
-          "conditions": { "wasSureItWasHere": true },
-          "next": "conditionalResponse"
-        },
-        {
-          "conditions": { "wasUnsureItWasHere": true },
-          "next": "someOtherStory"
-        }
-      ],
-      "next": "someOtherStory"
-    },
-    {
-      "id": "conditionalResponse",
-      "type": "singleParagraph",
-      "text": "Let me hear it.",
-      "next": "oldLadyAppears"
-    },
-    {
-      "id": "someOtherStory",
-      "type": "singleParagraph",
-      "text": "The final text.",
-      "next": "oldLadyAppears"
-    },
-    {
-      "id": "oldLadyAppears",
-      "type": "characterDialogue",
-      "character": "agnes",
-      "text": "“Hey! What are you doing near my doorstep?”",
-      "next": "agnesSecondLine"
-    },
-    {
-      "id": "agnesSecondLine",
-      "type": "characterDialogue",
-      "character": "agnes",
-      "text": "“I’ve had enough of youngsters sneaking around here.”",
-      "next": "agnesRevealsName"
-    },
-    {
-      "id": "agnesRevealsName",
-      "type": "characterDialogue",
-      "character": "agnes",
-      "text": "“Ah, where are my manners. I’m Agnes.”",
-      "effects": { "knowsAgnesName": true },
-      "next": "finalAgnes"
-    },
-    {
-      "id": "finalAgnes",
-      "type": "characterDialogue",
-      "character": "agnes",
-      "text": "“Ok, bye!”",
-      "next": "agnesKeepsRambling"
-    },
-    {
-      "id": "agnesKeepsRambling",
-      "type": "characterDialogue",
-      "character": "agnes",
-      "text": "“Will the circle be unbroken?”",
-      "next": "kirbyIsBack"
-    },
-    {
-      "id": "kirbyIsBack",
-      "type": "characterDialogue",
-      "character": "tim-kirby",
-      "text": "“Of course lady. I'm back!”"
     }
   ]
 }

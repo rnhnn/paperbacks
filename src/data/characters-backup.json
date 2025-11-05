@@ -1,0 +1,26 @@
+{
+  "tim-kirby": {
+    "id": "tim-kirby",
+    "name": "Tim Kirby",
+    "portrait": "kirby.png"
+  },
+  "sienna-green": {
+    "id": "tim-kirby",
+    "name": "Tim Kirby",
+    "portrait": "kirby.png"
+  },
+  "agnes": {
+    "id": "agnes",
+    "nameStates": [
+      {
+        "label": "Fierce Old Lady",
+        "condition": null
+      },
+      {
+        "label": "Agnes",
+        "condition": "knowsAgnesName"
+      }
+    ],
+    "portrait": "agnes.png"
+  }
+}

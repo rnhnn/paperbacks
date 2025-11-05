@@ -169,10 +169,44 @@ export function AudioProvider({ children }) {
     // Create and start new ambience loop
     const audio = new Audio(path);
     audio.loop = true;
-    audio.volume = isMuted ? 0 : 1.0;
     audio.preload = "auto";
     ambienceRef.current = audio;
+
+    // Start silent for fade-in
+    audio.volume = 0;
     audio.play().catch(() => {});
+
+    // Smoothly fade in ambience if not muted
+    if (!isMuted) {
+      const FADE_DURATION = 800; // ms
+      const STEP_INTERVAL = 50;
+      const steps = FADE_DURATION / STEP_INTERVAL;
+      const volumeStep = 1.0 / steps;
+      let currentVolume = 0;
+
+      // Cancel previous fade interval if still running
+      if (ambienceFadeRef.current) {
+        clearInterval(ambienceFadeRef.current);
+        ambienceFadeRef.current = null;
+      }
+
+      ambienceFadeRef.current = setInterval(() => {
+        if (!audio) {
+          clearInterval(ambienceFadeRef.current);
+          ambienceFadeRef.current = null;
+          return;
+        }
+        currentVolume = Math.min(1.0, currentVolume + volumeStep);
+        audio.volume = currentVolume;
+        if (currentVolume >= 1.0) {
+          clearInterval(ambienceFadeRef.current);
+          ambienceFadeRef.current = null;
+          if (isDebugMode()) {
+            console.log(`[Audio] Ambience ${key} faded in`);
+          }
+        }
+      }, STEP_INTERVAL);
+    }
   };
 
   // Gradually fade out and stop ambience
