@@ -37,14 +37,12 @@ export function AudioProvider({ children }) {
   useEffect(() => {
     const track = audioData.music?.mainMenu;
     if (!track) {
-      console.warn("AudioContext: Missing mainMenu track");
+      console.warn("[AudioContext] Missing mainMenu track");
       return;
     }
 
     const path = `/assets/audio/${track}`;
-    if (isDebugMode()) {
-      console.log(`[Audio] Preparing main menu music: ${path}`);
-    }
+    if (isDebugMode()) console.log(`[Audio] Preparing main menu music: ${path}`);
 
     const audio = new Audio(path);
     audio.loop = true;
@@ -69,12 +67,9 @@ export function AudioProvider({ children }) {
       const base = new Audio(path);
       base.preload = "auto";
       uiRefs.current[key] = base;
-      if (isDebugMode()) {
-        console.log(`[Audio] Preloaded UI sound: ${key} (${path})`);
-      }
+      if (isDebugMode()) console.log(`[Audio] Preloaded UI sound: ${key} (${path})`);
     });
 
-    // Clean up base refs on unmount
     return () => {
       uiRefs.current = {};
     };
@@ -90,9 +85,7 @@ export function AudioProvider({ children }) {
       localStorage.setItem("audioMuted", isMuted);
     } catch {}
 
-    if (isDebugMode()) {
-      console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
-    }
+    if (isDebugMode()) console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
   }, [isMuted]);
 
   // Start playing main menu track from the beginning
@@ -101,9 +94,7 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return;
 
-    if (isDebugMode()) {
-      console.log("[Audio] Playing main menu music");
-    }
+    if (isDebugMode()) console.log("[Audio] Playing main menu music");
 
     audio.currentTime = 0;
     audio.volume = isMuted ? 0 : 1.0;
@@ -115,9 +106,7 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return Promise.resolve();
 
-    if (isDebugMode()) {
-      console.log("[Audio] Fading out main menu music");
-    }
+    if (isDebugMode()) console.log("[Audio] Fading out main menu music");
 
     const FADE_DURATION = 800; // ms
     const STEP_INTERVAL = 50;
@@ -139,32 +128,27 @@ export function AudioProvider({ children }) {
           audio.pause();
           audio.currentTime = 0;
           audio.volume = isMuted ? 0 : 1.0;
-          if (isDebugMode()) {
-            console.log("[Audio] Main menu music stopped");
-          }
+          if (isDebugMode()) console.log("[Audio] Main menu music stopped");
           resolve();
         }
       }, STEP_INTERVAL);
     });
   };
 
-  // Play ambience layer by key name
-  const playAmbience = async (key) => {
-    const file = audioData.ambience?.[key];
+  // Play ambience layer by id, with optional volume
+  const playAmbience = async (id, volume = 1) => {
+    if (isDebugMode()) console.log(`[Audio] playAmbience: id=${id}, volume=${volume}`);
+
+    const file = audioData.ambience?.[id];
     if (!file) {
-      console.warn(`AudioContext: Missing ambience key '${key}'`);
+      console.warn(`[AudioContext] Missing ambience id '${id}'`);
       return;
     }
 
     const path = `/assets/audio/${file}`;
-    if (isDebugMode()) {
-      console.log(`[Audio] Starting ambience: ${key} (${path})`);
-    }
+    if (isDebugMode()) console.log(`[Audio] Starting ambience: ${id} (${path})`);
 
-    // Fade out previous ambience if one is already playing
-    if (ambienceRef.current) {
-      await stopAmbience();
-    }
+    if (ambienceRef.current) await stopAmbience(); // Fade out previous ambience
 
     // Create and start new ambience loop
     const audio = new Audio(path);
@@ -172,19 +156,18 @@ export function AudioProvider({ children }) {
     audio.preload = "auto";
     ambienceRef.current = audio;
 
-    // Start silent for fade-in
-    audio.volume = 0;
+    audio.volume = 0; // Start silent for fade-in
     audio.play().catch(() => {});
 
     // Smoothly fade in ambience if not muted
     if (!isMuted) {
-      const FADE_DURATION = 800; // ms
+      const FADE_DURATION = 800;
       const STEP_INTERVAL = 50;
       const steps = FADE_DURATION / STEP_INTERVAL;
-      const volumeStep = 1.0 / steps;
+      const targetVolume = Math.min(1, Math.max(0, volume));
+      const volumeStep = targetVolume / steps;
       let currentVolume = 0;
 
-      // Cancel previous fade interval if still running
       if (ambienceFadeRef.current) {
         clearInterval(ambienceFadeRef.current);
         ambienceFadeRef.current = null;
@@ -196,14 +179,13 @@ export function AudioProvider({ children }) {
           ambienceFadeRef.current = null;
           return;
         }
-        currentVolume = Math.min(1.0, currentVolume + volumeStep);
+        currentVolume = Math.min(targetVolume, currentVolume + volumeStep);
         audio.volume = currentVolume;
-        if (currentVolume >= 1.0) {
+        if (isDebugMode()) console.log(`[Audio] Ambience fade progress: ${currentVolume.toFixed(2)}`);
+        if (currentVolume >= targetVolume) {
           clearInterval(ambienceFadeRef.current);
           ambienceFadeRef.current = null;
-          if (isDebugMode()) {
-            console.log(`[Audio] Ambience ${key} faded in`);
-          }
+          if (isDebugMode()) console.log(`[Audio] Ambience '${id}' faded in to ${targetVolume}`);
         }
       }, STEP_INTERVAL);
     }
@@ -217,27 +199,20 @@ export function AudioProvider({ children }) {
     const name = audio.src.split("/").pop();
 
     if (isDebugMode()) {
-      if (immediate) {
-        console.log(`[Audio] Stopping ambience immediately: ${name}`);
-      } else {
-        console.log(`[Audio] Fading out ambience: ${name}`);
-      }
+      console.log(`[Audio] stopAmbience: ${immediate ? "immediate" : "fade"} (${name})`);
     }
 
-    // Cancel any previous fade before starting a new one
     if (ambienceFadeRef.current) {
       clearInterval(ambienceFadeRef.current);
       ambienceFadeRef.current = null;
     }
 
-    // Immediate stop option (used when switching to main menu)
+    // Immediate stop
     if (immediate) {
       audio.pause();
       audio.currentTime = 0;
       ambienceRef.current = null;
-      if (isDebugMode()) {
-        console.log(`[Audio] Ambience ${name} stopped instantly`);
-      }
+      if (isDebugMode()) console.log(`[Audio] Ambience '${name}' stopped instantly`);
       return Promise.resolve();
     }
 
@@ -256,6 +231,7 @@ export function AudioProvider({ children }) {
         }
 
         audio.volume = Math.max(0, audio.volume - volumeStep);
+        if (isDebugMode()) console.log(`[Audio] Ambience fade-out progress: ${audio.volume.toFixed(2)}`);
 
         if (audio.volume <= 0.01) {
           clearInterval(ambienceFadeRef.current);
@@ -263,30 +239,28 @@ export function AudioProvider({ children }) {
           audio.pause();
           audio.currentTime = 0;
           ambienceRef.current = null;
-          if (isDebugMode()) {
-            console.log(`[Audio] Ambience ${name} fully stopped`);
-          }
+          if (isDebugMode()) console.log(`[Audio] Ambience '${name}' fully stopped`);
           resolve();
         }
       }, STEP_INTERVAL);
     });
   };
 
-  // Play a short sound effect once, no loop or fade
-  const playSFX = (key) => {
-    const file = audioData.sfx?.[key];
+  // Play a short sound effect once, with optional volume
+  const playSFX = (id, volume = 1) => {
+    const file = audioData.sfx?.[id];
     if (!file) {
-      console.warn(`AudioContext: Missing SFX key '${key}'`);
+      console.warn(`[AudioContext] Missing SFX id '${id}'`);
       return;
     }
 
     const path = `/assets/audio/${file}`;
-    if (isDebugMode()) {
-      console.log(`[Audio] Playing SFX: ${key} (${path})`);
-    }
+    const clampedVolume = Math.min(1, Math.max(0, volume));
+
+    if (isDebugMode()) console.log(`[Audio] Playing SFX: ${id} (${path}), volume=${clampedVolume}`);
 
     const audio = new Audio(path);
-    audio.volume = isMuted ? 0 : 1.0;
+    audio.volume = isMuted ? 0 : clampedVolume;
     audio.preload = "auto";
     audio.loop = false;
 
@@ -300,12 +274,11 @@ export function AudioProvider({ children }) {
   const playUISound = (key) => {
     const base = uiRefs.current[key];
     if (!base) {
-      console.warn(`AudioContext: Missing UI sound key '${key}'`);
+      console.warn(`[AudioContext] Missing UI sound key '${key}'`);
       return;
     }
-    if (isDebugMode()) {
-      console.log(`[Audio] UI sound: ${key}`);
-    }
+    if (isDebugMode()) console.log(`[Audio] UI sound: ${key}`);
+
     const node = base.cloneNode();
     node.volume = isMuted ? 0 : 0.4;
     node.play().catch(() => {});
@@ -320,9 +293,7 @@ export function AudioProvider({ children }) {
   }, []);
 
   // Toggle mute on or off
-  const toggleMute = () => {
-    setIsMuted((prev) => !prev);
-  };
+  const toggleMute = () => setIsMuted((prev) => !prev);
 
   // Expose UI player to external helpers
   externalPlayUISound = playUISound;

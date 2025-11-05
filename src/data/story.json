@@ -1,6 +1,6 @@
 {
   "id": "story",
-  "initialAmbience": "street",
+  "initialAmbience": { "id": "street", "volume": 0.3 },
   "nodes": [
     {
       "id": "lonelyStreet",
@@ -12,7 +12,8 @@
       "id": "threeStoryRelic",
       "type": "singleParagraph",
       "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Narcissus 188.",
-      "next": "doubtAboutNumber"
+      "next": "doubtAboutNumber",
+      "playSFX": { "id": "wind-whiff", "volume": 0.2 }
     },
     {
       "id": "doubtAboutNumber",

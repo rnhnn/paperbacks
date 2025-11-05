@@ -102,18 +102,18 @@ export default function GameScreen({ phase, transitionTo }) {
   };
 
   // Handle ambience updates emitted from StoryFlow
-  const handleAmbienceChange = (ambienceKey) => {
+  const handleAmbienceChange = (ambienceKey, volume = 1) => {
     if (!ambienceKey || ambienceKey === currentAmbienceRef.current) return;
     currentAmbienceRef.current = ambienceKey;
-    playAmbience(ambienceKey);
+    playAmbience(ambienceKey, volume);
   };
 
   // Handle one-shot sound effects emitted from StoryFlow
-  const handleSFXChange = (sfxKey) => {
+  const handleSFXChange = (sfxKey, volume = 1) => {
     if (!sfxKey) return;
-    playSFX(sfxKey);
+    playSFX(sfxKey, volume);
   };
-
+  
   // Load story from quick save
   const handleQuickLoad = () => {
     const storySlice = quickLoad();

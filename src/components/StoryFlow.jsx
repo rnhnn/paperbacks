@@ -93,7 +93,12 @@ export default function StoryFlow({
 
       // Trigger story-level ambience only if the starting node doesn’t override it
       if (!nodeHasOwnAmbience) {
-        onAmbienceChange(localizedStory.initialAmbience);
+        // Support object form: { id, volume } and legacy string id
+        const ia = localizedStory.initialAmbience;
+        const id = typeof ia === "string" ? ia : ia?.id;
+        const volume = typeof ia === "object" && ia?.volume != null ? ia.volume : 1;
+        console.log("[StoryFlow] onAmbienceChange →", id, volume);
+        onAmbienceChange(id, volume);
         hasTriggeredInitialAmbience.current = true;
       }
     }
@@ -102,7 +107,11 @@ export default function StoryFlow({
   // Detect ambience changes when the current node defines a new ambience key
   useEffect(() => {
     if (onAmbienceChange && currentNode?.setAmbience) {
-      onAmbienceChange(currentNode.setAmbience);
+      // Support object form: { id, volume } and legacy string id
+      const sa = currentNode.setAmbience;
+      const id = typeof sa === "string" ? sa : sa?.id;
+      const volume = typeof sa === "object" && sa?.volume != null ? sa.volume : 1;
+      onAmbienceChange(id, volume);
     }
   }, [onAmbienceChange, currentNode]);
 
@@ -268,7 +277,11 @@ export default function StoryFlow({
 
     // Trigger one-shot SFX when node defines playSFX
     if (onSFX && nodeToRender.playSFX) {
-      onSFX(nodeToRender.playSFX);
+      // Support object form: { id, volume } and legacy string id
+      const ps = nodeToRender.playSFX;
+      const id = typeof ps === "string" ? ps : ps?.id;
+      const volume = typeof ps === "object" && ps?.volume != null ? ps.volume : 1;
+      onSFX(id, volume);
     }
 
     // Freeze character at render-time so later flag changes do not rewrite history
@@ -337,7 +350,11 @@ export default function StoryFlow({
 
     // Trigger one-shot SFX when next node defines playSFX
     if (onSFX && nextNode?.playSFX) {
-      onSFX(nextNode.playSFX);
+      // Support object form: { id, volume } and legacy string id
+      const ps = nextNode.playSFX;
+      const id = typeof ps === "string" ? ps : ps?.id;
+      const volume = typeof ps === "object" && ps?.volume != null ? ps.volume : 1;
+      onSFX(id, volume);
     }
 
     // Freeze all blocks that show characters so names/portraits stay consistent
