@@ -1,4 +1,9 @@
 {
+  "felix-alba": {
+    "id": "felix-alba",
+    "name": "Félix Alba",
+    "portrait": "protagonist.png"
+  },
   "maria-monsell": {
     "id": "maria-monsell",
     "name": "Maria Monsell",
