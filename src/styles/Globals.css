@@ -7,24 +7,6 @@
   font-display: block;
 }
 
-@font-face {
-  font-family: 'Sierra';
-  src: url('/assets/fonts/Sierra.woff2') format('woff2'),
-      url('/assets/fonts/Sierra.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Peepo';
-  src: url('/assets/fonts/Peepo.woff2') format('woff2'),
-      url('/assets/fonts/Peepo.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 * {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -55,8 +37,6 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: 'Sierra';
-  font-family: 'Peepo';
   font-family: 'Grand9K Pixel';
   font-size: var(--font-size-regular);
   background-color: var(--black);

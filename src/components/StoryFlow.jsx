@@ -497,7 +497,8 @@ export default function StoryFlow({
                   {safeChoices.map((c, j) => (
                     <li key={j} className="story-flow-dialogue-list-option">
                       <button onClick={() => handleChoice(c)} className="story-flow-dialogue-list-option-button">
-                        <span className="story-flow-option-number">{j + 1}.</span> {c.text}
+                        <span className="story-flow-option-number">{j + 1}.</span>{" "}
+                        <span dangerouslySetInnerHTML={{ __html: c.text }} />
                       </button>
                     </li>
                   ))}

@@ -30,7 +30,7 @@ export default function Loading({ onComplete }) {
       try {
         const font = new FontFace(
           "Grand9KPixelRegular",
-          "url(/assets/fonts/Grand9KPixelRegular.woff2)"
+          "url(/assets/fonts/Grand9KPixel.woff2)"
         );
         await font.load();
         document.fonts.add(font);

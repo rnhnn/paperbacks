@@ -5,13 +5,13 @@
     {
       "id": "lonelyStreet",
       "type": "singleParagraph",
-      "text": "At the end of the desolate and windy street, you <em>eventually</em> find the right building.",
+      "text": "At the end of the quiet and windy street, you <em>eventually</em> find the right building.",
       "next": "threeStoryRelic"
     },
     {
       "id": "threeStoryRelic",
       "type": "singleParagraph",
-      "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Narcissus 188.",
+      "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Azalea 188.",
       "next": "doubtAboutNumber",
       "playSFX": { "id": "wind-whiff", "volume": 0.2 }
     },
@@ -26,11 +26,11 @@
       "type": "dialogueChoice",
       "choices": [
         {
-          "text": "“It’s here.”",
+          "text": "“It’s here.” <em>(Point at the plaque)</em>",
           "next": "mariaRelief"
         },
         {
-          "text": "“It’s… here?”",
+          "text": "“It’s… here?”  <em>(Squint at the plaque)</em>",
           "next": "mariaNotConvinced"
         }
       ]
@@ -39,14 +39,28 @@
       "id": "mariaRelief",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Freaking finally.”",
-      "next": "theStoryResumes"
+      "text": "“Aha…” <em>Your sister catches up to you and stops in front of the small building.</em> “Morningstar's castle.”",
+      "next": "mariaNotSure"
+    },
+    {
+      "id": "mariaNotSure",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“You sure?”",
+      "next": "mariaCantBelieve"
     },
     {
       "id": "mariaNotConvinced",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“You don't sound too sure.”",
+      "text": "“Hmm, let me see.” <em>Your sister catches up to you. She also squints at the rusty plaque</em> “Yeah… I guess”.",
+      "next": "mariaCantBelieve"
+    },
+    {
+      "id": "mariaCantBelieve",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“I can’t believe we haven’t been here before.”",
       "next": "theStoryResumes"
     }
   ]
