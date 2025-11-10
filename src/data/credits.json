@@ -1,18 +1,18 @@
 {
   "sections": {
-    "writing": "Story, Graphics & Programming",
-    "editing": "Editor & Proofreader",
-    "music": "Music",
-    "specialThanks": "Special Thanks",
-    "playtesters": "Playtesters",
-    "font": "Font"
+    "writing": "Story, Code & Graphics:",
+    "editing": "Editor & Proofreader:",
+    "music": "Music:",
+    "specialThanks": "Special Thanks:",
+    "playtesters": "Testers:",
+    "font": "Font:"
   },
   "names": {
     "rolando": "Rolando Hernández",
     "valentina": "Valentina Lamazon"
   },
   "fontInfo": {
-    "note": "“Grand9K Pixel” by Jayvee D. Enaguas (Grand Chaos). Modified by Rolando Hernández.",
+    "note": "“Grand9K Pixel” by Jayvee D. Enaguas.<br>Modified by Rolando Hernández.",
     "license": "Licensed under Creative Commons: CC-BY-SA 3.0"
   },
   "musicInfo": {
@@ -21,7 +21,6 @@
     "license": "Licensed under Creative Commons: By Attribution 3.0 License"
   },
   "playtesters": [
-    "Alfredo Pérez",
     "Fabiana Hernández",
     "Victor Fernández",
     "Walther Graciano"

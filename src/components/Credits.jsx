@@ -30,47 +30,20 @@ export default function Credits({ onClose }) {
             <h3 className="window-credits-content-section-header">
               {t("credits.sections.writing")}
             </h3>
-            <p className="window-credits-content-section-entry">
-              {t("credits.names.rolando")}
-            </p>
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.names.rolando") }}
+            />
           </section>
 
           <section className="window-credits-content-section">
             <h3 className="window-credits-content-section-header">
               {t("credits.sections.editing")}
             </h3>
-            <p className="window-credits-content-section-entry">
-              {t("credits.names.valentina")}
-            </p>
-          </section>
-
-          <section className="window-credits-content-section">
-            <h3 className="window-credits-content-section-header">
-              {t("credits.sections.music")}
-            </h3>
-            <p className="window-credits-content-section-entry">
-              {t("credits.musicInfo.title")}
-            </p>
-            <p className="window-credits-content-section-entry">
-              {t("credits.musicInfo.site")}
-            </p>
-            <p className="window-credits-content-section-entry">
-              {t("credits.musicInfo.license")}
-            </p>
-          </section>
-
-          {/* Font section */}
-          <section className="window-credits-content-section">
-            <h3 className="window-credits-content-section-header">
-              {t("credits.sections.font")}
-            </h3>
-            
-            <p className="window-credits-content-section-entry">
-              {t("credits.fontInfo.note")}
-            </p>
-            <p className="window-credits-content-section-entry">
-              {t("credits.fontInfo.license")}
-            </p>
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.names.valentina") }}
+            />
           </section>
 
           <section className="window-credits-content-section">
@@ -78,10 +51,44 @@ export default function Credits({ onClose }) {
               {t("credits.sections.playtesters")}
             </h3>
             {playtesters.map((name, i) => (
-              <p key={i} className="window-credits-content-section-entry">
-                {name}
-              </p>
+              <p
+                key={i}
+                className="window-credits-content-section-entry"
+                dangerouslySetInnerHTML={{ __html: name }}
+              />
             ))}
+          </section>
+
+          <section className="window-credits-content-section">
+            <h3 className="window-credits-content-section-header">
+              {t("credits.sections.music")}
+            </h3>
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.musicInfo.title") }}
+            />
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.musicInfo.site") }}
+            />
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.musicInfo.license") }}
+            />
+          </section>
+
+          <section className="window-credits-content-section">
+            <h3 className="window-credits-content-section-header">
+              {t("credits.sections.font")}
+            </h3>
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.fontInfo.note") }}
+            />
+            <p
+              className="window-credits-content-section-entry"
+              dangerouslySetInnerHTML={{ __html: t("credits.fontInfo.license") }}
+            />
           </section>
 
           <section className="window-credits-content-section">
@@ -89,9 +96,11 @@ export default function Credits({ onClose }) {
               {t("credits.sections.specialThanks")}
             </h3>
             {specialThanks.map((name, i) => (
-              <p key={i} className="window-credits-content-section-entry">
-                {name}
-              </p>
+              <p
+                key={i}
+                className="window-credits-content-section-entry"
+                dangerouslySetInnerHTML={{ __html: name }}
+              />
             ))}
           </section>
 

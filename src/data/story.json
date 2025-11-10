@@ -5,15 +5,14 @@
     {
       "id": "lonelyStreet",
       "type": "singleParagraph",
-      "text": "At the end of the quiet and windy street, you <em>eventually</em> find the right building.",
+      "text": "At the end of a quiet side street, you <em>eventually</em> find the right building.",
       "next": "threeStoryRelic"
     },
     {
       "id": "threeStoryRelic",
       "type": "singleParagraph",
       "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Azalea 188.",
-      "next": "doubtAboutNumber",
-      "playSFX": { "id": "wind-whiff", "volume": 0.2 }
+      "next": "doubtAboutNumber"
     },
     {
       "id": "doubtAboutNumber",
@@ -26,12 +25,16 @@
       "type": "dialogueChoice",
       "choices": [
         {
-          "text": "“It’s here.” <em>(Point at the plaque)</em>",
+          "text": "“It’s here.”",
           "next": "mariaRelief"
         },
         {
-          "text": "“It’s… here?”  <em>(Squint at the plaque)</em>",
+          "text": "“It’s… here?”",
           "next": "mariaNotConvinced"
+        },
+        {
+          "text": "<em>(Squint at the plaque)</em>",
+          "next": "squintingAtTheBulding"
         }
       ]
     },
@@ -39,7 +42,7 @@
       "id": "mariaRelief",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Aha…” <em>Your sister catches up to you and stops in front of the small building.</em> “Morningstar's castle.”",
+      "text": "“Aha…” <em>Your sister catches up to you and stops in front of the small building.</em> “So this is Morningstar's castle.”",
       "next": "mariaNotSure"
     },
     {

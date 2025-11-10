@@ -29,6 +29,10 @@
   100% { opacity: 1; }
 }
 
+.story-flow-node {
+  opacity: 0.5;
+}
+
 .story-flow-node.is-current {
  opacity: 0;
  animation: nodeSoftFade 0.4s ease-in-out forwards;
@@ -46,14 +50,14 @@
   cursor: pointer;
 }
 
+.story-flow-dialogue-list-option-button:hover {
+  color: var(--black);
+}
+
 .story-flow-option-number {
   display: inline-block;
   min-width: 1.5ch;
   color: var(--black);
-}
-
-.story-flow-dialogue-list-option button:hover {
-  color: var(--red-hover);
 }
 
 .story-flow-button-area {
