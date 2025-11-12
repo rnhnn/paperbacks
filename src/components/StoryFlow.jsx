@@ -22,6 +22,7 @@ export default function StoryFlow({
   onBegin,
   onAmbienceChange,
   onSFX,
+  fadeInDuration = 400,
 }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
@@ -409,6 +410,10 @@ export default function StoryFlow({
     return () => clearTimeout(timer);
   }, [renderedBlocks]);
 
+  // Fade in StoryFlow on mount
+  const [visible, setVisible] = useState(false);
+  useEffect(() => setVisible(true), []);
+
   // Pick the most recent block with a portrait to display in the side panel
   const lastPortraitBlock = useMemo(
     () =>
@@ -424,7 +429,8 @@ export default function StoryFlow({
 
   // Render the story UI with portrait, content feed, and progression controls
   return (
-    <div className="story-flow has-scroll-parent">
+    <div className={`story-flow has-scroll-parent${visible ? " visible" : ""}`}
+    style={{ "--story-fade": `${fadeInDuration}ms` }}>
       {/* Portrait of the last speaking character */}
       {lastPortraitBlock && (
         <div className="story-flow-portrait">

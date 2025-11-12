@@ -10,6 +10,15 @@
   background-color: var(--white);
 }
 
+.story-flow {
+  opacity: 0;
+  transition: opacity var(--story-fade) ease-in-out;
+}
+
+.story-flow.visible {
+  opacity: 1;
+}
+
 .story-flow-content {
   position: relative;
   overflow-y: auto;

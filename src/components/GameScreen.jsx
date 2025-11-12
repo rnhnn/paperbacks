@@ -33,7 +33,7 @@ import "../styles/ScreenTransition.css";
 const MUSIC_DELAY = 350; // ms
 
 export default function GameScreen({ phase, transitionTo }) {
-  // Normalize fade duration from CSS in milliseconds
+  // Get fade duration from CSS (--fade-screen-duration), defaulting to 400ms
   const fadeDuration = useFadeDuration(400);
 
   const { quickSave, quickLoad } = useSaveSystem(); // Handles quick save/load operations
@@ -231,9 +231,10 @@ export default function GameScreen({ phase, transitionTo }) {
             story={storyData}
             savedStory={savedStory}
             onStorySnapshot={handleStorySnapshotUpdate}
-            onBegin={() => setShowPlayerMenu(true)} // Added callback for Begin
-            onAmbienceChange={handleAmbienceChange} // Added: handle ambience changes
-            onSFX={handleSFXChange} // Added: handle one-shot SFX triggers
+            onBegin={() => setShowPlayerMenu(true)}
+            onAmbienceChange={handleAmbienceChange}
+            onSFX={handleSFXChange}
+            fadeInDuration={3000}
           />
 
           {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked or resumed from save
