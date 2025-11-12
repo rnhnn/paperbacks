@@ -11,7 +11,7 @@ import { isDebugMode } from "../helpers/isDebugMode";
 import characters from "../data/characters.json";
 import icons from "../data/icons.json";
 import items from "../data/items.json";
-import hud from "../data/hud.json";
+import system from "../data/system.json";
 import audioData from "../data/audio.json";
 
 // Styles
@@ -60,7 +60,7 @@ export default function Loading({ onComplete }) {
 
     // Preload all audio files (music, ambience, and SFX) using smart cache
     const preloadAllAudio = async () => {
-      const groups = ["music", "ambience", "sfx", "ui"];
+      const groups = ["music", "ambience", "effects", "system"];
       const requests = [];
       const cacheName = "paperbacks-audio-cache-v1";
 
@@ -126,21 +126,21 @@ export default function Loading({ onComplete }) {
       // Collect item icon paths from items.json
       const itemIcons = items.map((it) => it.icon).filter(Boolean);
 
-      // Collect hud image paths from hud.json
-      const hudPaths = hud.map((f) => `/assets/hud/${f}`);
+      // Collect system image paths from system.json
+      const systemPaths = system.map((f) => `/assets/system/${f}`);
 
       // Log preloading details when debug mode is active
       if (isDebugMode()) {
         portraits.forEach((p) => console.log(`[Image Preload] Portrait: ${p}`));
         iconPaths.forEach((p) => console.log(`[Image Preload] Icon: ${p}`));
         itemIcons.forEach((p) => console.log(`[Image Preload] Item: ${p}`));
-        hudPaths.forEach((p) => console.log(`[Image Preload] hud: ${p}`));
+        systemPaths.forEach((p) => console.log(`[Image Preload] system: ${p}`));
       }
 
       try {
         // Load all assets and audio in parallel
         await Promise.all([
-          ...hudPaths.map(preloadImage),
+          ...systemPaths.map(preloadImage),
           ...iconPaths.map(preloadImage),
           ...itemIcons.map(preloadImage),
           ...portraits.map(preloadImage),
