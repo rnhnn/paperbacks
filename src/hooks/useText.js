@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useFlags } from "../contexts/FlagsContext";
 
 // Load all base (English) text data
-import uiEn from "../data/ui.json";
+import uiEn from "../data/strings.json";
 import storyEn from "../data/story.json";
 import itemsEn from "../data/items.json";
 import notesEn from "../data/notes.json";
@@ -11,7 +11,7 @@ import charactersEn from "../data/characters.json";
 import creditsEn from "../data/credits.json";
 
 // Load translation overlays (only Spanish for now)
-import uiEs from "../data/translations/es-ui.json";
+import uiEs from "../data/translations/es-strings.json";
 import storyEs from "../data/translations/es-story.json";
 import itemsEs from "../data/translations/es-items.json";
 import notesEs from "../data/translations/es-notes.json";

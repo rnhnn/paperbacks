@@ -8,6 +8,19 @@
 }
 
 * {
+  cursor: url("/assets/hud/cursor.png") 0 0, auto !important;
+}
+
+button,
+a,
+[role="button"],
+.main-menu-button,
+input[type="button"],
+input[type="submit"] {
+  cursor: url("/assets/hud/cursor-click.png") 0 0, pointer !important;
+}
+
+* {
   scrollbar-width: none;
   -ms-overflow-style: none;
   scrollbar-gutter: stable;

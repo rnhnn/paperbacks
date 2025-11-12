@@ -8,7 +8,7 @@ import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import { useAudio } from "../contexts/AudioContext";
 import useFadeDuration from "../hooks/useFadeDuration";
-import useText from "../hooks/useText"; // Added: translation hook for localized title text
+import useText from "../hooks/useText";
 
 // Core helpers
 import { isDebugMode } from "../helpers/isDebugMode";
@@ -27,10 +27,11 @@ import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
 
 // Styles
+import "../styles/GameScreen.css";
 import "../styles/ScreenTransition.css";
 
 // Define delay before main menu music starts
-const MUSIC_DELAY = 350; // ms
+const MUSIC_DELAY = 900; // ms
 
 export default function GameScreen({ phase, transitionTo }) {
   // Get fade duration from CSS (--fade-screen-duration), defaulting to 400ms
@@ -183,7 +184,7 @@ export default function GameScreen({ phase, transitionTo }) {
 
   // Render phases
   return (
-    <div className="game-screen">
+    <div className={`game-screen${transitioning ? " is-transitioning" : ""}`}>
       {/* Phase 1: Loading assets */}
       {phase === "loading" && (
         <Loading
@@ -234,7 +235,7 @@ export default function GameScreen({ phase, transitionTo }) {
             onBegin={() => setShowPlayerMenu(true)}
             onAmbienceChange={handleAmbienceChange}
             onSFX={handleSFXChange}
-            fadeInDuration={3000}
+            fadeInDuration={2500}
           />
 
           {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked or resumed from save
