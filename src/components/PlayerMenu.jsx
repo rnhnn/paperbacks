@@ -24,7 +24,7 @@ import useText from "../hooks/useText";
 // Styles
 import "../styles/PlayerMenu.css";
 
-const protagonistImg = "/assets/portraits/protagonist.png";
+const protagonistImg = "/portraits/protagonist.png";
 
 export default function PlayerMenu({
   onQuickSave,

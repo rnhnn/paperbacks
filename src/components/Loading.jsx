@@ -29,7 +29,7 @@ export default function Loading({ onComplete }) {
       try {
         const font = new FontFace(
           "Grand9KPixelRegular",
-          "url(/assets/fonts/Grand9KPixel.woff2)"
+          "url(/fonts/Grand9KPixel.woff2)"
         );
         await font.load();
         document.fonts.add(font);
@@ -71,7 +71,7 @@ export default function Loading({ onComplete }) {
         if (!entries) continue;
 
         for (const [key, file] of Object.entries(entries)) {
-          const path = `/assets/audio/${file}`;
+          const path = `/audio/${file}`;
 
           // Log each audio file being preloaded in debug mode
           if (isDebugMode()) console.log(`[Audio Preload] ${group}/${key}: ${path}`);
@@ -117,13 +117,13 @@ export default function Loading({ onComplete }) {
       const portraits = Object.values(characters)
         .map((c) => c.portrait)
         .filter(Boolean)
-        .map((f) => `/assets/portraits/${f}`);
+        .map((f) => `/portraits/${f}`);
 
       // Collect item icon paths
       const itemIcons = items.map((it) => it.icon).filter(Boolean);
 
       // Collect system image paths
-      const systemPaths = system.map((f) => `/assets/system/${f}`);
+      const systemPaths = system.map((f) => `/system/${f}`);
 
       // Log asset preload details in debug mode
       if (isDebugMode()) {

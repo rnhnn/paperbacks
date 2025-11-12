@@ -41,7 +41,7 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    const path = `/assets/audio/${track}`;
+    const path = `/audio/${track}`;
     if (isDebugMode()) console.log(`[Audio] Preparing main menu music: ${path}`);
 
     const audio = new Audio(path);
@@ -63,7 +63,7 @@ export function AudioProvider({ children }) {
     if (entries.length === 0) return;
 
     entries.forEach(([key, file]) => {
-      const path = `/assets/audio/${file}`;
+      const path = `/audio/${file}`;
       const base = new Audio(path);
       base.preload = "auto";
       uiRefs.current[key] = base;
@@ -145,7 +145,7 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    const path = `/assets/audio/${file}`;
+    const path = `/audio/${file}`;
     if (isDebugMode()) console.log(`[Audio] Starting ambience: ${id} (${path})`);
 
     if (ambienceRef.current) await stopAmbience(); // Fade out previous ambience
@@ -254,7 +254,7 @@ export function AudioProvider({ children }) {
       return;
     }
 
-    const path = `/assets/audio/${file}`;
+    const path = `/audio/${file}`;
     const clampedVolume = Math.min(1, Math.max(0, volume));
 
     if (isDebugMode()) console.log(`[Audio] Playing SFX: ${id} (${path}), volume=${clampedVolume}`);

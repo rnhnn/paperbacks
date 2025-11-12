@@ -440,7 +440,7 @@ export default function StoryFlow({
               resolveCharacter(lastPortraitBlock.character);
             return (
               <img
-                src={`/assets/portraits/${char.portrait}`}
+                src={`/portraits/${char.portrait}`}
                 alt={char.name}
               />
             );

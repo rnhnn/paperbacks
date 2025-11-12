@@ -2,7 +2,7 @@
   {
     "id": "beckys_keys",
     "name": "Keys to Becky's",
-    "icon": "/assets/items/keys-to-beckys.png",
+    "icon": "/items/keys-to-beckys.png",
     "description": [
       "She gave them to me after work."
     ],
@@ -11,7 +11,7 @@
   {
     "id": "golden-card",
     "name": "Golden Card",
-    "icon": "/assets/items/golden-card.png",
+    "icon": "/items/golden-card.png",
     "description": [
       "A shiny card that glimmers under the light, almost too perfect.",
       "The back reads <em>“Admit one, when the hour is right.”</em>"
@@ -21,7 +21,7 @@
   {
     "id": "old_shoe",
     "name": "Old Shoe",
-    "icon": "/assets/items/golden-card.png",
+    "icon": "/items/golden-card.png",
     "description": [
       "A stinky shoe."
     ],

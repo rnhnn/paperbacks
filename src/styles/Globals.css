@@ -1,14 +1,14 @@
 @font-face {
   font-family: 'Grand9K Pixel';
-  src: url('/assets/fonts/Grand9KPixel.woff2') format('woff2'),
-  url('/assets/fonts/Grand9KPixel.woff') format('woff');
+  src: url('/fonts/Grand9KPixel.woff2') format('woff2'),
+  url('/fonts/Grand9KPixel.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: block;
 }
 
 * {
-  cursor: url("/assets/system/cursor.png") 0 0, auto !important;
+  cursor: url("/system/cursor.png") 0 0, auto !important;
 }
 
 button,
@@ -17,7 +17,7 @@ a,
 .main-menu-button,
 input[type="button"],
 input[type="submit"] {
-  cursor: url("/assets/system/cursor-click.png") 0 0, pointer !important;
+  cursor: url("/system/cursor-click.png") 0 0, pointer !important;
 }
 
 * {

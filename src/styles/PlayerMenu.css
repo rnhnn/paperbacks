@@ -97,19 +97,19 @@
 }
 
 .player-menu-buttons-item-inventory {
-  background-image: url("/assets/icons/icon-inventory.png");
+  background-image: url("/icons/icon-inventory.png");
 }
 
 .player-menu-buttons-item-notes {
-  background-image: url("/assets/icons/icon-notes.png");
+  background-image: url("/icons/icon-notes.png");
 }
 
 .player-menu-buttons-item-options {
-  background-image: url("/assets/icons/icon-options.png");
+  background-image: url("/icons/icon-options.png");
 }
 
 .player-menu-buttons-item-exit {
-  background-image: url("/assets/icons/icon-exit.png");
+  background-image: url("/icons/icon-exit.png");
 }
 
 .player-menu {
