@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { useFlags } from "../contexts/FlagsContext";
 
-// Core helpers
+// Helpers
 import { isDebugMode } from "../helpers/isDebugMode";
 
 // Data

@@ -26,10 +26,6 @@
   background-color: #8899a1;
 }
 
-.player-menu-portrait img {
-  image-rendering: pixelated;
-}
-
 .player-menu-buttons {
   display: flex;
   justify-content: space-between;
@@ -40,7 +36,6 @@
   cursor: pointer;
   width: 35px;
   height: 35px;
-  image-rendering: pixelated;
   overflow: hidden;
   text-overflow: ellipsis;
 }
