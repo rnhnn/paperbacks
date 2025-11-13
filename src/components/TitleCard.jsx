@@ -1,10 +1,10 @@
-// Display a timed fullscreen title card that fades in, holds, and fades out
-
-// React hooks
-import { useState, useEffect } from "react";
+// Display a timed fullscreen title card that fades in, holds, fades out, and fires a completion callback
 
 // Styles
 import "../styles/TitleCard.css";
+
+// React
+import { useState, useEffect } from "react";
 
 export default function TitleCard({
   text,

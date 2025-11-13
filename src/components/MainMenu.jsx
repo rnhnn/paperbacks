@@ -1,17 +1,23 @@
-// Display main menu with new game, continue, load, options, and credits
-
-// React and context hooks
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useSaveSystem } from "../contexts/SaveSystemContext";
-import useText from "../hooks/useText";
-
-// Components
-import Credits from "./Credits";
-import Options from "./Options"; // Added: shared options window component
-import { playClickSound } from "../helpers/uiSound";
+// Display the main menu with new game, continue, load-from-file, options, and credits windows
 
 // Styles
 import "../styles/MainMenu.css";
+
+// React
+import { useState, useEffect, useRef, useCallback } from "react";
+
+// Contexts
+import { useSaveSystem } from "../contexts/SaveSystemContext";
+
+// Components
+import Credits from "./Credits";
+import Options from "./Options";
+
+// Hooks
+import useText from "../hooks/useText";
+
+// Helpers
+import { playClickSound } from "../helpers/uiSound";
 
 export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
   // Track quick-save availability and window visibility

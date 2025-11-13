@@ -1,10 +1,18 @@
-// React & styles
-import { useState, useMemo, useEffect, useRef } from "react";
-import WindowOverlay from "./WindowOverlay";
-import useText from "../hooks/useText";
-import useScrollArrows from "../hooks/useScrollArrows";
+// Display the notes window with a scrollable sidebar, active note viewer, and localized content
+
+// Styles
 import "../styles/Notes.css";
 import "../styles/ScrollArrows.css";
+
+// React
+import { useState, useMemo, useEffect, useRef } from "react";
+
+// Components
+import WindowOverlay from "./WindowOverlay";
+
+// Hooks
+import useText from "../hooks/useText";
+import useScrollArrows from "../hooks/useScrollArrows";
 
 export default function Notes({ notes, onClose }) {
   const { t, textData } = useText();

@@ -1,16 +1,24 @@
-// Control all major game phases and transitions between loading, menu, and gameplay
+// Control all major game phases, transitions, audio state, and snapshot-driven gameplay flow
 
-// React and context hooks
+// Styles
+import "../styles/GameScreen.css";
+import "../styles/ScreenTransition.css";
+
+// React
 import { useState, useRef, useEffect } from "react";
+
+// Contexts
 import { useSaveSystem } from "../contexts/SaveSystemContext";
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
 import { useAudio } from "../contexts/AudioContext";
+
+// Hooks
 import useFadeDuration from "../hooks/useFadeDuration";
 import useText from "../hooks/useText";
 
-// Core helpers
+// Helpers
 import { isDebugMode } from "../helpers/isDebugMode";
 
 // Components
@@ -25,10 +33,6 @@ import TitleCard from "./TitleCard";
 import storyData from "../data/story.json";
 import itemsData from "../data/items.json";
 import notesData from "../data/notes.json";
-
-// Styles
-import "../styles/GameScreen.css";
-import "../styles/ScreenTransition.css";
 
 // Define delay before main menu music starts
 const MUSIC_DELAY = 900; // ms

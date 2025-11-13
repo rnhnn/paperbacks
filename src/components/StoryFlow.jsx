@@ -1,16 +1,20 @@
-// Drive the narrative flow, rendering story nodes, choices, and player progression
+// Drive the narrative engine: render story nodes, apply effects, handle choices, manage snapshots, and trigger ambience/SFX
 
-// React and styles
+// Styles
 import "../styles/StoryFlow.css";
+import "../styles/ScrollArrows.css";
+
+// React
 import { useState, useEffect, useRef, useMemo } from "react";
 
-// Contexts and data
+// Contexts
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
-import useText from "../hooks/useText"; // Added: hook for localized text
-import useScrollArrows from "../hooks/useScrollArrows"; // Added
-import "../styles/ScrollArrows.css"; // Added
+
+// Hooks
+import useText from "../hooks/useText";
+import useScrollArrows from "../hooks/useScrollArrows";
 
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM

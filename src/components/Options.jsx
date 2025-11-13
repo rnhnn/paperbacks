@@ -1,9 +1,17 @@
-// React & styles
-import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
-import useText from "../hooks/useText";
-import useFullscreen from "../hooks/useFullscreen"; // Manage browser fullscreen state
-import { useAudio } from "../contexts/AudioContext"; // Control global mute state
+// Display the options window with fullscreen toggle, mute controls, and optional save/load tools
+
+// Styles
 import "../styles/Options.css";
+
+// Components
+import WindowOverlay from "./WindowOverlay";
+
+// Hooks
+import useText from "../hooks/useText";
+import useFullscreen from "../hooks/useFullscreen";
+
+// Contexts
+import { useAudio } from "../contexts/AudioContext";
 
 export default function Options({
   onClose,

@@ -1,8 +1,14 @@
-// Exit confirmation window
-import WindowOverlay from "./WindowOverlay";
-import useText from "../hooks/useText";
-import { useAudio } from "../contexts/AudioContext"; // Added
+// Display an exit confirmation window that stops ambience and returns to the main menu
+
+// Styles
 import "../styles/Exit.css";
+
+// Components
+import WindowOverlay from "./WindowOverlay";
+
+// Hooks
+import useText from "../hooks/useText";
+import { useAudio } from "../contexts/AudioContext";
 
 export default function Exit({ onConfirm, onClose }) {
   const { t } = useText();

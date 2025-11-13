@@ -1,9 +1,19 @@
-// React & styles
-import { useState, useMemo } from "react";
-import WindowOverlay from "./WindowOverlay";
-import useText from "../hooks/useText";
-import { isDebugMode } from "../helpers/isDebugMode";
+// Display the inventory window with a fixed grid, item selection, and localized descriptions
+
+// Styles
 import "../styles/Inventory.css";
+
+// React
+import { useState, useMemo } from "react";
+
+// Components
+import WindowOverlay from "./WindowOverlay";
+
+// Hooks
+import useText from "../hooks/useText";
+
+// Helpers
+import { isDebugMode } from "../helpers/isDebugMode";
 
 const GRID_SLOTS = 18; // 2 rows x 9 columns
 

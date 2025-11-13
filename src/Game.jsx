@@ -1,31 +1,39 @@
-// Global styles
+// Root game component that sets up global providers, scaling, and top-level phase control
+
+// Styles
 import "./styles/Variables.css";
 import "./styles/Globals.css";
 import "./styles/Game.css";
 
-// React and context imports
+// React
 import { useState } from "react";
+
+// Contexts
 import { InventoryProvider } from "./contexts/InventoryContext";
 import { NotesProvider } from "./contexts/NotesContext";
 import { FlagsProvider } from "./contexts/FlagsContext";
 import { SaveSystemProvider } from "./contexts/SaveSystemContext";
-
-// Hooks and components
-import useGameScale from "./hooks/useGameScale";
 import { AudioProvider } from "./contexts/AudioContext";
+
+// Hooks
+import useGameScale from "./hooks/useGameScale";
+
+// Components
 import GameScreen from "./components/GameScreen";
 
 export default function Game() {
-  useGameScale(960, 540); // Keep base 960×540 resolution
+  // Maintain fixed 960×540 base resolution and apply scale based on window size
+  useGameScale(960, 540);
 
-  const [phase, setPhase] = useState("loading"); // Current app phase
+  // Track current app phase (loading, menu, game, etc.)
+  const [phase, setPhase] = useState("loading");
 
-  // Switch between app phases immediately
+  // Update app phase immediately
   const transitionTo = (newPhase) => {
     setPhase(newPhase);
   };
 
-  // Wrap app with all global state providers
+  // Wrap the entire game inside all global providers
   return (
     <AudioProvider>
       <FlagsProvider>

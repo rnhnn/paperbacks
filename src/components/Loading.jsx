@@ -1,7 +1,12 @@
 // Preload all fonts, images, and audio before showing language selection
 
-// React and context hooks
+// Styles
+import "../styles/Loading.css";
+
+// React
 import { useState, useEffect } from "react";
+
+// Contexts
 import { useFlags } from "../contexts/FlagsContext";
 
 // Helpers
@@ -12,9 +17,6 @@ import system from "../data/system.json";
 import characters from "../data/characters.json";
 import items from "../data/items.json";
 import audioData from "../data/audio.json";
-
-// Styles
-import "../styles/Loading.css";
 
 export default function Loading({ onComplete }) {
   // Track asset loading states

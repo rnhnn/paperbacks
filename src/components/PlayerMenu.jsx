@@ -1,13 +1,15 @@
-// Display in-game player menu with inventory, notes, options, and exit
+// Display the in-game player menu with inventory, notes, options, exit, and save management tools
 
-// React and context hooks
+// Styles
+import "../styles/PlayerMenu.css";
+
+// React
 import { useState, useMemo, useRef, useEffect } from "react";
+
+// Contexts
 import { useInventory } from "../contexts/InventoryContext";
 import { useNotes } from "../contexts/NotesContext";
 import { useFlags } from "../contexts/FlagsContext";
-
-// Core helpers
-import { playClickSound } from "../helpers/uiSound";
 
 // Components
 import Options from "./Options";
@@ -15,14 +17,14 @@ import Inventory from "./Inventory";
 import Notes from "./Notes";
 import Exit from "./Exit";
 
-// Data
-import notesData from "../data/notes.json";
-
 // Hooks
 import useText from "../hooks/useText";
 
-// Styles
-import "../styles/PlayerMenu.css";
+// Helpers
+import { playClickSound } from "../helpers/uiSound";
+
+// Data
+import notesData from "../data/notes.json";
 
 const protagonistImg = "/portraits/protagonist.png";
 

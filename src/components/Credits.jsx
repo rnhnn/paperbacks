@@ -1,8 +1,16 @@
-// React & styles
-import { useRef } from "react";
-import WindowOverlay from "./WindowOverlay"; // Added: overlay wrapper
+// Display a scrollable credits window with HTML-enabled entries and custom scroll arrows
+
+// Styles
 import "../styles/Credits.css";
 import "../styles/ScrollArrows.css";
+
+// React
+import { useRef } from "react";
+
+// Components
+import WindowOverlay from "./WindowOverlay";
+
+// Hooks
 import useText from "../hooks/useText";
 import useScrollArrows from "../hooks/useScrollArrows";
 

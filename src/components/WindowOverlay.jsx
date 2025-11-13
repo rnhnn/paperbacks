@@ -1,7 +1,13 @@
-// Provide a reusable overlay layer for modal windows
-import { useEffect } from "react";
-import { playClickSound } from "../helpers/uiSound";
+// Provide a reusable modal overlay with click-outside close, ESC support, and an optional close button
+
+// Styles
 import "../styles/WindowOverlay.css";
+
+// React
+import { useEffect } from "react";
+
+// Helpers
+import { playClickSound } from "../helpers/uiSound";
 
 export default function WindowOverlay({ onClose, children, autoCloseButton = true }) {
   // Close window when the Escape key is pressed
