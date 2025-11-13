@@ -1,5 +1,9 @@
-// Flags context
+// Provide global story flags and language state, including defaults, persistence, and runtime updates
+
+// React
 import { createContext, useContext, useState, useEffect } from "react";
+
+// Data
 import flagsData from "../data/flags.json";
 
 const FlagsContext = createContext();

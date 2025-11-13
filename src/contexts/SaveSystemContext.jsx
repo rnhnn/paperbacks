@@ -1,5 +1,9 @@
-// Save system context
+// Provide global save/load system: build snapshots, persist state, restore inventory/notes/flags
+
+// React
 import { createContext, useContext, useRef } from "react";
+
+// Contexts
 import { useInventory } from "./InventoryContext";
 import { useNotes } from "./NotesContext";
 import { useFlags } from "./FlagsContext";

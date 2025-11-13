@@ -1,5 +1,9 @@
-// Notes context
+// Provide global notes state: unlocked notes, note mutations, and restoration support
+
+// React
 import { createContext, useContext, useState } from "react";
+
+// Data
 import notesData from "../data/notes.json"; // Master list of all possible notes
 
 const NotesContext = createContext();

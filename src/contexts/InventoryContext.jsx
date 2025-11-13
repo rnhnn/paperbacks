@@ -1,6 +1,10 @@
-// Inventory context
+// Provide global inventory state: acquired items, item mutations, and restoration support
+
+// React
 import { createContext, useContext, useState } from "react";
-import itemsData from "../data/items.json"; // Master list of all possible items
+
+// Data
+import itemsData from "../data/items.json";
 
 const InventoryContext = createContext();
 

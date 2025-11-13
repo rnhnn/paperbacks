@@ -1,6 +1,12 @@
-// Provide global audio access and playback control
+// Provide global audio management: music, ambience, SFX, UI sounds, fades, mute state, and external playback access
+
+// React
 import { createContext, useContext, useRef, useEffect, useState } from "react";
+
+// Helpers
 import { isDebugMode } from "../helpers/isDebugMode";
+
+// Data
 import audioData from "../data/audio.json";
 
 const AudioContext = createContext();
