@@ -11,13 +11,19 @@
     {
       "id": "threeStoryRelic",
       "type": "singleParagraph",
-      "text": "A three-story relic from the '40s, with a rust-eaten plaque on the side that reads: Azalea 188.",
+      "text": "A three-story relic from the ’40s, with a rust-eaten plaque on its wall that reads: Azalea 28.",
       "next": "doubtAboutNumber"
     },
     {
       "id": "doubtAboutNumber",
       "type": "singleParagraph",
-      "text": "Or is it 189?",
+      "text": "Or is it 29?",
+      "next": "hiddenByIvy"
+    },
+    {
+      "id": "hiddenByIvy",
+      "type": "singleParagraph",
+      "text": "From that distance, the plaque looks small and half-hidden by ivy leaves.",
       "next": "reactingToTheBuilding"
     },
     {
