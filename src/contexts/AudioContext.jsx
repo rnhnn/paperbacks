@@ -63,9 +63,9 @@ export function AudioProvider({ children }) {
     };
   }, []);
 
-  // Preload UI sounds for instant playback
+  // Preload system/UI sounds for instant playback
   useEffect(() => {
-    const entries = Object.entries(audioData.ui || {});
+    const entries = Object.entries(audioData.system || {});
     if (entries.length === 0) return;
 
     entries.forEach(([key, file]) => {
@@ -114,7 +114,7 @@ export function AudioProvider({ children }) {
 
     if (isDebugMode()) console.log("[Audio] Fading out main menu music");
 
-    const FADE_DURATION = 800; // ms
+    const FADE_DURATION = 800;
     const STEP_INTERVAL = 50;
     const steps = FADE_DURATION / STEP_INTERVAL;
     const volumeStep = audio.volume / steps;
@@ -252,9 +252,9 @@ export function AudioProvider({ children }) {
     });
   };
 
-  // Play a short sound effect once, with optional volume
+  // Load SFX using the effects group from audio.json
   const playSFX = (id, volume = 1) => {
-    const file = audioData.sfx?.[id];
+    const file = audioData.effects?.[id];
     if (!file) {
       console.warn(`[AudioContext] Missing SFX id '${id}'`);
       return;

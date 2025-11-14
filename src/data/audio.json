@@ -7,11 +7,11 @@
     "rain": "ambience/rain.mp3"
   },
   "effects": {
-    "wind-whiff": "sfx/wind-whiff.mp3"
+    "wind-whiff": "effects/wind-whiff.mp3"
   },
   "system": {
-    "hover": "effects/hover-wood.mp3",
-    "click": "effects/hover-wood.mp3",
-    "click-paper": "effects/click-paper.mp3"
+    "hover": "system/hover-wood.mp3",
+    "click": "system/hover-wood.mp3",
+    "click-paper": "system/click-paper.mp3"
   }
 }
