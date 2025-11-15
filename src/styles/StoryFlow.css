@@ -108,6 +108,12 @@
   background: linear-gradient(to top, var(--white) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.story-flow .has-scroll-arrow {
-  background-image: url("/icons/icon-arrow-story-flow.png");
+.story-flow .has-scroll-arrow--up {
+  top: 0;
+  right: -25px;
+}
+
+.story-flow .has-scroll-arrow--down {
+  top: 23px;
+  right: -25px;
 }

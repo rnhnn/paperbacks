@@ -1,76 +1,98 @@
 {
   "id": "story",
   "initialAmbience": { "id": "street", "volume": 0.3 },
+
   "nodes": [
     {
-      "id": "lonelyStreet",
+      "id": "street.building",
       "type": "singleParagraph",
       "text": "At the end of a quiet side street, you <em>eventually</em> find the right building.",
-      "next": "threeStoryRelic"
+      "next": "street.azalea"
     },
     {
-      "id": "threeStoryRelic",
+      "id": "street.azalea",
       "type": "singleParagraph",
       "text": "A three-story relic from the ’40s, with a rust-eaten plaque on its wall that reads: Azalea 28.",
-      "next": "doubtAboutNumber"
+      "next": "street.number"
     },
     {
-      "id": "doubtAboutNumber",
+      "id": "street.number",
       "type": "singleParagraph",
       "text": "Or is it 29?",
-      "next": "hiddenByIvy"
+      "next": "street.ivy"
     },
     {
-      "id": "hiddenByIvy",
+      "id": "street.ivy",
       "type": "singleParagraph",
       "text": "From that distance, the plaque looks small and half-hidden by ivy leaves.",
-      "next": "reactingToTheBuilding"
+      "next": "approach.choice"
     },
+
     {
-      "id": "reactingToTheBuilding",
+      "id": "approach.choice",
       "type": "dialogueChoice",
       "choices": [
         {
           "text": "“It’s here.”",
-          "next": "mariaRelief"
+          "next": "approach.relief"
         },
         {
           "text": "“It’s… here?”",
-          "next": "mariaNotConvinced"
+          "next": "approach.doubt"
         },
         {
           "text": "<em>(Squint at the plaque)</em>",
-          "next": "squintingAtTheBulding"
+          "next": "approach.squint"
         }
       ]
     },
+
     {
-      "id": "mariaRelief",
+      "id": "approach.relief",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Aha…” <em>Your sister catches up to you and stops in front of the small building.</em> “So this is Morningstar's castle.”",
-      "next": "mariaNotSure"
+      "text": "“Ah…” <em>Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.</em> “Morningstar’s palace.”",
+      "next": "approach.notSure"
     },
+
     {
-      "id": "mariaNotSure",
+      "id": "approach.notSure",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“You sure?”",
-      "next": "mariaCantBelieve"
+      "text": "“That plaque is unreadable, but it does look like the place she described…”",
+      "next": "approach.final"
     },
+
     {
-      "id": "mariaNotConvinced",
+      "id": "approach.doubt",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Hmm, let me see.” <em>Your sister catches up to you. She also squints at the rusty plaque</em> “Yeah… I guess”.",
-      "next": "mariaCantBelieve"
+      "text": "“Hmm.” <em>Your sister catches up to you. She almost sticks her face between the bars of the building’s fence, trying to read the rusty plaque.</em> “Tch… that magazine is making me blind.”",
+      "next": "approach.thinksPlace"
     },
+
     {
-      "id": "mariaCantBelieve",
+      "id": "approach.thinksPlace",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“But yeah… I think this is the place. Looks like it.”",
+      "next": "approach.final"
+    },
+
+    {
+      "id": "approach.squint",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“That plaque is unreadable, but it does look like the place she described…”",
+      "next": "approach.final"
+    },
+
+    {
+      "id": "approach.final",
       "type": "characterDialogue",
       "character": "maria-monsell",
       "text": "“I can’t believe we haven’t been here before.”",
-      "next": "theStoryResumes"
+      "next": null
     }
   ]
 }
