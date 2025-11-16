@@ -4,95 +4,74 @@
 
   "nodes": [
     {
-      "id": "street.building",
+      "id": "narration.building",
       "type": "singleParagraph",
       "text": "At the end of a quiet side street, you <em>eventually</em> find the right building.",
-      "next": "street.azalea"
-    },
-    {
-      "id": "street.azalea",
-      "type": "singleParagraph",
-      "text": "A three-story relic from the ’40s, with a rust-eaten plaque on its wall that reads: Azalea 28.",
-      "next": "street.number"
-    },
-    {
-      "id": "street.number",
-      "type": "singleParagraph",
-      "text": "Or is it 29?",
-      "next": "street.ivy"
-    },
-    {
-      "id": "street.ivy",
-      "type": "singleParagraph",
-      "text": "From that distance, the plaque looks small and half-hidden by ivy leaves.",
-      "next": "approach.choice"
+      "next": "narration.azalea"
     },
 
     {
-      "id": "approach.choice",
+      "id": "narration.azalea",
+      "type": "singleParagraph",
+      "text": "A three-story relic from the ’40s, with a rust-eaten plaque on its wall that reads: Azalea 28.",
+      "next": "narration.number"
+    },
+
+    {
+      "id": "narration.number",
+      "type": "singleParagraph",
+      "text": "Or is it 29?",
+      "next": "narration.ivy"
+    },
+
+    {
+      "id": "narration.ivy",
+      "type": "singleParagraph",
+      "text": "From the sidewalk, the plaque looks small and half-hidden by ivy leaves.",
+      "next": "choice.plaque"
+    },
+
+    {
+      "id": "choice.plaque",
       "type": "dialogueChoice",
       "choices": [
         {
           "text": "“It’s here.”",
-          "next": "approach.relief"
+          "next": "dialogue.relief"
         },
         {
           "text": "“It’s… here?”",
-          "next": "approach.doubt"
+          "next": "reaction.magazine"
         },
         {
           "text": "<em>(Squint at the plaque)</em>",
-          "next": "approach.squint"
+          "next": ""
         }
       ]
     },
 
     {
-      "id": "approach.relief",
+      "id": "dialogue.relief",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Ah…” <em>Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.</em> “Morningstar’s palace.”",
-      "next": "approach.notSure"
+      "text": "“Ah…”",
+      "next": "narration.relief.sister"
     },
 
     {
-      "id": "approach.notSure",
-      "type": "characterDialogue",
-      "character": "maria-monsell",
-      "text": "“That plaque is unreadable, but it does look like the place she described…”",
-      "next": "approach.final"
+      "id": "narration.relief.sister",
+      "type": "singleParagraph",
+      "text": "Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.",
+      "next": "dialogue.relief.hideout"
     },
 
     {
-      "id": "approach.doubt",
+      "id": "dialogue.relief.hideout",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Hmm.” <em>Your sister catches up to you. She almost sticks her face between the bars of the building’s fence, trying to read the rusty plaque.</em> “Tch… that magazine is making me blind.”",
-      "next": "approach.thinksPlace"
-    },
-
-    {
-      "id": "approach.thinksPlace",
-      "type": "characterDialogue",
-      "character": "maria-monsell",
-      "text": "“But yeah… I think this is the place. Looks like it.”",
-      "next": "approach.final"
-    },
-
-    {
-      "id": "approach.squint",
-      "type": "characterDialogue",
-      "character": "maria-monsell",
-      "text": "“That plaque is unreadable, but it does look like the place she described…”",
-      "next": "approach.final"
-    },
-
-    {
-      "id": "approach.final",
-      "type": "characterDialogue",
-      "character": "maria-monsell",
-      "text": "“I can’t believe we haven’t been here before.”",
+      "text": "“So this is Week's hideout.”",
       "next": null
     }
+
   ]
 }

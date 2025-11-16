@@ -8,5 +8,10 @@
     "id": "maria-monsell",
     "name": "Maria Monsell",
     "portrait": "maria-monsell.png"
+  },
+  "plaque": {
+    "id": "plaque",
+    "name": "Plaque",
+    "portrait": "azalea.png"
   }
 }
