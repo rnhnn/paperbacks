@@ -27,6 +27,7 @@ export default function StoryFlow({
   onAmbienceChange,
   onSFX,
   fadeInDuration = 400,
+  onPortraitChange,
 }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
@@ -431,26 +432,30 @@ export default function StoryFlow({
     [renderedBlocks]
   );
 
+  // Notify parent when the displayed portrait should change
+  useEffect(() => {
+    if (!onPortraitChange) return;
+
+    if (!lastPortraitBlock) {
+      onPortraitChange(null);
+      return;
+    }
+
+    const char =
+      lastPortraitBlock._frozenCharacter ||
+      resolveCharacter(lastPortraitBlock.character);
+
+    onPortraitChange({
+      portrait: char.portrait,
+      name: char.name,
+    });
+  }, [lastPortraitBlock, onPortraitChange]);
+
   // Render the story UI with portrait, content feed, and progression controls
   return (
     <div className={`story-flow has-scroll-parent${visible ? " visible" : ""}`}
     style={{ "--story-fade": `${fadeInDuration}ms` }}>
-      {/* Portrait of the last speaking character */}
-      {lastPortraitBlock && (
-        <div className="story-flow-portrait">
-          {(() => {
-            const char =
-              lastPortraitBlock._frozenCharacter ||
-              resolveCharacter(lastPortraitBlock.character);
-            return (
-              <img
-                src={`/portraits/${char.portrait}`}
-                alt={char.name}
-              />
-            );
-          })()}
-        </div>
-      )}
+
 
       <div className="story-flow-content has-scroll" ref={contentRef}>
         {renderedBlocks.map((block, i) => {

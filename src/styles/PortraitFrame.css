@@ -1,0 +1,19 @@
+.portrait-frame {
+  align-self: flex-start;
+  width: 155px;
+  border: 3px solid var(--white);
+  opacity: 0;
+  margin-right: 20px;
+  margin-left: -175px;
+  transition: opacity 300ms ease-in-out;
+}
+
+.portrait-frame.visible {
+  opacity: 1;
+}
+
+.portrait-frame img {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+}

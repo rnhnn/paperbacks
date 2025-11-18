@@ -54,7 +54,7 @@
       "id": "dialogue.relief",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Ah…”",
+      "text": "“Oh…”",
       "next": "narration.relief.sister"
     },
 
@@ -63,6 +63,14 @@
       "type": "singleParagraph",
       "text": "Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.",
       "next": "dialogue.relief.hideout"
+    },
+
+    {
+      "id": "dialogue.relief.hideout",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“So this is Week's hideout.”",
+      "next": null
     },
 
     {

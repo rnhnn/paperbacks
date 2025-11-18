@@ -28,6 +28,7 @@ import StoryFlow from "./StoryFlow";
 import PlayerMenu from "./PlayerMenu";
 import ScreenTransition from "./ScreenTransition";
 import TitleCard from "./TitleCard";
+import PortraitFrame from "./PortraitFrame";
 
 // Data
 import storyData from "../data/story.json";
@@ -47,6 +48,7 @@ export default function GameScreen({ phase, transitionTo }) {
   const storySnapshotRef = useRef(() => null); // Stores a snapshot builder function
   const [transitioning, setTransitioning] = useState(false); // Tracks active screen fade
   const [showPlayerMenu, setShowPlayerMenu] = useState(false); // Tracks if the PlayerMenu should be visible
+  const [portraitInfo, setPortraitInfo] = useState(null); // Track the current portrait sent by StoryFlow
 
   // Access translation function
   const { t } = useText();
@@ -231,6 +233,8 @@ export default function GameScreen({ phase, transitionTo }) {
       {/* Phase 4: Main gameplay */}
       {phase === "game" && (
         <div className="game">
+          <PortraitFrame info={portraitInfo} />
+          
           <StoryFlow
             key={storyKey}
             story={storyData}
@@ -240,6 +244,7 @@ export default function GameScreen({ phase, transitionTo }) {
             onAmbienceChange={handleAmbienceChange}
             onSFX={handleSFXChange}
             fadeInDuration={2500}
+            onPortraitChange={setPortraitInfo}
           />
 
           {showPlayerMenu && ( // Only render PlayerMenu when Begin was clicked or resumed from save
