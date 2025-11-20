@@ -56,7 +56,7 @@ export default function Notes({ notes, onClose }) {
   // Render notes window
   return (
     <WindowOverlay onClose={onClose}>
-      <div className="window window-notes">
+      <div className="window window-notes has-pixelated-corners">
         <h2 className="window-title">{t("ui.notesWindow.title")}</h2>
 
         {sortedNotes.length > 0 ? (

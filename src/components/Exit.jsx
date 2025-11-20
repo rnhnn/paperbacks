@@ -17,7 +17,7 @@ export default function Exit({ onConfirm, onClose }) {
   // Render confirmation modal asking the player if they want to exit to the main menu
   return (
     <WindowOverlay onClose={onClose}>
-      <div className="window window-exit">
+      <div className="window window-exit has-pixelated-corners">
         <h2 className="window-title">{t("ui.exitWindow.title")}</h2>
         <p className="window-message">{t("ui.exitWindow.message")}</p>
 

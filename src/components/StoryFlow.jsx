@@ -453,7 +453,7 @@ export default function StoryFlow({
 
   // Render the story UI with portrait, content feed, and progression controls
   return (
-    <div className={`story-flow has-scroll-parent${visible ? " visible" : ""}`}
+    <div className={`story-flow has-pixelated-corners has-scroll-parent${visible ? " visible" : ""}`}
     style={{ "--story-fade": `${fadeInDuration}ms` }}>
 
 
@@ -532,7 +532,7 @@ export default function StoryFlow({
         {!waitingChoice && currentNodeId !== null && (
           <button
             onClick={renderedBlocks.length === 0 ? handleBegin : renderNext}
-            className="story-flow-button"
+            className="story-flow-button has-pixelated-corners"
           >
             {renderedBlocks.length === 0
               ? t("ui.storyFlow.begin")

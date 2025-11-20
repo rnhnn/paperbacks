@@ -5,7 +5,7 @@
   opacity: 0;
   margin-right: 20px;
   margin-left: -175px;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .portrait-frame.visible {
