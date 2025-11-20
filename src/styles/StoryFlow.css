@@ -54,7 +54,7 @@
 .story-flow-dialogue-list-option-button {
   text-align: left;
   border: 0;
-  color: var(--red);
+  color: var(--color-red);
   background-color: transparent;
   cursor: pointer;
 }
@@ -79,12 +79,12 @@
   height: 35px;
   padding-bottom: 4px;
   color: var(--color-white);
-  background-color: var(--red);
+  background-color: var(--color-red);
   cursor: pointer;
 }
 
 .story-flow-button:hover {
-  background-color: var(--red-hover);
+  background-color: var(--color-red-hover);
 }
 
 .story-flow::before,
