@@ -23,8 +23,8 @@
 .inventory-slot {
   width: 48px;
   height: 48px;
-  background: var(--black);
-  border: 2px solid var(--black);
+  background: var(--color-black);
+  border: 2px solid var(--color-black);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -33,7 +33,7 @@
 
 /* Selected slot highlight */
 .inventory-slot.selected {
-  border-color: var(--white)
+  border-color: var(--color-white)
 }
 
 /* Item icon image */

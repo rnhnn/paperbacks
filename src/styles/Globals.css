@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Grand9K Pixel';
   src: url('/fonts/Grand9KPixel.woff2') format('woff2'),
-  url('/fonts/Grand9KPixel.woff') format('woff');
+    url('/fonts/Grand9KPixel.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -53,11 +53,16 @@ body {
   overflow: hidden;
   font-family: 'Grand9K Pixel';
   font-size: var(--font-size-regular);
-  background-color: var(--black);
-  color: var(--white);
+  background-color: var(--color-black);
+  color: var(--color-white);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: normal;
 }
 
@@ -97,4 +102,59 @@ ol {
   padding: 0;
   margin: 0;
   font-size: inherit;
+}
+
+.has-pixelated-corners {
+  clip-path: polygon(0px calc(100% - 8px),
+      1px calc(100% - 8px),
+      1px calc(100% - 5px),
+      2px calc(100% - 5px),
+      2px calc(100% - 4px),
+      3px calc(100% - 4px),
+      3px calc(100% - 3px),
+      4px calc(100% - 3px),
+      4px calc(100% - 2px),
+      5px calc(100% - 2px),
+      5px calc(100% - 1px),
+      8px calc(100% - 1px),
+      8px 100%,
+      calc(100% - 8px) 100%,
+      calc(100% - 8px) calc(100% - 1px),
+      calc(100% - 5px) calc(100% - 1px),
+      calc(100% - 5px) calc(100% - 2px),
+      calc(100% - 4px) calc(100% - 2px),
+      calc(100% - 4px) calc(100% - 3px),
+      calc(100% - 3px) calc(100% - 3px),
+      calc(100% - 3px) calc(100% - 4px),
+      calc(100% - 2px) calc(100% - 4px),
+      calc(100% - 2px) calc(100% - 5px),
+      calc(100% - 1px) calc(100% - 5px),
+      calc(100% - 1px) calc(100% - 8px),
+      100% calc(100% - 8px),
+      100% 8px,
+      calc(100% - 1px) 8px,
+      calc(100% - 1px) 5px,
+      calc(100% - 2px) 5px,
+      calc(100% - 2px) 4px,
+      calc(100% - 3px) 4px,
+      calc(100% - 3px) 3px,
+      calc(100% - 4px) 3px,
+      calc(100% - 4px) 2px,
+      calc(100% - 5px) 2px,
+      calc(100% - 5px) 1px,
+      calc(100% - 8px) 1px,
+      calc(100% - 8px) 0px,
+      8px 0px,
+      8px 1px,
+      5px 1px,
+      5px 2px,
+      4px 2px,
+      4px 3px,
+      3px 3px,
+      3px 4px,
+      2px 4px,
+      2px 5px,
+      1px 5px,
+      1px 8px,
+      0px 8px);
 }

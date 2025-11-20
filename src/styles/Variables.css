@@ -4,12 +4,13 @@
 
   --fade-screen-duration: 900ms;
   
-  --white: #f7f7f7;
-  --black: #000000;
-  --red: #ae4141;
-  --red-hover: #bb5353;
-  --window: #4e4f64;
-  --pink: #ffc0cb;
+  --color-white: #f7f7f7;
+  --color-black: #000000;
+  --color-red: #ae4141;
+  --color-red-hover: #bb5353;
+  --color-hover: #a5a7c2;
+  --color-window: #4e4f64;
+  --color-pink: #ffc0cb;
 
   --font-size-tiny: 15px;
   --font-size-small: 18px;

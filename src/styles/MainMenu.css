@@ -28,12 +28,8 @@
   gap: 6px;
 }
 
-.main-menu-button {
-  transition: transform 200ms ease-in-out;
-}
-
 .main-menu-button:hover {
-  transform: translateX(6px);
+  color: var(--color-hover);
 }
 
 .main-menu-button:disabled {

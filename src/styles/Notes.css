@@ -29,8 +29,8 @@
 }
 
 .notes-sidebar-item.is-active {
-  background: var(--white);
-  color: var(--black);
+  background: var(--color-white);
+  color: var(--color-black);
 }
 
 .notes-content {

@@ -17,12 +17,12 @@
   align-items: center;
   padding: 16px;
   background-color: #4e4f64;
-  color: var(--white);
+  color: var(--color-white);
 }
 
 .player-menu-portrait {
   margin-bottom: 15px;
-  border: 3px solid var(--white);
+  border: 3px solid var(--color-white);
   background-color: #8899a1;
 }
 
@@ -57,8 +57,8 @@
   min-height: 180px;
   height: 180px;
   max-height: 180px;
-  background-color: var(--white);
-  color: var(--black);
+  background-color: var(--color-white);
+  color: var(--color-black);
   font-size: var(--font-size-small);
   scrollbar-width: none;
 }

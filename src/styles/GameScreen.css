@@ -6,7 +6,7 @@
   height: var(--game-base-height);
   transform: translate(-50%, -50%) scale(var(--game-scale));
   transform-origin: center center;
-  background-color: var(--black);
+  background-color: var(--color-black);
 }
 
 .game-screen.is-transitioning {
@@ -23,8 +23,8 @@
     text-align: center;
     content: "Paperbacks is designed and optimized for desktop or tablet screens.";
     white-space: pre-line;
-    background: var(--black);
-    color: var(--white);
+    background: var(--color-black);
+    color: var(--color-white);
     padding: 0 20px;
     z-index: 9999;
   }
