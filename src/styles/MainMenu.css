@@ -28,7 +28,15 @@
   gap: 6px;
 }
 
+.main-menu-button {
+  transition: transform 200ms ease-in-out;
+}
+
+.main-menu-button:hover {
+  transform: translateX(6px);
+}
+
 .main-menu-button:disabled {
-  cursor: default;
+  pointer-events: none;
   opacity: 0.4;
 }

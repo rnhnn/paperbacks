@@ -34,7 +34,7 @@ export default function WindowOverlay({ onClose, children, autoCloseButton = tru
       {/* Make a positioning context that wraps the clipped window */}
       <div className="window-frame" onClick={handleFrameClick}>
         {/* Keep pixelated corners as the outer clipped box */}
-        <div className="window-content pixelated-corners">{children}</div>
+        <div className="window-content">{children}</div>
 
         {/* Place close button as sibling so it is not clipped */}
         {autoCloseButton && (

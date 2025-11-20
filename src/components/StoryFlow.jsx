@@ -532,7 +532,7 @@ export default function StoryFlow({
         {!waitingChoice && currentNodeId !== null && (
           <button
             onClick={renderedBlocks.length === 0 ? handleBegin : renderNext}
-            className="story-flow-button pixelated-corners"
+            className="story-flow-button"
           >
             {renderedBlocks.length === 0
               ? t("ui.storyFlow.begin")
