@@ -16,6 +16,9 @@ import { useFlags } from "../contexts/FlagsContext";
 import useText from "../hooks/useText";
 import useScrollArrows from "../hooks/useScrollArrows";
 
+// Data
+import elementsData from "../data/elements.json";
+
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
@@ -27,12 +30,21 @@ export default function StoryFlow({
   onAmbienceChange,
   onSFX,
   fadeInDuration = 400,
-  onPortraitChange,
+  onGraphicChange,
 }) {
   // Use the translated version of the story when available, otherwise fall back to the base English version
   const { t, textData } = useText();
   const characters = textData.characters;
   const localizedStory = textData.story || story;
+
+  // Build O(1) lookup for element graphics by id
+  const elementMap = useMemo(
+    () =>
+      Object.fromEntries(
+        (elementsData || []).map((el) => [el.id, el])
+      ),
+    []
+  );
 
   // Build O(1) node lookup from story.nodes using node id as key
   const nodeMap = useMemo(
@@ -130,24 +142,24 @@ export default function StoryFlow({
   const resolveCharacter = (charLike, flagSet = flags) => {
     const id = typeof charLike === "string" ? charLike : charLike?.id;
     const base = characters[id];
-    if (!base) return { id, name: "???", portrait: "" };
+    if (!base) return { id, name: "???", graphic: "" };
 
     if (Array.isArray(base.nameStates) && base.nameStates.length > 0) {
       const revealed = base.nameStates.find(
         (s) => s.condition && flagSet[s.condition]
       );
       if (revealed)
-        return { id, name: revealed.label, portrait: base.portrait || "" };
+        return { id, name: revealed.label, graphic: base.graphic || "" };
       const fallback =
         base.nameStates.find((s) => !s.condition) || base.nameStates[0];
       return {
         id,
         name: fallback?.label || base.name || "???",
-        portrait: base.portrait || "",
+        graphic: base.graphic || "",
       };
     }
 
-    return { id, name: base.name || "???", portrait: base.portrait || "" };
+    return { id, name: base.name || "???", graphic: base.graphic || "" };
   };
 
   // Compute the next traversable node, skipping nodes whose conditions are not met
@@ -199,9 +211,10 @@ export default function StoryFlow({
         id: b.id,
         type: b.type,
         text: b.text,
-        character: b.character || null, // Keep original author info
-        _frozenCharacter: b._frozenCharacter || null, // Keep resolved name/portrait at render time
-        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined, // Persist visible choices
+        character: b.character || null,
+        _frozenCharacter: b._frozenCharacter || null,
+        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined,
+        graphic: b.graphic || null,
       })),
   });
 
@@ -419,37 +432,66 @@ export default function StoryFlow({
   const [visible, setVisible] = useState(false);
   useEffect(() => setVisible(true), []);
 
-  // Pick the most recent block with a portrait to display in the side panel
+  // Pick the most recent block with a graphic to display in the side panel
   const lastPortraitBlock = useMemo(
     () =>
       [...renderedBlocks]
         .reverse()
         .find(
           (b) =>
-            (b._frozenCharacter && b._frozenCharacter.portrait) ||
-            resolveCharacter(b.character)?.portrait
+            (b._frozenCharacter && b._frozenCharacter.graphic) ||
+            resolveCharacter(b.character)?.graphic
         ),
     [renderedBlocks]
   );
 
-  // Notify parent when the displayed portrait should change
-  useEffect(() => {
-    if (!onPortraitChange) return;
+  // Pick the most recent block that provides any graphic (element or portrait)
+  const lastGraphicSource = useMemo(() => {
+    // Scan from newest to oldest
+    for (let i = renderedBlocks.length - 1; i >= 0; i--) {
+      const block = renderedBlocks[i];
 
-    if (!lastPortraitBlock) {
-      onPortraitChange(null);
-      return;
+      // Node explicitly disables the graphic panel
+      if (block.graphic === false) {
+        return null;
+      }
+
+      // Node uses an element graphic
+      if (typeof block.graphic === "string") {
+        const element = elementMap[block.graphic];
+        if (element && element.src) {
+          return {
+            type: "element",
+            src: element.src,
+            alt: element.alt || "",
+          };
+        }
+      }
+
+      // 2) Character portrait graphic (from dialogue nodes)
+      if (block.type === "characterDialogue") {
+        const char =
+          block._frozenCharacter || resolveCharacter(block.character);
+
+        if (char && char.graphic) {
+          return {
+            type: "portrait",
+            src: `/portraits/${char.graphic}`,
+            alt: char.name,
+          };
+        }
+      }
     }
 
-    const char =
-      lastPortraitBlock._frozenCharacter ||
-      resolveCharacter(lastPortraitBlock.character);
+    // No graphic found at all
+    return null;
+  }, [renderedBlocks, elementMap]);
 
-    onPortraitChange({
-      portrait: char.portrait,
-      name: char.name,
-    });
-  }, [lastPortraitBlock, onPortraitChange]);
+  // Notify parent whenever the active graphic changes
+  useEffect(() => {
+    if (!onGraphicChange) return;
+    onGraphicChange(lastGraphicSource);
+  }, [onGraphicChange, lastGraphicSource]);
 
   // Render the story UI with portrait, content feed, and progression controls
   return (

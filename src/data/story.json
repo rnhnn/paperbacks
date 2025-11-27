@@ -13,6 +13,7 @@
     {
       "id": "narration.azalea",
       "type": "singleParagraph",
+      "graphic": "plaque-azalea",
       "text": "A three-story relic from the ’40s, with a rust-stained plaque on one side that reads “Azalea 28.”",
       "next": "narration.number"
     },
@@ -69,15 +70,16 @@
       "id": "dialogue.relief.hideout",
       "type": "characterDialogue",
       "character": "maria-monsell",
+      "graphic": false,
       "text": "“So this is Week's hideout.”",
-      "next": null
+      "next": "dialogue.relief.test"
     },
 
-    {
-      "id": "dialogue.relief.hideout",
+      {
+      "id": "dialogue.relief.test",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“So this is Week's hideout.”",
+      "text": "“Test”",
       "next": null
     }
 

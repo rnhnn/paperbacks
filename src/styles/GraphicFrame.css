@@ -1,4 +1,4 @@
-.portrait-frame {
+.graphic-frame {
   align-self: flex-start;
   width: 155px;
   border: 3px solid var(--color-white);
@@ -9,11 +9,11 @@
   transition: opacity 0.4s ease-in-out;
 }
 
-.portrait-frame.visible {
+.graphic-frame.visible {
   opacity: 1;
 }
 
-.portrait-frame img {
+.graphic-frame img {
   display: block;
   width: 100%;
   image-rendering: pixelated;

@@ -2,16 +2,16 @@
   "felix-alba": {
     "id": "felix-alba",
     "name": "Félix Monsell",
-    "portrait": "protagonist.png"
+    "graphic": "protagonist.png"
   },
   "maria-monsell": {
     "id": "maria-monsell",
     "name": "Erika Monsell",
-    "portrait": "erika-monsell.png"
+    "graphic": "erika-monsell.png"
   },
   "plaque": {
     "id": "plaque",
     "name": "Plaque",
-    "portrait": "azalea.png"
+    "graphic": "azalea.png"
   }
 }
