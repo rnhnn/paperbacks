@@ -70,16 +70,24 @@
       "id": "dialogue.relief.hideout",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "graphic": false,
       "text": "“So this is Week's hideout.”",
       "next": "dialogue.relief.test"
     },
 
-      {
+    {
       "id": "dialogue.relief.test",
       "type": "characterDialogue",
       "character": "maria-monsell",
-      "text": "“Test”",
+      "graphic": false,
+      "text": "“This is a test to remove a graphic”",
+      "next": "dialogue.relief.test2"
+    },
+
+    {
+      "id": "dialogue.relief.test2",
+      "type": "characterDialogue",
+      "character": "maria-monsell",
+      "text": "“This is a test to restore graphic”",
       "next": null
     }
 

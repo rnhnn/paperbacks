@@ -1,4 +1,5 @@
-// Drive the narrative engine: render story nodes, apply effects, handle choices, manage snapshots, and trigger ambience/SFX
+// Drive the narrative engine: render story nodes, apply effects, handle choices,
+// manage snapshots, and trigger ambience/SFX and story graphics
 
 // Styles
 import "../styles/StoryFlow.css";
@@ -238,7 +239,7 @@ export default function StoryFlow({
     const startNode = startId ? nodeMap[startId] : null;
 
     if (Array.isArray(savedStory.renderedBlocks)) {
-      // Restore previously frozen blocks to preserve names and portraits
+      // Restore previously frozen blocks to preserve character names and graphics
       const restored = savedStory.renderedBlocks.map((b) => ({
         ...b,
         character: b.character || b._frozenCharacter?.id || null, // Guard older saves
@@ -376,7 +377,7 @@ export default function StoryFlow({
       onSFX(id, volume);
     }
 
-    // Freeze all blocks that show characters so names/portraits stay consistent
+    // Freeze all blocks that show characters so names/graphics stay consistent
     const freezeBlock = (b) =>
       b?.type === "characterDialogue"
         ? { ...b, _frozenCharacter: resolveCharacter(b.character) }
@@ -432,20 +433,7 @@ export default function StoryFlow({
   const [visible, setVisible] = useState(false);
   useEffect(() => setVisible(true), []);
 
-  // Pick the most recent block with a graphic to display in the side panel
-  const lastPortraitBlock = useMemo(
-    () =>
-      [...renderedBlocks]
-        .reverse()
-        .find(
-          (b) =>
-            (b._frozenCharacter && b._frozenCharacter.graphic) ||
-            resolveCharacter(b.character)?.graphic
-        ),
-    [renderedBlocks]
-  );
-
-  // Pick the most recent block that provides any graphic (element or portrait)
+  // Pick the most recent block that provides any graphic (element or character)
   const lastGraphicSource = useMemo(() => {
     // Scan from newest to oldest
     for (let i = renderedBlocks.length - 1; i >= 0; i--) {
@@ -468,7 +456,7 @@ export default function StoryFlow({
         }
       }
 
-      // 2) Character portrait graphic (from dialogue nodes)
+      // Character graphic (portrait) from dialogue nodes
       if (block.type === "characterDialogue") {
         const char =
           block._frozenCharacter || resolveCharacter(block.character);
@@ -493,12 +481,14 @@ export default function StoryFlow({
     onGraphicChange(lastGraphicSource);
   }, [onGraphicChange, lastGraphicSource]);
 
-  // Render the story UI with portrait, content feed, and progression controls
+  // Render the story UI with content feed and progression controls
   return (
-    <div className={`story-flow has-pixelated-corners has-scroll-parent${visible ? " visible" : ""}`}
-    style={{ "--story-fade": `${fadeInDuration}ms` }}>
-
-
+    <div
+      className={`story-flow has-pixelated-corners has-scroll-parent${
+        visible ? " visible" : ""
+      }`}
+      style={{ "--story-fade": `${fadeInDuration}ms` }}
+    >
       <div className="story-flow-content has-scroll" ref={contentRef}>
         {renderedBlocks.map((block, i) => {
           const isCurrent = i === renderedBlocks.length - 1; // Mark last block for subtle emphasis
@@ -508,7 +498,10 @@ export default function StoryFlow({
           if (block.type === "singleParagraph")
             return (
               <div key={block.id || i} className={cls}>
-                <p className="story-flow-node-pargraph" dangerouslySetInnerHTML={{ __html: block.text }} />
+                <p
+                  className="story-flow-node-pargraph"
+                  dangerouslySetInnerHTML={{ __html: block.text }}
+                />
               </div>
             );
 
@@ -517,7 +510,10 @@ export default function StoryFlow({
             return (
               <div key={block.id || i} className={cls}>
                 {block.text.map((t, j) => (
-                  <p key={`${i}-${j}`} dangerouslySetInnerHTML={{ __html: t }} />
+                  <p
+                    key={`${i}-${j}`}
+                    dangerouslySetInnerHTML={{ __html: t }}
+                  />
                 ))}
               </div>
             );
