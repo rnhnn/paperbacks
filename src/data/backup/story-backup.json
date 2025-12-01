@@ -8,6 +8,7 @@
       "text": "At the end of the desolate and windy street, you <em>eventually</em> find the right building.",
       "next": "threeStoryBuilding"
     },
+    
     {
       "id": "threeStoryBuilding",
       "type": "singleParagraph",
@@ -16,6 +17,7 @@
       "setAmbience": "rain",
       "playSFX": "wind-whiff"
     },
+
     {
       "id": "doubtAboutNumber",
       "type": "singleParagraph",
@@ -23,6 +25,7 @@
       "next": "reactingToTheBuilding",
       "playSFX": "wind-whiff"
     },
+
     {
       "id": "reactingToTheBuilding",
       "type": "dialogueChoice",
@@ -39,6 +42,7 @@
         }
       ]
     },
+
     {
       "id": "kirbyRelief",
       "type": "characterDialogue",
@@ -46,6 +50,7 @@
       "text": "“Freaking finally.”",
       "next": "theStoryResumes"
     },
+
     {
       "id": "kirbyNotConvinced",
       "type": "characterDialogue",
@@ -53,6 +58,7 @@
       "text": "“You don't sound too sure.”",
       "next": "theStoryResumes"
     },
+
     {
       "id": "theStoryResumes",
       "type": "singleParagraph",
@@ -60,6 +66,7 @@
       "next": "findingAShoe",
       "playSFX": "wind-whiff"
     },
+
     {
       "id": "findingAShoe",
       "type": "singleParagraph",
@@ -68,6 +75,7 @@
       "effects": { "foundOldShoe": true },
       "next": "findingAShoppingList"
     },
+
     {
       "id": "findingAShoppingList",
       "type": "singleParagraph",
@@ -75,6 +83,7 @@
       "notesAdd": ["shopping_list_home"],
       "next": "flagChecker"
     },
+
     {
       "id": "flagChecker",
       "type": "characterDialogue",
@@ -92,18 +101,21 @@
       ],
       "next": "someOtherStory"
     },
+
     {
       "id": "conditionalResponse",
       "type": "singleParagraph",
       "text": "Let me hear it.",
       "next": "oldLadyAppears"
     },
+
     {
       "id": "someOtherStory",
       "type": "singleParagraph",
       "text": "The final text.",
       "next": "oldLadyAppears"
     },
+
     {
       "id": "oldLadyAppears",
       "type": "characterDialogue",
@@ -111,6 +123,7 @@
       "text": "“Hey! What are you doing near my doorstep?”",
       "next": "agnesSecondLine"
     },
+
     {
       "id": "agnesSecondLine",
       "type": "characterDialogue",
@@ -118,6 +131,7 @@
       "text": "“I’ve had enough of youngsters sneaking around here.”",
       "next": "agnesRevealsName"
     },
+
     {
       "id": "agnesRevealsName",
       "type": "characterDialogue",
@@ -126,6 +140,7 @@
       "effects": { "knowsAgnesName": true },
       "next": "finalAgnes"
     },
+
     {
       "id": "finalAgnes",
       "type": "characterDialogue",
@@ -133,6 +148,7 @@
       "text": "“Ok, bye!”",
       "next": "agnesKeepsRambling"
     },
+
     {
       "id": "agnesKeepsRambling",
       "type": "characterDialogue",
@@ -140,11 +156,29 @@
       "text": "“Will the circle be unbroken?”",
       "next": "kirbyIsBack"
     },
+
     {
       "id": "kirbyIsBack",
       "type": "characterDialogue",
       "character": "tim-kirby",
       "text": "“Of course lady. I'm back!”"
+    },
+
+    {
+      "id": "dialogue.relief.test",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "graphic": false,
+      "text": "“This is a test to remove a graphic”",
+      "next": "dialogue.relief.test2"
+    },
+
+    {
+      "id": "dialogue.relief.test2",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“This is a test to restore graphic”",
+      "next": null
     }
   ]
 }
