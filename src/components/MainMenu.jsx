@@ -155,6 +155,10 @@ export default function MainMenu({ onNewGame, onContinue, onLoadFromFile }) {
       {showCredits && (
         <Credits onClose={() => setShowCredits(false)} />
       )}
+
+      <footer className="main-menu-footer">
+        <p>© 2025 Indoor Prince</p>
+      </footer>
     </div>
   );
 }
