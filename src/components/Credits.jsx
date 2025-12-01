@@ -113,7 +113,7 @@ export default function Credits({ onClose }) {
           </section>
 
           <p className="window-credits-content-footer">
-            © 2025 Rolando Hernández —{" "}
+            © 2025 Indoor Prince —{" "}
             <a
               href="https://indoorprince.com"
               target="_blank"

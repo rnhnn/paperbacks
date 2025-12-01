@@ -124,7 +124,7 @@
       "id": "dialogue.blueish",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“But yeah... I think this is her place. She did say it was blue… <em>ish</em>.”",
+      "text": "“But yeah… I think this is her place. She did say it was blue… <em>ish</em>.”",
       "next": "narration.lookAround"
     },
 
