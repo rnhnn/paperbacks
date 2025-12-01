@@ -90,7 +90,7 @@
     },
 
     {
-      "id": "dialogue.Leansmafiosos",
+      "id": "dialogue.mafiosos",
       "type": "characterDialogue",
       "character": "erika-monsell",
       "text": "“I bet she doesn’t get woken up at three in the morning by <em>mafiosos</em> having a knife fight.”",
