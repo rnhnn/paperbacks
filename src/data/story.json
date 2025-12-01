@@ -38,11 +38,11 @@
       "choices": [
         {
           "text": "“It’s here.”",
-          "next": "dialogue.relief"
+          "next": "dialogue.oh"
         },
         {
           "text": "“It’s… here?”",
-          "next": "reaction.magazine"
+          "next": "dialogue.hmm"
         },
         {
           "text": "<em>(Squint at the plaque)</em>",
@@ -52,42 +52,94 @@
     },
 
     {
-      "id": "dialogue.relief",
+      "id": "dialogue.oh",
       "type": "characterDialogue",
       "character": "erika-monsell",
       "text": "“Oh…”",
-      "next": "narration.relief.sister"
+      "next": "narration.sister"
     },
 
     {
-      "id": "narration.relief.sister",
+      "id": "narration.sister",
       "type": "singleParagraph",
       "text": "Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.",
-      "next": "dialogue.relief.hideout"
+      "next": "dialogue.hideout"
     },
 
     {
-      "id": "dialogue.relief.hideout",
+      "id": "dialogue.hideout",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“So this is Week's hideout.”",
-      "next": "dialogue.relief.test"
+      "text": "“Look at Week's hideout.”",
+      "next": "narration.peaceful"
     },
 
     {
-      "id": "dialogue.relief.test",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "graphic": false,
-      "text": "“This is a test to remove a graphic”",
-      "next": "dialogue.relief.test2"
+      "id": "narration.peaceful",
+      "type": "singleParagraph",
+      "text": "She turns around, taking a moment to appreciate the peaceful street.",
+      "next": "dialogue.like"
     },
 
     {
-      "id": "dialogue.relief.test2",
+      "id": "dialogue.like",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“This is a test to restore graphic”",
+      "text": "I like it.",
+      "next": "dialogue.mafiosos"
+    },
+
+    {
+      "id": "dialogue.Leansmafiosos",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“I bet she doesn’t get woken up at three in the morning by <em>mafiosos</em> having a knife fight.”",
+      "next": null
+    },
+  
+    {
+      "id": "dialogue.hmm",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "Hmm?",
+      "next": "narration.sisterLeans"
+    },
+  
+    {
+      "id": "narration.sisterLeans",
+      "type": "singleParagraph",
+      "text": "Your sister catches up to you. She leans forward on her toes, trying to read the building’s plaque.",
+      "next": "dialogue.OttosDiatribes"
+    },
+
+    {
+      "id": "dialogue.OttosDiatribes",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“Tch… Otto’s diatribes are making me blind. Truly.”",
+      "next": "dialogue.blueish"
+    },
+
+    {
+      "id": "dialogue.blueish",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“But yeah... I think this is her place. She did say it was blue… <em>ish</em>.”",
+      "next": "narration.lookAround"
+    },
+
+    {
+      "id": "narration.lookAround",
+      "type": "singleParagraph",
+      "text": "She takes another look around the peaceful street.",
+      "next": "dialogue.likeQuiet"
+    },
+  
+    {
+      "id": "dialogue.likeQuiet",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“I like it here.”",
       "next": null
     }
 
