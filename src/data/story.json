@@ -14,7 +14,7 @@
       "id": "narration.azalea",
       "type": "singleParagraph",
       "graphic": "plaque-azalea",
-      "text": "A three-story relic from the early twenties, marked with a rusty plaque that reads “Azalea 28.”",
+      "text": "A three-story relic from the twenties, marked with a rusty plaque that reads “Azalea 28.”",
       "next": "narration.number"
     },
 
@@ -45,8 +45,8 @@
           "next": "dialogue.hmm"
         },
         {
-          "text": "<em>(Squint at the plaque)</em>",
-          "next": ""
+          "text": " (Squint at the plaque.) “Uh…”",
+          "next": "narration.cornea"
         }
       ]
     },
@@ -77,7 +77,7 @@
     {
       "id": "narration.peaceful",
       "type": "singleParagraph",
-      "text": "She turns around, taking a moment to appreciate the peaceful street.",
+      "text": "She turns around, her eyes taking in the peaceful street.",
       "next": "dialogue.like"
     },
 
@@ -108,7 +108,7 @@
     {
       "id": "narration.sisterLeans",
       "type": "singleParagraph",
-      "text": "Your sister catches up to you. She leans forward on her toes, trying to read the building’s plaque.",
+      "text": "Your sister catches up to you and stops in front of the building. She leans forward on her toes, trying to read the plaque.",
       "next": "dialogue.OttosDiatribes"
     },
 
@@ -140,6 +140,59 @@
       "type": "characterDialogue",
       "character": "erika-monsell",
       "text": "“I like it here.”",
+      "next": null
+    },
+
+    {
+      "id": "narration.cornea",
+      "type": "singleParagraph",
+      "text": "Those numbers are not getting any clearer for you. No matter how hard you squish your cornea.",
+      "next": "dialogue.areYouOk"
+    },
+  
+    {
+      "id": "dialogue.areYouOk",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“Are you okay?”",
+      "next": "narration.puzzled"
+    },
+
+    {
+      "id": "narration.puzzled",
+      "type": "singleParagraph",
+      "text": "Your sister catches up to you, puzzled. She quickly glances at the obscured plaque and the third-floor windows, before returning to your disoriented face.",
+      "next": "dialogue.blueish2"
+    },
+
+    {
+      "id": "dialogue.blueish2",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“Hmm, she did say it was blue… <em>ish</em>.”",
+      "next": "dialogue.mustBeThePlace"
+    },
+
+    {
+      "id": "dialogue.mustBeThePlace",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“This must be...”",
+      "next": "narration.eyesWander"
+    },
+
+    {
+      "id": "narration.eyesWander",
+      "type": "singleParagraph",
+      "text": "She turns around; her eyes wander along the trees flanking the peaceful street, a hint of a smile on her face.",
+      "next": "dialogue.itsNice"
+    },
+
+    {
+      "id": "dialogue.itsNice",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“It's nice here.”",
       "next": null
     }
 
