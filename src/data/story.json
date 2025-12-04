@@ -55,7 +55,7 @@
       "id": "dialogue.oh",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Oh…”",
+      "text": "“Oh.”",
       "next": "narration.sister"
     },
 
