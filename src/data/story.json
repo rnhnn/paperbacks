@@ -70,7 +70,7 @@
       "id": "dialogue.hideout",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Look at Weeks’s hideout.”",
+      "text": "“Well… Look at Weeks’s hideout.”",
       "next": "narration.peaceful"
     },
 
