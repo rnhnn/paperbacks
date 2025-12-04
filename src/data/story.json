@@ -45,7 +45,7 @@
           "next": "dialogue.hmm"
         },
         {
-          "text": " (Squint at the plaque.) “Uh…”",
+          "text": "(Squint at the plaque.) “Uh…”",
           "next": "narration.cornea"
         }
       ]
@@ -70,7 +70,7 @@
       "id": "dialogue.hideout",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Look at Week's hideout.”",
+      "text": "“Look at Weeks’s hideout.”",
       "next": "narration.peaceful"
     },
 
@@ -85,7 +85,7 @@
       "id": "dialogue.like",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "I like it.",
+      "text": "“I like it.”",
       "next": "dialogue.mafiosos"
     },
 
@@ -146,7 +146,7 @@
     {
       "id": "narration.cornea",
       "type": "singleParagraph",
-      "text": "Those numbers are not getting any clearer for you. No matter how hard you squish your cornea.",
+      "text": "Those numbers are not getting any clearer for you — no matter how hard you squish your cornea.",
       "next": "dialogue.areYouOk"
     },
   
@@ -177,7 +177,7 @@
       "id": "dialogue.mustBeThePlace",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“This must be...”",
+      "text": "“This must be…”",
       "next": "narration.eyesWander"
     },
 
