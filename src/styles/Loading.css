@@ -13,7 +13,3 @@
   align-items: flex-start;
   gap: 6px;
 }
-
-.language-select-button:hover {
-  color: var(--color-hover);
-}

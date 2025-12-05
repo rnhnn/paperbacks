@@ -60,7 +60,7 @@ export default function Inventory({ items, onClose }) {
   // Render inventory inside window overlay
   return (
     <WindowOverlay onClose={onClose}>
-      <div className="window window-inventory has-pixelated-corners">
+      <div className="window window-inventory has-pixelated-borders">
         <h2 className="window-title">{t("ui.inventoryWindow.title")}</h2>
 
         {/* Split layout into grid (top) and description (bottom) */}
