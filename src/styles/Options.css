@@ -1,6 +1,6 @@
 .window-options {
   height: auto;
-  max-width: 200px;
+  max-width: 275px;
 }
 
 .window-buttons {
@@ -11,7 +11,7 @@
 .window-buttons-item {
   height: 40px;
   padding-bottom: 4px;
-  background-color: #767787;
+  border: 3px solid var(--color-white);
 }
 
 .window-buttons-item + .window-buttons-item {
