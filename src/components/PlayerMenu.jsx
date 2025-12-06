@@ -183,7 +183,7 @@ export default function PlayerMenu({
         {saveMsg && <span className="player-menu-toast">{saveMsg}</span>}
 
         {/* Wrap portrait and buttons */}
-        <div className="player-menu-window has-pixelated-corners">
+        <div className="player-menu-window">
           {/* Show player portrait */}
           <div className="player-menu-portrait">
             <img

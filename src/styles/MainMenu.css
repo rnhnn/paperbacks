@@ -29,8 +29,11 @@
 }
 
 .main-menu-button:disabled {
-  pointer-events: none;
-  opacity: 0.4;
+  display: none;
+}
+
+.main-menu-button:hover {
+  color: var(--color-gray);
 }
 
 .main-menu-footer {

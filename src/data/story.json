@@ -124,7 +124,7 @@
       "id": "dialogue.blueish",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“But yeah… I think this is her place. She did say the place was blue… <em>ish</em>.”",
+      "text": "“But yeah… I think this is her place. She did say it was blue… <em>ish</em>.”",
       "next": "narration.lookAround"
     },
 
@@ -169,7 +169,7 @@
       "id": "dialogue.blueish2",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Hmm, she did say it was blue… <em>ish</em>.”",
+      "text": "“Hmm, she did say the place was blue… <em>ish</em>.”",
       "next": "dialogue.mustBeThePlace"
     },
 
@@ -177,7 +177,7 @@
       "id": "dialogue.mustBeThePlace",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“This must be…”",
+      "text": "“This must be it.”",
       "next": "narration.eyesWander"
     },
 

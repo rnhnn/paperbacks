@@ -87,7 +87,7 @@
   background-color: var(--color-red-hover);
 }
 
-.story-flow::before,
+/* .story-flow::before,
 .story-flow::after {
   position: absolute;
   left: 0;
@@ -106,7 +106,7 @@
 .story-flow::after {
   bottom: 94px;
   background: linear-gradient(to top, var(--color-white) 0%, rgba(255, 255, 255, 0) 100%);
-}
+} */
 
 .story-flow .has-scroll-arrow--up {
   top: 0;
