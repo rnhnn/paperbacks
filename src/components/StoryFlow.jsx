@@ -20,6 +20,13 @@ import useScrollArrows from "../hooks/useScrollArrows";
 // Data
 import elementsData from "../data/elements.json";
 
+// Helpers
+import {
+  getInitialNodeId,
+  hydrateFromSavedStory,
+  buildStorySnapshot,
+} from "../helpers/storyPersistence";
+
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
@@ -57,15 +64,9 @@ export default function StoryFlow({
   );
 
   // Initialize current node from save when available, otherwise first node
-  const [currentNodeId, setCurrentNodeId] = useState(() => {
-    if (
-      savedStory &&
-      Object.prototype.hasOwnProperty.call(savedStory, "currentNodeId")
-    ) {
-      return savedStory.currentNodeId;
-    }
-    return localizedStory.nodes[0]?.id ?? null;
-  });
+  const [currentNodeId, setCurrentNodeId] = useState(() =>
+    getInitialNodeId(localizedStory, savedStory)
+  );
 
   // Keep a sliding window of previously rendered blocks for UI and persistence
   const [renderedBlocks, setRenderedBlocks] = useState([]);
@@ -204,62 +205,29 @@ export default function StoryFlow({
   const setEndOfStory = () => setCurrentNodeId(null);
 
   // Build a compact snapshot capturing current position and recent blocks
-  const getStorySnapshot = () => ({
-    currentNodeId,
-    renderedBlocks: renderedBlocks
-      .slice(-MAX_RENDERED_BLOCKS)
-      .map((b) => ({
-        id: b.id,
-        type: b.type,
-        text: b.text,
-        character: b.character || null,
-        _frozenCharacter: b._frozenCharacter || null,
-        choices: b.type === "dialogueChoice" ? b.choices || [] : undefined,
-        graphic: b.graphic || null,
-      })),
-  });
+  const getStorySnapshot = () =>
+    buildStorySnapshot({
+      currentNodeId,
+      renderedBlocks,
+      maxRenderedBlocks: MAX_RENDERED_BLOCKS,
+    });
 
   // Provide snapshot getter to the parent so Quick Save can pull latest state
   useEffect(() => {
     if (onStorySnapshot) onStorySnapshot(getStorySnapshot);
   }, [onStorySnapshot, currentNodeId, renderedBlocks]);
 
-  // Restore a saved story by hydrating blocks and position with backward compatibility
+  // Restore a saved story by hydrating blocks and position from the current save format
   useEffect(() => {
-    if (!savedStory) return;
-
-    const hasExplicitId = Object.prototype.hasOwnProperty.call(
+    hydrateFromSavedStory({
       savedStory,
-      "currentNodeId"
-    );
-    const startId = hasExplicitId
-      ? savedStory.currentNodeId
-      : localizedStory.nodes[0]?.id ?? null;
-
-    const startNode = startId ? nodeMap[startId] : null;
-
-    if (Array.isArray(savedStory.renderedBlocks)) {
-      // Restore previously frozen blocks to preserve character names and graphics
-      const restored = savedStory.renderedBlocks.map((b) => ({
-        ...b,
-        character: b.character || b._frozenCharacter?.id || null, // Guard older saves
-        choices:
-          b.type === "dialogueChoice" && !Array.isArray(b.choices)
-            ? []
-            : b.choices,
-      }));
-      setRenderedBlocks(restored);
-    } else {
-      // Fallback path for older save format that only stored recent node ids
-      const recent = (savedStory.recentNodeIds || [])
-        .map((id) => nodeMap[id])
-        .filter(Boolean);
-      setRenderedBlocks(recent.slice(-MAX_RENDERED_BLOCKS));
-    }
-
-    setCurrentNodeId(startId);
-    setWaitingChoice(startNode?.type === "dialogueChoice"); // Resume with choice gate if needed
-  }, [savedStory, nodeMap, localizedStory.nodes]);
+      nodeMap,
+      setRenderedBlocks,
+      setCurrentNodeId,
+      setWaitingChoice,
+      maxRenderedBlocks: MAX_RENDERED_BLOCKS,
+    });
+  }, [savedStory, nodeMap]);
 
   // Advance the narrative by resolving the next renderable node and applying effects
   const renderNext = () => {
@@ -525,9 +493,10 @@ export default function StoryFlow({
               ? { name: "YOU" }
               : block._frozenCharacter || resolveCharacter(block.character);
             const name = char.name.toUpperCase();
-            const text = Array.isArray(block.text)
-              ? block.text.join(" ")
-              : block.text;
+            const text =
+              Array.isArray(block.text) ?
+                block.text.join(" ") :
+                block.text;
 
             return (
               <div key={block.id || i} className={cls}>
@@ -549,8 +518,13 @@ export default function StoryFlow({
                 <ol className="story-flow-dialogue-list">
                   {safeChoices.map((c, j) => (
                     <li key={j} className="story-flow-dialogue-list-option">
-                      <button onClick={() => handleChoice(c)} className="story-flow-dialogue-list-option-button">
-                        <span className="story-flow-option-number">{j + 1}.</span>{" "}
+                      <button
+                        onClick={() => handleChoice(c)}
+                        className="story-flow-dialogue-list-option-button"
+                      >
+                        <span className="story-flow-option-number">
+                          {j + 1}.
+                        </span>{" "}
                         <span dangerouslySetInnerHTML={{ __html: c.text }} />
                       </button>
                     </li>

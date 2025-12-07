@@ -62,7 +62,7 @@ export default function Notes({ notes, onClose }) {
         {sortedNotes.length > 0 ? (
           <div className="notes-container">
             {/* Sidebar wrapper with scroll arrows */}
-            <div className="notes-sidebar-wrapper has-pixelated-corners has-scroll-parent">
+            <div className="notes-sidebar-wrapper has-pixelated-borders has-scroll-parent">
               <div ref={scrollRef} className="notes-sidebar has-scroll">
                 {sortedNotes.map((note) => {
                   const loc = localizedById[note.id] || note;
