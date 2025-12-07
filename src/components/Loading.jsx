@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { useFlags } from "../contexts/FlagsContext";
 
 // Helpers
-import { isDebugMode } from "../helpers/isDebugMode";
+import { debugMode } from "../helpers/debugMode";
 
 // Data
 import system from "../data/system.json";
@@ -76,13 +76,13 @@ export default function Loading({ onComplete }) {
           const path = `/audio/${file}`;
 
           // Log each audio file being preloaded in debug mode
-          if (isDebugMode()) console.log(`[Audio Preload] ${group}/${key}: ${path}`);
+          if (debugMode()) console.log(`[Audio Preload] ${group}/${key}: ${path}`);
 
           if (cache) {
             // Skip files already in cache
             const match = await cache.match(path);
             if (match) {
-              if (isDebugMode()) console.log(`[Audio Preload] Cache hit: ${path}`);
+              if (debugMode()) console.log(`[Audio Preload] Cache hit: ${path}`);
               continue;
             }
 
@@ -92,7 +92,7 @@ export default function Loading({ onComplete }) {
                 .then((response) => {
                   if (response.ok) {
                     cache.put(path, response.clone());
-                    if (isDebugMode()) console.log(`[Audio Preload] Cached: ${path}`);
+                    if (debugMode()) console.log(`[Audio Preload] Cached: ${path}`);
                   }
                 })
                 .catch((err) =>
@@ -128,7 +128,7 @@ export default function Loading({ onComplete }) {
       const systemPaths = system.map((f) => `/system/${f}`);
 
       // Log asset preload details in debug mode
-      if (isDebugMode()) {
+      if (debugMode()) {
         portraits.forEach((p) => console.log(`[Image Preload] Portrait: ${p}`));
         itemIcons.forEach((p) => console.log(`[Image Preload] Item: ${p}`));
         systemPaths.forEach((p) => console.log(`[Image Preload] System: ${p}`));
@@ -192,7 +192,7 @@ export default function Loading({ onComplete }) {
           </button>
 
           {/* Show skip option in debug mode */}
-          {isDebugMode() && (
+          {debugMode() && (
             <button
               className="language-select-button"
               onClick={handleSkipToGame}

@@ -13,7 +13,7 @@ import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
 
 // Helpers
-import { isDebugMode } from "../helpers/isDebugMode";
+import { debugMode } from "../helpers/debugMode";
 
 const GRID_SLOTS = 18; // 2 rows x 9 columns
 
@@ -31,7 +31,7 @@ export default function Inventory({ items, onClose }) {
   const acquired = useMemo(() => {
     const active = items.filter((it) => it.acquired);
     const sorted = active.reverse();
-    if (isDebugMode() && sorted.length > GRID_SLOTS) {
+    if (debugMode() && sorted.length > GRID_SLOTS) {
       console.warn(
         `[Inventory] Too many items (${sorted.length}). Showing latest ${GRID_SLOTS}.`
       );

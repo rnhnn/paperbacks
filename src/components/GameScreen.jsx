@@ -19,7 +19,7 @@ import useFadeDuration from "../hooks/useFadeDuration";
 import useText from "../hooks/useText";
 
 // Helpers
-import { isDebugMode } from "../helpers/isDebugMode";
+import { debugMode } from "../helpers/debugMode";
 
 // Components
 import Loading from "./Loading";
@@ -197,7 +197,7 @@ export default function GameScreen({ phase, transitionTo }) {
         <Loading
           onComplete={(mode) => {
             // Skip full flow when launched in debug mode (local or ?debug=1)
-            if (mode === "skip" && isDebugMode()) {
+            if (mode === "skip" && debugMode()) {
               resetGameState(); // Initialize default data instantly
               transitionTo("game"); // Jump directly to gameplay (no fade)
             } else {

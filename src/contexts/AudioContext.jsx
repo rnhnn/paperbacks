@@ -4,7 +4,7 @@
 import { createContext, useContext, useRef, useEffect, useState } from "react";
 
 // Helpers
-import { isDebugMode } from "../helpers/isDebugMode";
+import { debugMode } from "../helpers/debugMode";
 
 // Data
 import audioData from "../data/audio.json";
@@ -48,7 +48,7 @@ export function AudioProvider({ children }) {
     }
 
     const path = `/audio/${track}`;
-    if (isDebugMode()) console.log(`[Audio] Preparing main menu music: ${path}`);
+    if (debugMode()) console.log(`[Audio] Preparing main menu music: ${path}`);
 
     const audio = new Audio(path);
     audio.loop = true;
@@ -73,7 +73,7 @@ export function AudioProvider({ children }) {
       const base = new Audio(path);
       base.preload = "auto";
       uiRefs.current[key] = base;
-      if (isDebugMode()) console.log(`[Audio] Preloaded UI sound: ${key} (${path})`);
+      if (debugMode()) console.log(`[Audio] Preloaded UI sound: ${key} (${path})`);
     });
 
     return () => {
@@ -91,7 +91,7 @@ export function AudioProvider({ children }) {
       localStorage.setItem("audioMuted", isMuted);
     } catch {}
 
-    if (isDebugMode()) console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
+    if (debugMode()) console.log(`[Audio] Mute state changed: ${isMuted ? "ON" : "OFF"}`);
   }, [isMuted]);
 
   // Start playing main menu track from the beginning
@@ -100,7 +100,7 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return;
 
-    if (isDebugMode()) console.log("[Audio] Playing main menu music");
+    if (debugMode()) console.log("[Audio] Playing main menu music");
 
     audio.currentTime = 0;
     audio.volume = isMuted ? 0 : 1.0;
@@ -112,7 +112,7 @@ export function AudioProvider({ children }) {
     const audio = musicRef.current;
     if (!audio) return Promise.resolve();
 
-    if (isDebugMode()) console.log("[Audio] Fading out main menu music");
+    if (debugMode()) console.log("[Audio] Fading out main menu music");
 
     const FADE_DURATION = 800;
     const STEP_INTERVAL = 50;
@@ -134,7 +134,7 @@ export function AudioProvider({ children }) {
           audio.pause();
           audio.currentTime = 0;
           audio.volume = isMuted ? 0 : 1.0;
-          if (isDebugMode()) console.log("[Audio] Main menu music stopped");
+          if (debugMode()) console.log("[Audio] Main menu music stopped");
           resolve();
         }
       }, STEP_INTERVAL);
@@ -143,7 +143,7 @@ export function AudioProvider({ children }) {
 
   // Play ambience layer by id, with optional volume
   const playAmbience = async (id, volume = 1) => {
-    if (isDebugMode()) console.log(`[Audio] playAmbience: id=${id}, volume=${volume}`);
+    if (debugMode()) console.log(`[Audio] playAmbience: id=${id}, volume=${volume}`);
 
     const file = audioData.ambience?.[id];
     if (!file) {
@@ -152,7 +152,7 @@ export function AudioProvider({ children }) {
     }
 
     const path = `/audio/${file}`;
-    if (isDebugMode()) console.log(`[Audio] Starting ambience: ${id} (${path})`);
+    if (debugMode()) console.log(`[Audio] Starting ambience: ${id} (${path})`);
 
     if (ambienceRef.current) await stopAmbience(); // Fade out previous ambience
 
@@ -187,11 +187,11 @@ export function AudioProvider({ children }) {
         }
         currentVolume = Math.min(targetVolume, currentVolume + volumeStep);
         audio.volume = currentVolume;
-        if (isDebugMode()) console.log(`[Audio] Ambience fade progress: ${currentVolume.toFixed(2)}`);
+        if (debugMode()) console.log(`[Audio] Ambience fade progress: ${currentVolume.toFixed(2)}`);
         if (currentVolume >= targetVolume) {
           clearInterval(ambienceFadeRef.current);
           ambienceFadeRef.current = null;
-          if (isDebugMode()) console.log(`[Audio] Ambience '${id}' faded in to ${targetVolume}`);
+          if (debugMode()) console.log(`[Audio] Ambience '${id}' faded in to ${targetVolume}`);
         }
       }, STEP_INTERVAL);
     }
@@ -204,7 +204,7 @@ export function AudioProvider({ children }) {
 
     const name = audio.src.split("/").pop();
 
-    if (isDebugMode()) {
+    if (debugMode()) {
       console.log(`[Audio] stopAmbience: ${immediate ? "immediate" : "fade"} (${name})`);
     }
 
@@ -218,7 +218,7 @@ export function AudioProvider({ children }) {
       audio.pause();
       audio.currentTime = 0;
       ambienceRef.current = null;
-      if (isDebugMode()) console.log(`[Audio] Ambience '${name}' stopped instantly`);
+      if (debugMode()) console.log(`[Audio] Ambience '${name}' stopped instantly`);
       return Promise.resolve();
     }
 
@@ -237,7 +237,7 @@ export function AudioProvider({ children }) {
         }
 
         audio.volume = Math.max(0, audio.volume - volumeStep);
-        if (isDebugMode()) console.log(`[Audio] Ambience fade-out progress: ${audio.volume.toFixed(2)}`);
+        if (debugMode()) console.log(`[Audio] Ambience fade-out progress: ${audio.volume.toFixed(2)}`);
 
         if (audio.volume <= 0.01) {
           clearInterval(ambienceFadeRef.current);
@@ -245,7 +245,7 @@ export function AudioProvider({ children }) {
           audio.pause();
           audio.currentTime = 0;
           ambienceRef.current = null;
-          if (isDebugMode()) console.log(`[Audio] Ambience '${name}' fully stopped`);
+          if (debugMode()) console.log(`[Audio] Ambience '${name}' fully stopped`);
           resolve();
         }
       }, STEP_INTERVAL);
@@ -263,7 +263,7 @@ export function AudioProvider({ children }) {
     const path = `/audio/${file}`;
     const clampedVolume = Math.min(1, Math.max(0, volume));
 
-    if (isDebugMode()) console.log(`[Audio] Playing SFX: ${id} (${path}), volume=${clampedVolume}`);
+    if (debugMode()) console.log(`[Audio] Playing SFX: ${id} (${path}), volume=${clampedVolume}`);
 
     const audio = new Audio(path);
     audio.volume = isMuted ? 0 : clampedVolume;
@@ -283,7 +283,7 @@ export function AudioProvider({ children }) {
       console.warn(`[AudioContext] Missing UI sound key '${key}'`);
       return;
     }
-    if (isDebugMode()) console.log(`[Audio] UI sound: ${key}`);
+    if (debugMode()) console.log(`[Audio] UI sound: ${key}`);
 
     const node = base.cloneNode();
     node.volume = isMuted ? 0 : 0.4;
