@@ -1,19 +1,4 @@
 {
-  "wasSureItWasHere": {
-    "default": false,
-    "type": "boolean",
-    "description": "Player chose the confident option (“It’s here.”)."
-  },
-  "wasUnsureItWasHere": {
-    "default": false,
-    "type": "boolean",
-    "description": "Player chose the hesitant option (“It’s… here?”)."
-  },
-  "foundOldShoe": {
-    "default": false,
-    "type": "boolean",
-    "description": "Set when the node gives the player the old_shoe inventory item."
-  },
   "readShoppingList": {
     "default": false,
     "type": "boolean",

@@ -70,31 +70,23 @@
       "id": "dialogue.hideout",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Well… Look at Weeks’s hideout.”",
-      "next": "narration.peaceful"
+      "text": "“Well… look at Weeks's hideout.”",
+      "next": "narration.mafiosos"
     },
 
     {
-      "id": "narration.peaceful",
-      "type": "singleParagraph",
-      "text": "She turns around, her eyes taking in the peaceful street.",
-      "next": "dialogue.like"
-    },
-
-    {
-      "id": "dialogue.like",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“I like it.”",
-      "next": "dialogue.mafiosos"
-    },
-
-    {
-      "id": "dialogue.mafiosos",
+      "id": "narration.mafiosos",
       "type": "characterDialogue",
       "character": "erika-monsell",
       "text": "“I bet she doesn’t get woken up at three in the morning by <em>mafiosos</em> having a knife fight.”",
-      "next": null
+      "next": "narration.peacefulStreet"
+    },
+
+    {
+      "id": "narration.peacefulStreet",
+      "type": "singleParagraph",
+      "text": "She turns around, her eyes taking in the peaceful street.”",
+      "next": "dialogue.howCome"
     },
   
     {
@@ -116,7 +108,7 @@
       "id": "dialogue.OttosDiatribes",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Tch… Otto’s diatribes are making me blind. Truly.”",
+      "text": "<em>Tch</em>… Otto’s ramblings are making me blind. Truly.",
       "next": "dialogue.blueish"
     },
 
@@ -124,7 +116,7 @@
       "id": "dialogue.blueish",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“But yeah… I think this is her place. She did say it was blue… <em>ish</em>.”",
+      "text": "“But yeah… I think this is the place. She did say it was blue… <em>ish</em>.”",
       "next": "narration.lookAround"
     },
 
@@ -132,21 +124,13 @@
       "id": "narration.lookAround",
       "type": "singleParagraph",
       "text": "She takes another look around the peaceful street.",
-      "next": "dialogue.likeQuiet"
-    },
-  
-    {
-      "id": "dialogue.likeQuiet",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“I like it here.”",
-      "next": null
+      "next": "dialogue.howCome"
     },
 
     {
       "id": "narration.cornea",
       "type": "singleParagraph",
-      "text": "Those numbers are not getting any clearer for you — no matter how hard you squish your cornea.",
+      "text": "Those numbers are not getting any clearer for you. No matter how hard you squish your cornea.",
       "next": "dialogue.areYouOk"
     },
   
@@ -161,7 +145,7 @@
     {
       "id": "narration.puzzled",
       "type": "singleParagraph",
-      "text": "Your sister catches up to you, puzzled. She quickly glances at the obscured plaque and the third-floor windows, before returning to your disoriented face.",
+      "text": "Your sister catches up to you, puzzled. She glances at the obscured plaque, then up at the third-floor windows, before her eyes return to your disoriented face.",
       "next": "dialogue.blueish2"
     },
 
@@ -192,7 +176,15 @@
       "id": "dialogue.itsNice",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“It's nice here.”",
+      "text": "“I like it.”",
+      "next": "dialogue.howCome"
+    },
+
+    {
+      "id": "dialogue.howCome",
+      "type": "characterDialogue",
+      "character": "erika-monsell",
+      "text": "“How come we haven’t been here before? It’s not that far from the studio.”",
       "next": null
     }
 
