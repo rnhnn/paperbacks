@@ -153,7 +153,7 @@
       "id": "dialogue.blueish2",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“Hmm, she did say the place was blue… <em>ish</em>.”",
+      "text": "Well… she did say the place was blue… <em>ish</em>.",
       "next": "dialogue.mustBeThePlace"
     },
 
@@ -169,14 +169,6 @@
       "id": "narration.eyesWander",
       "type": "singleParagraph",
       "text": "She turns around; her eyes wander along the trees flanking the peaceful street, a hint of a smile on her face.",
-      "next": "dialogue.itsNice"
-    },
-
-    {
-      "id": "dialogue.itsNice",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“I like it.”",
       "next": "dialogue.howCome"
     },
 
@@ -185,6 +177,14 @@
       "type": "characterDialogue",
       "character": "erika-monsell",
       "text": "“How come we haven’t been here before? It’s not that far from the studio.”",
+      "next": "note.theStudio"
+    },
+
+    {
+      "id": "note.theStudio",
+      "type": "singleParagraph",
+      "text": "<em>New note added: The Studio</em>",
+      "notesAdd": ["the-studio"],
       "next": null
     }
 
