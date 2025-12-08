@@ -176,7 +176,10 @@
       "id": "dialogue.howCome",
       "type": "characterDialogue",
       "character": "erika-monsell",
-      "text": "“How come we haven’t been here before? It’s not that far from the studio.”",
+      "text": [
+        "“How come we haven’t been here before? It’s not that far from the studio.”",
+        "“How come we haven’t been here before? It’s not that far from the studio.”"
+      ],
       "next": "note.theStudio"
     },
 
