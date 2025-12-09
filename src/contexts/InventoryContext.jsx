@@ -9,9 +9,13 @@ import itemsData from "../data/items.json";
 const InventoryContext = createContext();
 
 export const InventoryProvider = ({ children }) => {
-  // Initialize item state from items.json, marking each with its acquired status
+  // Initialize item state from items.json, marking each with its acquired status and unseen state
   const [items, setItems] = useState(() =>
-    itemsData.map((item) => ({ ...item, acquired: !!item.acquired }))
+    itemsData.map((item) => ({
+      ...item,
+      acquired: !!item.acquired,
+      seen: false, // Track whether the player has viewed this item in the inventory
+    }))
   );
 
   // Mark an item as acquired by its ID if not already obtained
@@ -32,6 +36,15 @@ export const InventoryProvider = ({ children }) => {
     );
   };
 
+  // Mark an item as seen when the player has viewed it in the inventory
+  const markItemSeen = (itemId) => {
+    setItems((prev) =>
+      prev.map((i) =>
+        i.id === itemId ? { ...i, seen: true } : i
+      )
+    );
+  };
+
   // Compute a derived list of acquired item IDs for quick access
   const inventory = items.filter((i) => i.acquired).map((i) => i.id);
 
@@ -43,6 +56,7 @@ export const InventoryProvider = ({ children }) => {
         inventory, // List of acquired item IDs
         addItem, // Add item by ID
         removeItem, // Remove item by ID
+        markItemSeen, // Mark item as seen by ID
         setItems, // Used internally by SaveSystem to restore inventory state
       }}
     >

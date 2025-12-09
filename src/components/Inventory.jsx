@@ -4,7 +4,7 @@
 import "../styles/Inventory.css";
 
 // React
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 // Components
 import WindowOverlay from "./WindowOverlay";
@@ -17,7 +17,7 @@ import { debugMode } from "../helpers/debugMode";
 
 const GRID_SLOTS = 18; // 2 rows x 9 columns
 
-export default function Inventory({ items, onClose }) {
+export default function Inventory({ items, onClose, onItemSeen }) {
   const { t, textData } = useText();
 
   // Build quick lookup for localized items by id
@@ -51,6 +51,13 @@ export default function Inventory({ items, onClose }) {
 
   // Get selected item (newest by default)
   const selectedItem = gridSlots[selectedIndex] || null;
+
+  // Mark selected item as seen when it changes
+  useEffect(() => {
+    if (selectedItem && typeof onItemSeen === "function") {
+      onItemSeen(selectedItem.id);
+    }
+  }, [selectedItem, onItemSeen]);
 
   // Handle clicking a slot
   const handleSelect = (index) => {

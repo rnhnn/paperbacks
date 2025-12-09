@@ -29,6 +29,12 @@ export const SaveSystemProvider = ({ children }) => {
     inventoryIds: [...inventory], // List of acquired item IDs
     noteIds: [...unlockedNotes], // List of unlocked note IDs
     flags: { ...flags }, // Current flag dictionary
+    seenItemIds: items // List of item IDs the player has viewed in inventory
+      .filter((it) => it.seen)
+      .map((it) => it.id),
+    readNoteIds: notes // List of note IDs the player has read in the notes window
+      .filter((n) => n.read)
+      .map((n) => n.id),
   });
 
   // Persist a snapshot to localStorage with duplicate prevention
@@ -64,19 +70,29 @@ export const SaveSystemProvider = ({ children }) => {
       const data = JSON.parse(raw);
       if (!data) return null;
 
-      // Restore inventory acquisition states
+      // Restore inventory acquisition and seen states
       if (Array.isArray(data.inventoryIds)) {
         const acquired = new Set(data.inventoryIds);
+        const seen = new Set(data.seenItemIds || []);
         setItems((prev) =>
-          prev.map((it) => ({ ...it, acquired: acquired.has(it.id) }))
+          prev.map((it) => ({
+            ...it,
+            acquired: acquired.has(it.id),
+            seen: seen.has(it.id),
+          }))
         );
       }
 
-      // Restore unlocked notes
+      // Restore unlocked notes and read states
       if (Array.isArray(data.noteIds)) {
         const unlocked = new Set(data.noteIds);
+        const read = new Set(data.readNoteIds || []);
         setNotes((prev) =>
-          prev.map((n) => ({ ...n, unlocked: unlocked.has(n.id) }))
+          prev.map((n) => ({
+            ...n,
+            unlocked: unlocked.has(n.id),
+            read: read.has(n.id),
+          }))
         );
       }
 

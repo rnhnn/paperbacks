@@ -51,7 +51,7 @@ export default function PlayerMenu({
   const fileInputRef = useRef(null);
 
   // Access gameplay systems
-  const { items } = useInventory();
+  const { items, markItemSeen } = useInventory();
   const { notes, markNoteRead } = useNotes();
   const { flags } = useFlags();
 
@@ -104,6 +104,16 @@ export default function PlayerMenu({
         inventoryIds: items.filter((i) => i.acquired).map((i) => i.id),
         noteIds: notes.filter((n) => n.unlocked).map((n) => n.id),
         flags: { ...flags },
+
+        // Persist which acquired items have been seen
+        seenItemIds: items
+          .filter((i) => i.seen)
+          .map((i) => i.id),
+
+        // Persist which unlocked notes have been read
+        readNoteIds: notes
+          .filter((n) => n.read)
+          .map((n) => n.id),
       };
 
       const json = JSON.stringify(snapshot, null, 2);
@@ -180,6 +190,12 @@ export default function PlayerMenu({
   // Detect whether there are any unlocked notes that have not been read
   const hasUnreadNotes = notes.some((n) => n.unlocked && !n.read);
 
+  // Detect whether the player has any items acquired
+  const hasAnyAcquiredItems = items.some((i) => i.acquired);
+
+  // Detect whether there are any acquired items that have not been seen
+  const hasUnseenItems = items.some((i) => i.acquired && !i.seen);
+
   // Render player menu and subwindows
   return (
     <>
@@ -203,10 +219,16 @@ export default function PlayerMenu({
           <div className="player-menu-buttons">
             <button
               onClick={() => {
+                if (!hasAnyAcquiredItems) return;
                 playClickSound();
                 setShowInventory(true);
               }}
-              className="player-menu-buttons-item player-menu-buttons-item-inventory"
+              disabled={!hasAnyAcquiredItems}
+              className={
+                "player-menu-buttons-item player-menu-buttons-item-inventory" +
+                (hasUnseenItems ? " player-menu-buttons-item-has-unseen" : "") +
+                (!hasAnyAcquiredItems ? " is-disabled" : "")
+              }
             >
               {t("ui.playerMenu.buttons.inventory")}
             </button>
@@ -272,6 +294,7 @@ export default function PlayerMenu({
         <Inventory
           items={items}
           onClose={() => setShowInventory(false)}
+          onItemSeen={markItemSeen}
         />
       )}
 
