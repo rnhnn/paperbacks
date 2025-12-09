@@ -31,6 +31,7 @@ export default function Credits({ onClose }) {
   return (
     <WindowOverlay onClose={onClose}>
       {/* Outer container stays fixed size, inner content scrolls */}
+      <h2 className="window-title">{t("ui.creditsWindow.title")}</h2>
       <div className="window window-credits has-pixelated-borders has-scroll-parent">
         {/* Scrollable content area */}
         <div ref={scrollRef} className="window-credits-content has-scroll">

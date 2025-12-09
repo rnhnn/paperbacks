@@ -85,7 +85,7 @@
     {
       "id": "narration.peacefulStreet",
       "type": "singleParagraph",
-      "text": "She turns around, her eyes taking in the peaceful street.”",
+      "text": "She turns around, her eyes taking in the peaceful street.",
       "next": "dialogue.howCome"
     },
   
@@ -178,15 +178,8 @@
       "character": "erika-monsell",
       "text": [
         "“How come we haven’t been here before? It’s not that far from the studio.”",
-        "“How come we haven’t been here before? It’s not that far from the studio.”"
+        "<br><br><em>New note added: The Studio.</em>"
       ],
-      "next": "note.theStudio"
-    },
-
-    {
-      "id": "note.theStudio",
-      "type": "singleParagraph",
-      "text": "<em>New note added: The Studio</em>",
       "notesAdd": ["the-studio"],
       "next": null
     }

@@ -33,18 +33,21 @@
     "noTitle": "No title",
     "noContent": "No content"
   },
+  "creditsWindow": {
+    "title": "Credits:"
+  },
   "inventoryWindow": {
-    "title": "Inventory",
+    "title": "Inventory:",
     "empty": "No items yet.",
     "noName": "No name"
   },
   "notesWindow": {
-    "title": "Notes",
+    "title": "Notes:",
     "empty": "No notes yet.",
     "noTitle": "No title"
   },
   "optionsWindow": {
-    "title": "Options",
+    "title": "Options:",
     "quickSave": "Quick Save",
     "quickLoad": "Quick Load",
     "exportSave": "Export Save File",

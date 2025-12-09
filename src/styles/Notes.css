@@ -1,5 +1,5 @@
 .window-notes {
-  width: 610px;
+  width: 660px;
 }
 
 .notes-container {
@@ -9,7 +9,7 @@
 }
 
 .notes-sidebar {
-  width: 150px;
+  width: 170px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -19,7 +19,7 @@
 .notes-sidebar-item {
   padding: 7px 10px 10px 10px;
   text-align: left;
-  font-size: var(--font-size-small);
+  font-size: var(--font-size-regular);
 }
 
 .notes-sidebar-item + .notes-sidebar-item {

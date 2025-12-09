@@ -20,22 +20,23 @@
   flex-direction: column;
   width: 500px;
   height: 400px;
-  padding: 9px 15px 15px 15px;
+  padding: 15px;
   color: var(--color-white);
 }
 
 .window-title {
   margin-top: 0;
-  margin-bottom: 15px;
+  margin-left: 10px;
+  margin-bottom: 5px;
   line-height: 1;
-  text-align: center;
+  text-align: left;
   font-weight: normal;
-  font-size: var(--font-size-large);
+  font-size: var(--font-size-regular);
 }
 
 .window-close {
   position: absolute;
-  top: -20px;
+  top: 9px;
   right: -23px;
   cursor: pointer;
   z-index: 2;

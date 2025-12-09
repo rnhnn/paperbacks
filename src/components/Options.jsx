@@ -32,8 +32,8 @@ export default function Options({
   return (
     <WindowOverlay onClose={onClose}>
       {/* Outer container stays fixed size */}
+      <h2 className="window-title">{t("ui.optionsWindow.title")}</h2>
       <div className="window window-options has-pixelated-borders">
-        <h2 className="window-title">{t("ui.optionsWindow.title")}</h2>
 
         {/* Action buttons for save, load, export, and import */}
         <div className="window-buttons">
