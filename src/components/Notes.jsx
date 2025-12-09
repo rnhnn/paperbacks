@@ -14,7 +14,7 @@ import WindowOverlay from "./WindowOverlay";
 import useText from "../hooks/useText";
 import useScrollArrows from "../hooks/useScrollArrows";
 
-export default function Notes({ notes, onClose }) {
+export default function Notes({ notes, onClose, onNoteRead }) {
   const { t, textData } = useText();
 
   // Build a quick lookup for localized notes by id
@@ -44,6 +44,13 @@ export default function Notes({ notes, onClose }) {
       setActiveNoteId(sortedNotes[0].id);
     }
   }, [sortedNotes]);
+
+  // Mark active note as read when it becomes selected
+  useEffect(() => {
+    if (activeNoteId && typeof onNoteRead === "function") {
+      onNoteRead(activeNoteId);
+    }
+  }, [activeNoteId, onNoteRead]);
 
   // Find currently active note for display
   const activeNote = useMemo(() => {

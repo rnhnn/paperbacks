@@ -9,9 +9,13 @@ import notesData from "../data/notes.json"; // Master list of all possible notes
 const NotesContext = createContext();
 
 export const NotesProvider = ({ children }) => {
-  // Initialize notes from notes.json, marking each with its unlocked status
+  // Initialize notes from notes.json, marking each with its unlocked status and unread state
   const [notes, setNotes] = useState(() =>
-    notesData.map((note) => ({ ...note, unlocked: !!note.unlocked }))
+    notesData.map((note) => ({
+      ...note,
+      unlocked: !!note.unlocked,
+      read: false, // Track whether the player has viewed this note
+    }))
   );
 
   // Unlock a note by its ID if not already unlocked
@@ -32,6 +36,15 @@ export const NotesProvider = ({ children }) => {
     );
   };
 
+  // Mark a note as read when the player has viewed it
+  const markNoteRead = (noteId) => {
+    setNotes((prev) =>
+      prev.map((n) =>
+        n.id === noteId ? { ...n, read: true } : n
+      )
+    );
+  };
+
   // Compute a list of all unlocked note IDs for quick access
   const unlockedNotes = notes.filter((n) => n.unlocked).map((n) => n.id);
 
@@ -43,6 +56,7 @@ export const NotesProvider = ({ children }) => {
         unlockedNotes, // List of unlocked note IDs
         addNote, // Unlock a note by ID
         removeNote, // Lock a note by ID
+        markNoteRead, // Mark a note as read by ID
         setNotes, // Used internally by SaveSystem to restore note state
       }}
     >

@@ -52,7 +52,7 @@ export default function PlayerMenu({
 
   // Access gameplay systems
   const { items } = useInventory();
-  const { notes } = useNotes();
+  const { notes, markNoteRead } = useNotes();
   const { flags } = useFlags();
 
   // Load translation utility
@@ -174,6 +174,12 @@ export default function PlayerMenu({
     [notes, t]
   );
 
+  // Detect whether the player has any notes unlocked
+  const hasAnyUnlockedNotes = notes.some((n) => n.unlocked);
+
+  // Detect whether there are any unlocked notes that have not been read
+  const hasUnreadNotes = notes.some((n) => n.unlocked && !n.read);
+
   // Render player menu and subwindows
   return (
     <>
@@ -206,10 +212,16 @@ export default function PlayerMenu({
             </button>
             <button
               onClick={() => {
+                if (!hasAnyUnlockedNotes) return;
                 playClickSound("click-paper");
                 setShowNotes(true);
               }}
-              className="player-menu-buttons-item player-menu-buttons-item-notes"
+              disabled={!hasAnyUnlockedNotes}
+              className={
+                "player-menu-buttons-item player-menu-buttons-item-notes" +
+                (hasUnreadNotes ? " player-menu-buttons-item-has-unread" : "") +
+                (!hasAnyUnlockedNotes ? " is-disabled" : "")
+              }
             >
               {t("ui.playerMenu.buttons.notes")}
             </button>
@@ -268,6 +280,7 @@ export default function PlayerMenu({
         <Notes
           notes={unlockedNotes}
           onClose={() => setShowNotes(false)}
+          onNoteRead={markNoteRead}
         />
       )}
 

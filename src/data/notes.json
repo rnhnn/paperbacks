@@ -1,13 +1,5 @@
 [
   {
-    "id": "placeholder-note",
-    "title": "Placeholder Note",
-    "content": [
-      "A note to give flavor a the beginning of the game. To be written later."
-    ],
-    "unlocked": true
-  },
-  {
     "id": "the-studio",
     "title": "The Studio",
     "content": [

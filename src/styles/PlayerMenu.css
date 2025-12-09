@@ -114,3 +114,24 @@
 .player-menu.is-active {
   opacity: 1;
 }
+
+.player-menu-buttons-item-notes.is-disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread {
+  position: relative;
+}
+
+.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background-color: #da5151;
+}
