@@ -52,7 +52,7 @@ export default function PlayerMenu({
 
   // Access gameplay systems
   const { items, inventory, markItemSeen } = useInventory();
-  const { notes, markNoteRead } = useNotes();
+  const { notes, unlockedNotes: unlockedNoteIds, markNoteRead } = useNotes();
   const { flags } = useFlags();
 
   // Load translation utility
@@ -98,8 +98,8 @@ export default function PlayerMenu({
         version: 1,
         timestamp: Date.now(),
         story: storyData,
-        inventoryIds: items.filter((i) => i.acquired).map((i) => i.id),
-        noteIds: notes.filter((n) => n.unlocked).map((n) => n.id),
+        inventoryIds: [...inventory], // Use derived list from InventoryContext
+        noteIds: [...unlockedNoteIds], // Use derived list from NotesContext
         flags: { ...flags },
 
         // Persist which acquired items have been seen
@@ -165,8 +165,8 @@ export default function PlayerMenu({
     }
   };
 
-  // Build unlocked notes with fallback content
-  const unlockedNotes = useMemo(
+  // Build unlocked notes with fallback content for the Notes window
+  const menuNotes = useMemo(
     () =>
       notes
         .filter((n) => n.unlocked)
@@ -203,7 +203,7 @@ export default function PlayerMenu({
   );
 
   // Detect whether the player has any notes unlocked
-  const hasAnyUnlockedNotes = unlockedNotes.length > 0;
+  const hasAnyUnlockedNotes = menuNotes.length > 0;
 
   // Detect whether there are any unlocked notes that have not been read,
   // ignoring those that start unlocked in notes.json
@@ -325,7 +325,7 @@ export default function PlayerMenu({
       {/* Show notes window */}
       {showNotes && (
         <Notes
-          notes={unlockedNotes}
+          notes={menuNotes}
           onClose={() => setShowNotes(false)}
           onNoteRead={markNoteRead}
         />

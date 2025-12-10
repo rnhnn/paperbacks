@@ -30,7 +30,7 @@ export default function Inventory({ items, onClose, onItemSeen }) {
   // Filter and sort acquired items (newest first)
   const acquired = useMemo(() => {
     const active = items.filter((it) => it.acquired);
-    const sorted = active.reverse();
+    const sorted = [...active].reverse(); // Avoid mutating the filtered array
     if (debugMode() && sorted.length > GRID_SLOTS) {
       console.warn(
         `[Inventory] Too many items (${sorted.length}). Showing latest ${GRID_SLOTS}.`
@@ -48,6 +48,18 @@ export default function Inventory({ items, onClose, onItemSeen }) {
 
   // Track selected item index
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Keep selection valid when acquired items change
+  useEffect(() => {
+    if (acquired.length === 0) {
+      if (selectedIndex !== 0) setSelectedIndex(0);
+      return;
+    }
+
+    if (selectedIndex >= acquired.length) {
+      setSelectedIndex(acquired.length - 1);
+    }
+  }, [acquired.length, selectedIndex]);
 
   // Get selected item (newest by default)
   const selectedItem = gridSlots[selectedIndex] || null;

@@ -14,7 +14,7 @@ export const NotesProvider = ({ children }) => {
     notesData.map((note) => ({
       ...note,
       unlocked: !!note.unlocked,
-      read: false, // Track whether the player has viewed this note
+      read: false, // Track whether the player has viewed this note at least once
     }))
   );
 
@@ -38,11 +38,19 @@ export const NotesProvider = ({ children }) => {
 
   // Mark a note as read when the player has viewed it
   const markNoteRead = (noteId) => {
-    setNotes((prev) =>
-      prev.map((n) =>
-        n.id === noteId ? { ...n, read: true } : n
-      )
-    );
+    setNotes((prev) => {
+      let changed = false;
+
+      const next = prev.map((n) => {
+        if (n.id !== noteId) return n;
+        if (n.read) return n; // Already read → no change
+        changed = true;
+        return { ...n, read: true };
+      });
+
+      // If nothing actually changed, return the previous array
+      return changed ? next : prev;
+    });
   };
 
   // Compute a list of all unlocked note IDs for quick access

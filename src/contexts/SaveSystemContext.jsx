@@ -22,20 +22,26 @@ export const SaveSystemProvider = ({ children }) => {
   const lastSavedRef = useRef("");
 
   // Build a structured snapshot of the current game state
-  const buildSnapshot = (storyState) => ({
-    version: SAVE_VERSION,
-    timestamp: Date.now(),
-    story: storyState || null, // Scene/story data provided by StoryFlow
-    inventoryIds: [...inventory], // List of acquired item IDs
-    noteIds: [...unlockedNotes], // List of unlocked note IDs
-    flags: { ...flags }, // Current flag dictionary
-    seenItemIds: items // List of item IDs the player has viewed in inventory
+  const buildSnapshot = (storyState) => {
+    const seenItemIds = items // List of item IDs the player has viewed in inventory
       .filter((it) => it.seen)
-      .map((it) => it.id),
-    readNoteIds: notes // List of note IDs the player has read in the notes window
+      .map((it) => it.id);
+
+    const readNoteIds = notes // List of note IDs the player has read in the notes window
       .filter((n) => n.read)
-      .map((n) => n.id),
-  });
+      .map((n) => n.id);
+
+    return {
+      version: SAVE_VERSION,
+      timestamp: Date.now(),
+      story: storyState || null, // Scene/story data provided by StoryFlow
+      inventoryIds: [...inventory], // List of acquired item IDs
+      noteIds: [...unlockedNotes], // List of unlocked note IDs
+      flags: { ...flags }, // Current flag dictionary
+      seenItemIds,
+      readNoteIds,
+    };
+  };
 
   // Persist a snapshot to localStorage with duplicate prevention
   const persist = (snapshot) => {
@@ -69,6 +75,13 @@ export const SaveSystemProvider = ({ children }) => {
 
       const data = JSON.parse(raw);
       if (!data) return null;
+
+      if (data.version !== SAVE_VERSION) {
+        console.warn(
+          `Save version mismatch: found v${data.version}, expected v${SAVE_VERSION}.`
+        );
+        // For now we still attempt to load; future versions can branch here.
+      }
 
       // Restore inventory acquisition and seen states
       if (Array.isArray(data.inventoryIds)) {

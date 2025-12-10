@@ -61,7 +61,10 @@ export default function Notes({ notes, onClose, onNoteRead }) {
     const stillExists = sortedNotes.some((n) => n.id === activeNoteId);
 
     // First time we get notes, or current note vanished
-    if ((prevCount === 0 && count > 0 && activeNoteId === null) || !stillExists) {
+    if (
+      (prevCount === 0 && count > 0 && activeNoteId === null) ||
+      !stillExists
+    ) {
       setActiveNoteId(sortedNotes[0].id);
       return;
     }
@@ -78,13 +81,14 @@ export default function Notes({ notes, onClose, onNoteRead }) {
     if (activeNoteId && typeof onNoteRead === "function") {
       onNoteRead(activeNoteId);
     }
-  }, [activeNoteId]);
+  }, [activeNoteId, onNoteRead]);
 
   // Find currently active note for display
   const activeNote = useMemo(() => {
     if (!activeNoteId) return null;
     const note = sortedNotes.find((n) => n.id === activeNoteId);
-    const loc = localizedById[note?.id] || note;
+    if (!note) return null;
+    const loc = localizedById[note.id] || note;
     return loc || null;
   }, [activeNoteId, sortedNotes, localizedById]);
 

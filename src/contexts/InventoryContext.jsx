@@ -14,7 +14,7 @@ export const InventoryProvider = ({ children }) => {
     itemsData.map((item) => ({
       ...item,
       acquired: !!item.acquired,
-      seen: false, // Track whether the player has viewed this item in the inventory
+      seen: false, // Track whether the player has viewed this item in the inventory at least once
     }))
   );
 
