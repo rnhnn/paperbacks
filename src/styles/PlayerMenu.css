@@ -115,45 +115,24 @@
   opacity: 1;
 }
 
-.player-menu-buttons-item-notes.is-disabled {
-  opacity: 0.35;
-  cursor: default;
-  pointer-events: none;
-}
-
-.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread {
-  position: relative;
-}
-
-.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background-color: #da5151;
-}
-
-/* Dim and disable pointer events when Inventory button is disabled */
+.player-menu-buttons-item-notes.is-disabled,
 .player-menu-buttons-item-inventory.is-disabled {
   opacity: 0.35;
   cursor: default;
   pointer-events: none;
 }
 
-/* Anchor notification dot on Inventory button when there are unseen items */
+.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread,
 .player-menu-buttons-item-inventory.player-menu-buttons-item-has-unseen {
   position: relative;
 }
 
-/* Draw red dot in the top-right corner of the Inventory button */
+.player-menu-buttons-item-notes.player-menu-buttons-item-has-unread::after,
 .player-menu-buttons-item-inventory.player-menu-buttons-item-has-unseen::after {
   content: "";
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 5px;
+  right: 0px;
   width: 7px;
   height: 7px;
   border-radius: 999px;
