@@ -41,6 +41,10 @@
   margin-bottom: 8px;
 }
 
+.notes-content-text p + p {
+  margin-top: 20px;
+}
+
 .notes-sidebar-wrapper {
   position: relative;
   height: 100%;

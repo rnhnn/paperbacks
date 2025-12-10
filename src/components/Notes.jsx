@@ -129,9 +129,12 @@ export default function Notes({ notes, onClose, onNoteRead }) {
                   <h3 className="notes-content-title">
                     {activeNote.title || t("ui.notesWindow.noTitle")}
                   </h3>
-                  <div className="notes-content-body">
+                  <div className="notes-content-text">
                     {(activeNote.content || []).map((p, i) => (
-                      <p key={i}>{p}</p>
+                      <p
+                        key={i}
+                        dangerouslySetInnerHTML={{ __html: p }}
+                      />
                     ))}
                   </div>
                 </>
@@ -141,7 +144,7 @@ export default function Notes({ notes, onClose, onNoteRead }) {
             </div>
           </div>
         ) : (
-          <p>{t("ui.notesWindow.empty")}</p>
+          <p className="notes-empty">{t("ui.notesWindow.empty")}</p>
         )}
       </div>
     </WindowOverlay>
