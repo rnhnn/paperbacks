@@ -25,6 +25,7 @@ import { playClickSound } from "../helpers/uiSound";
 
 // Data
 import notesData from "../data/notes.json";
+import itemsData from "../data/items.json"; // Base item data to detect starting items
 
 const protagonistImg = "/portraits/protagonist.png";
 
@@ -40,9 +41,8 @@ export default function PlayerMenu({
   const [showNotes, setShowNotes] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
-  // State for feedback message and opened note
+  // State for feedback message
   const [saveMsg, setSaveMsg] = useState("");
-  const [openNoteId, setOpenNoteId] = useState(null);
 
   // Track fade-in activation on mount
   const [isActive, setIsActive] = useState(false);
@@ -51,7 +51,7 @@ export default function PlayerMenu({
   const fileInputRef = useRef(null);
 
   // Access gameplay systems
-  const { items, markItemSeen } = useInventory();
+  const { items, inventory, markItemSeen } = useInventory();
   const { notes, markNoteRead } = useNotes();
   const { flags } = useFlags();
 
@@ -63,9 +63,6 @@ export default function PlayerMenu({
     const raf = requestAnimationFrame(() => setIsActive(true));
     return () => cancelAnimationFrame(raf);
   }, []);
-
-  // Toggle the open state of a note entry by id
-  const toggleNote = (id) => setOpenNoteId((prev) => (prev === id ? null : id));
 
   // Display short confirmation message
   const flashMsg = (msg) => {
@@ -184,17 +181,44 @@ export default function PlayerMenu({
     [notes, t]
   );
 
-  // Detect whether the player has any notes unlocked
-  const hasAnyUnlockedNotes = notes.some((n) => n.unlocked);
+  // Build sets of "starting" items/notes based on static data
+  const initialAcquiredItemIds = useMemo(
+    () =>
+      new Set(
+        itemsData
+          .filter((it) => it.acquired)
+          .map((it) => it.id)
+      ),
+    []
+  );
 
-  // Detect whether there are any unlocked notes that have not been read
-  const hasUnreadNotes = notes.some((n) => n.unlocked && !n.read);
+  const initialUnlockedNoteIds = useMemo(
+    () =>
+      new Set(
+        notesData
+          .filter((n) => n.unlocked)
+          .map((n) => n.id)
+      ),
+    []
+  );
+
+  // Detect whether the player has any notes unlocked
+  const hasAnyUnlockedNotes = unlockedNotes.length > 0;
+
+  // Detect whether there are any unlocked notes that have not been read,
+  // ignoring those that start unlocked in notes.json
+  const hasUnreadNotes = notes.some(
+    (n) => n.unlocked && !n.read && !initialUnlockedNoteIds.has(n.id)
+  );
 
   // Detect whether the player has any items acquired
-  const hasAnyAcquiredItems = items.some((i) => i.acquired);
+  const hasAnyAcquiredItems = inventory.length > 0;
 
-  // Detect whether there are any acquired items that have not been seen
-  const hasUnseenItems = items.some((i) => i.acquired && !i.seen);
+  // Detect whether there are any acquired items that have not been seen,
+  // ignoring those that start acquired in items.json
+  const hasUnseenItems = items.some(
+    (i) => i.acquired && !i.seen && !initialAcquiredItemIds.has(i.id)
+  );
 
   // Render player menu and subwindows
   return (

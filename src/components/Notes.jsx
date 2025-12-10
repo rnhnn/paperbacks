@@ -35,22 +35,50 @@ export default function Notes({ notes, onClose, onNoteRead }) {
   // Ref for sidebar scroll area
   const scrollRef = useRef(null);
 
+  // Ref to track previous note count for smarter auto-selection
+  const previousCountRef = useRef(0);
+
   // Enable custom scroll arrows for sidebar
   useScrollArrows(scrollRef, { step: 24 });
 
-  // Auto-select the most recently unlocked note when opened
+  // Auto-select a note when needed:
+  // - first time notes appear
+  // - when a new note is added (count increases)
+  // - when the currently active note no longer exists
   useEffect(() => {
-    if (sortedNotes.length > 0) {
+    const count = sortedNotes.length;
+    const prevCount = previousCountRef.current;
+    previousCountRef.current = count;
+
+    if (count === 0) {
+      // No notes → clear selection
+      if (activeNoteId !== null) {
+        setActiveNoteId(null);
+      }
+      return;
+    }
+
+    const stillExists = sortedNotes.some((n) => n.id === activeNoteId);
+
+    // First time we get notes, or current note vanished
+    if ((prevCount === 0 && count > 0 && activeNoteId === null) || !stillExists) {
+      setActiveNoteId(sortedNotes[0].id);
+      return;
+    }
+
+    // A new note was added (count increased) while keeping current selection valid.
+    // Decide whether to jump to the newest note; here we do, for "new note" behavior.
+    if (count > prevCount) {
       setActiveNoteId(sortedNotes[0].id);
     }
-  }, [sortedNotes]);
+  }, [sortedNotes, activeNoteId]);
 
   // Mark active note as read when it becomes selected
   useEffect(() => {
     if (activeNoteId && typeof onNoteRead === "function") {
       onNoteRead(activeNoteId);
     }
-  }, [activeNoteId, onNoteRead]);
+  }, [activeNoteId]);
 
   // Find currently active note for display
   const activeNote = useMemo(() => {

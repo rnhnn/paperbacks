@@ -7,5 +7,14 @@
       "Placeholder text about Sienna´s key. It´s going to be funny in the future."
     ],
     "acquired": true
+  },
+  {
+    "id": "gun",
+    "name": "Keys to Sienna's",
+    "icon": "/items/sienna-keys.png",
+    "description": [
+      "Gun gun"
+    ],
+    "acquired": true
   }
 ]

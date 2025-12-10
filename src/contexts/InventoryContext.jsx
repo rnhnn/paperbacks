@@ -38,11 +38,19 @@ export const InventoryProvider = ({ children }) => {
 
   // Mark an item as seen when the player has viewed it in the inventory
   const markItemSeen = (itemId) => {
-    setItems((prev) =>
-      prev.map((i) =>
-        i.id === itemId ? { ...i, seen: true } : i
-      )
-    );
+    setItems((prev) => {
+      let changed = false;
+
+      const next = prev.map((i) => {
+        if (i.id !== itemId) return i;
+        if (i.seen) return i; // Already seen → no change
+        changed = true;
+        return { ...i, seen: true };
+      });
+
+      // If nothing actually changed, return the previous array
+      return changed ? next : prev;
+    });
   };
 
   // Compute a derived list of acquired item IDs for quick access
