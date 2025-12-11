@@ -4,181 +4,167 @@
 
   "nodes": [
     {
-      "id": "narration.building",
-      "type": "singleParagraph",
+      "id": "building",
+      "type": "narration",
       "text": "At the end of the quiet side street, you <em>eventually</em> find the right building.",
-      "next": "narration.azalea"
+      "next": "azalea"
     },
 
     {
-      "id": "narration.azalea",
-      "type": "singleParagraph",
+      "id": "azalea",
+      "type": "narration",
       "graphic": "plaque-azalea",
       "text": "A three-story relic from the twenties, marked with a rusty plaque that reads “Azalea 28.”",
-      "next": "narration.number"
+      "next": "number"
     },
 
     {
-      "id": "narration.number",
-      "type": "singleParagraph",
+      "id": "number",
+      "type": "narration",
       "text": "Or is it 29?",
-      "next": "narration.ivy"
+      "next": "ivy"
     },
 
     {
-      "id": "narration.ivy",
-      "type": "singleParagraph",
+      "id": "ivy",
+      "type": "narration",
       "text": "From the sidewalk, the plaque looks small and half-hidden by the ivy crawling up the building's walls.",
-      "next": "choice.plaque"
+      "next": "plaque"
     },
 
     {
-      "id": "choice.plaque",
-      "type": "dialogueChoice",
+      "id": "plaque",
+      "type": "choice",
       "choices": [
         {
-          "text": "“It’s here.”",
-          "next": "dialogue.oh"
-        },
-        {
           "text": "“It’s… here?”",
-          "next": "dialogue.hmm"
+          "next": "oh"
         },
         {
           "text": "(Squint at the plaque.) “Uh…”",
-          "next": "narration.cornea"
+          "next": "cornea"
+        }
+      ]
+    },
+  
+    {
+      "id": "oh",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“Oh.”",
+      "next": "sisterLeans"
+    },
+  
+    {
+      "id": "sisterLeans",
+      "type": "narration",
+      "text": "Your sister catches up to you and stops in front of the building. She leans forward on her toes, trying to read the plaque.",
+      "next": "ottosDiatribes"
+    },
+
+    {
+      "id": "ottosDiatribes",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“Tch… Otto’s ramblings are making me blind. Truly.”",
+      "next": "iThinkIsThePlace"
+    },
+
+    {
+      "id": "iThinkIsThePlace",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“But yeah… I think this is the place.”",
+      "next": "blueish"
+    },
+
+    {
+      "id": "blueish",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“She did say it was blue… <em>ish</em>.”",
+      "next": "eyesWander"
+    },
+
+    {
+      "id": "cornea",
+      "type": "narration",
+      "text": "Those numbers are not getting any clearer for you. No matter how hard you squish your cornea.",
+      "next": "areYouOk"
+    },
+  
+    {
+      "id": "areYouOk",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“Are you okay?”",
+      "next": "puzzled"
+    },
+
+    {
+      "id": "puzzled",
+      "type": "narration",
+      "text": "Your sister catches up to you, puzzled. She glances at the obscured plaque, then up at the third-floor windows, before her eyes return to your disoriented face.",
+      "next": "blueish2"
+    },
+
+    {
+      "id": "blueish2",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“Well… she did say the place was blue… <em>ish</em>.”",
+      "next": "mustBeThePlace"
+    },
+
+    {
+      "id": "mustBeThePlace",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“This must be it.”",
+      "next": "eyesWander"
+    },
+
+    {
+      "id": "eyesWander",
+      "type": "narration",
+      "text": "She turns around; her eyes wander along the trees flanking the tranquil street, a hint of a smile on her face.",
+      "next": "streetAppreciation"
+    },
+
+    {
+      "id": "streetAppreciation",
+      "type": "choice",
+      "choices": [
+        {
+          "text": "“It’s very… peaceful here.”",
+          "next": "mobsters"
         }
       ]
     },
 
     {
-      "id": "dialogue.oh",
-      "type": "characterDialogue",
+      "id": "mobsters",
+      "type": "dialogue",
       "character": "erika-monsell",
-      "text": "“Oh.”",
-      "next": "narration.sister"
+      "text": "“I bet she doesn’t get woken up at three in the morning by mobsters having a knife fight…”",
+      "next": "theaterKids"
     },
 
     {
-      "id": "narration.sister",
-      "type": "singleParagraph",
-      "text": "Your sister catches up to you and stops in front of the building. She looks up at the third-floor windows, a hint of a smile on her face.",
-      "next": "dialogue.hideout"
-    },
-
-    {
-      "id": "dialogue.hideout",
-      "type": "characterDialogue",
+      "id": "theaterKids",
+      "type": "dialogue",
       "character": "erika-monsell",
-      "text": "“Well… look at Weeks's hideout.”",
-      "next": "narration.mafiosos"
+      "text": "“...or drunk theater kids <em>howling</em> the bloody act break of Winds of Velamar...”",
+      "next": "howCome"
     },
 
     {
-      "id": "narration.mafiosos",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“I bet she doesn’t get woken up at three in the morning by <em>mafiosos</em> having a knife fight.”",
-      "next": "narration.peacefulStreet"
-    },
-
-    {
-      "id": "narration.peacefulStreet",
-      "type": "singleParagraph",
-      "text": "She turns around, her eyes taking in the peaceful street.",
-      "next": "dialogue.howCome"
-    },
-  
-    {
-      "id": "dialogue.hmm",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "Hmm?",
-      "next": "narration.sisterLeans"
-    },
-  
-    {
-      "id": "narration.sisterLeans",
-      "type": "singleParagraph",
-      "text": "Your sister catches up to you and stops in front of the building. She leans forward on her toes, trying to read the plaque.",
-      "next": "dialogue.OttosDiatribes"
-    },
-
-    {
-      "id": "dialogue.OttosDiatribes",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "<em>Tch</em>… Otto’s ramblings are making me blind. Truly.",
-      "next": "dialogue.blueish"
-    },
-
-    {
-      "id": "dialogue.blueish",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“But yeah… I think this is the place. She did say it was blue… <em>ish</em>.”",
-      "next": "narration.lookAround"
-    },
-
-    {
-      "id": "narration.lookAround",
-      "type": "singleParagraph",
-      "text": "She takes another look around the peaceful street.",
-      "next": "dialogue.howCome"
-    },
-
-    {
-      "id": "narration.cornea",
-      "type": "singleParagraph",
-      "text": "Those numbers are not getting any clearer for you. No matter how hard you squish your cornea.",
-      "next": "dialogue.areYouOk"
-    },
-  
-    {
-      "id": "dialogue.areYouOk",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“Are you okay?”",
-      "next": "narration.puzzled"
-    },
-
-    {
-      "id": "narration.puzzled",
-      "type": "singleParagraph",
-      "text": "Your sister catches up to you, puzzled. She glances at the obscured plaque, then up at the third-floor windows, before her eyes return to your disoriented face.",
-      "next": "dialogue.blueish2"
-    },
-
-    {
-      "id": "dialogue.blueish2",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "Well… she did say the place was blue… <em>ish</em>.",
-      "next": "dialogue.mustBeThePlace"
-    },
-
-    {
-      "id": "dialogue.mustBeThePlace",
-      "type": "characterDialogue",
-      "character": "erika-monsell",
-      "text": "“This must be it.”",
-      "next": "narration.eyesWander"
-    },
-
-    {
-      "id": "narration.eyesWander",
-      "type": "singleParagraph",
-      "text": "She turns around; her eyes wander along the trees flanking the peaceful street, a hint of a smile on her face.",
-      "next": "dialogue.howCome"
-    },
-
-    {
-      "id": "dialogue.howCome",
-      "type": "characterDialogue",
+      "id": "howCome",
+      "type": "dialogue",
       "character": "erika-monsell",
       "text": [
         "“How come we haven’t been here before? It’s not that far from the studio.”",
-        "<br><br><em>New note added: The Studio.</em>"
+        "<em>New note added: The Studio.</em>"
       ],
       "notesAdd": ["the-studio"],
       "next": null

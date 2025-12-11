@@ -30,6 +30,13 @@ import {
 // Constants
 const MAX_RENDERED_BLOCKS = 10; // Limit number of rendered blocks kept in memory and DOM
 
+// Normalize text into an array for unified rendering
+const normalizeTextArray = (text) => {
+  if (Array.isArray(text)) return text.filter((t) => t != null && t !== "");
+  if (text == null) return [];
+  return [text];
+};
+
 export default function StoryFlow({
   story,
   savedStory,
@@ -274,11 +281,11 @@ export default function StoryFlow({
 
     // Freeze character at render-time so later flag changes do not rewrite history
     const frozenBlock =
-      nodeToRender.type === "characterDialogue"
+      nodeToRender.type === "dialogue"
         ? {
-            ...nodeToRender,
-            _frozenCharacter: resolveCharacter(nodeToRender.character),
-          }
+          ...nodeToRender,
+          _frozenCharacter: resolveCharacter(nodeToRender.character),
+        }
         : nodeToRender;
 
     // Append block while keeping only the last N items for performance
@@ -288,7 +295,7 @@ export default function StoryFlow({
     ]);
 
     // Stop progression and wait for player input if we rendered a choice
-    if (nodeToRender.type === "dialogueChoice") {
+    if (nodeToRender.type === "choice") {
       setWaitingChoice(true);
       setCurrentNodeId(nodeToRender.id);
       return;
@@ -320,7 +327,7 @@ export default function StoryFlow({
 
     // Render the player’s spoken line as a dialogue block ("YOU")
     const youBlock = {
-      type: "characterDialogue",
+      type: "dialogue",
       character: { id: "you", name: "You" },
       text: [choice.text],
     };
@@ -347,7 +354,7 @@ export default function StoryFlow({
 
     // Freeze all blocks that show characters so names/graphics stay consistent
     const freezeBlock = (b) =>
-      b?.type === "characterDialogue"
+      b?.type === "dialogue"
         ? { ...b, _frozenCharacter: resolveCharacter(b.character) }
         : b;
 
@@ -369,7 +376,7 @@ export default function StoryFlow({
     setWaitingChoice(false);
 
     if (nextNode) {
-      if (nextNode.type === "dialogueChoice") {
+      if (nextNode.type === "choice") {
         setWaitingChoice(true); // Enter choice mode again if next node is a choice
         setCurrentNodeId(nextNode.id);
       } else {
@@ -425,7 +432,7 @@ export default function StoryFlow({
       }
 
       // Character graphic (portrait) from dialogue nodes
-      if (block.type === "characterDialogue") {
+      if (block.type === "dialogue") {
         const char =
           block._frozenCharacter || resolveCharacter(block.character);
 
@@ -452,9 +459,8 @@ export default function StoryFlow({
   // Render the story UI with content feed and progression controls
   return (
     <div
-      className={`story-flow has-pixelated-corners has-scroll-parent${
-        visible ? " visible" : ""
-      }`}
+      className={`story-flow has-pixelated-corners has-scroll-parent${visible ? " visible" : ""
+        }`}
       style={{ "--story-fade": `${fadeInDuration}ms` }}
     >
       <div className="story-flow-content has-scroll" ref={contentRef}>
@@ -462,41 +468,33 @@ export default function StoryFlow({
           const isCurrent = i === renderedBlocks.length - 1; // Mark last block for subtle emphasis
           const cls = `story-flow-node${isCurrent ? " is-current" : ""}`;
 
-          // Render a single HTML paragraph block
-          if (block.type === "singleParagraph")
-            return (
-              <div key={block.id || i} className={cls}>
-                <p
-                  className="story-flow-node-pargraph"
-                  dangerouslySetInnerHTML={{ __html: block.text }}
-                />
-              </div>
-            );
+          // Render narration as one or more HTML paragraphs
+          if (block.type === "narration") {
+            const parts = normalizeTextArray(block.text);
 
-          // Render multiple HTML paragraphs as a sequence
-          if (block.type === "multipleParagraphs")
             return (
               <div key={block.id || i} className={cls}>
-                {block.text.map((t, j) => (
+                {parts.map((t, j) => (
                   <p
                     key={`${i}-${j}`}
+                    className="story-flow-node-pargraph"
                     dangerouslySetInnerHTML={{ __html: t }}
                   />
                 ))}
               </div>
             );
+          }
 
-          // Render a dialogue line with uppercase speaker label
-          if (block.type === "characterDialogue") {
+          // Render a dialogue block with uppercase speaker label and optional extra paragraphs
+          if (block.type === "dialogue") {
             const isYou = block.character?.id === "you";
             const char = isYou
               ? { name: "YOU" }
               : block._frozenCharacter || resolveCharacter(block.character);
-            const name = char.name.toUpperCase();
-            const text =
-              Array.isArray(block.text) ?
-                block.text.join(" ") :
-                block.text;
+            const name = (char.name || "???").toUpperCase();
+
+            const parts = normalizeTextArray(block.text);
+            const [first, ...rest] = parts.length > 0 ? parts : [""];
 
             return (
               <div key={block.id || i} className={cls}>
@@ -504,14 +502,21 @@ export default function StoryFlow({
                   <span className="story-flow-node-character">
                     {name} —
                   </span>{" "}
-                  <span dangerouslySetInnerHTML={{ __html: text }} />
+                  <span dangerouslySetInnerHTML={{ __html: first }} />
                 </p>
+
+                {rest.map((t, j) => (
+                  <p
+                    key={`${i}-extra-${j}`}
+                    dangerouslySetInnerHTML={{ __html: t }}
+                  />
+                ))}
               </div>
             );
           }
 
           // Render an ordered list of choices that call handleChoice on click
-          if (block.type === "dialogueChoice") {
+          if (block.type === "choice") {
             const safeChoices = Array.isArray(block.choices) ? block.choices : [];
             return (
               <div key={block.id || i} className={cls}>
