@@ -47,7 +47,8 @@
  animation: nodeSoftFade 0.4s ease-in-out forwards;
 }
 
-.story-flow-node + .story-flow-node {
+.story-flow-node + .story-flow-node,
+.story-flow-node p + p {
   margin-top: 20px;
 }
 

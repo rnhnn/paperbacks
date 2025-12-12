@@ -66,7 +66,7 @@
       "id": "ottosDiatribes",
       "type": "dialogue",
       "character": "erika-monsell",
-      "text": "“Tch… Otto’s ramblings are making me blind. Truly.”",
+      "text": "<em>“Tch</em>… Otto’s ramblings are making me blind. Truly.”",
       "next": "iThinkIsThePlace"
     },
 
@@ -136,10 +136,18 @@
       "type": "choice",
       "choices": [
         {
-          "text": "“It’s very… peaceful here.”",
-          "next": "mobsters"
+          "text": "“Peaceful, huh?”",
+          "next": "yeah"
         }
       ]
+    },
+
+    {
+      "id": "yeah",
+      "type": "dialogue",
+      "character": "erika-monsell",
+      "text": "“Yeah.”",
+      "next": "mobsters"
     },
 
     {
@@ -147,15 +155,30 @@
       "type": "dialogue",
       "character": "erika-monsell",
       "text": "“I bet she doesn’t get woken up at three in the morning by mobsters having a knife fight…”",
-      "next": "theaterKids"
+      "next": "theaterGroup"
     },
 
     {
-      "id": "theaterKids",
+      "id": "theaterGroup",
       "type": "dialogue",
       "character": "erika-monsell",
-      "text": "“...or drunk theater kids <em>howling</em> the bloody act break of Winds of Velamar...”",
-      "next": "howCome"
+      "text": "“…or by a drunk theatre group <em>howling</em> a song from bloody Winds of Wesmark…”",
+      "next": "mobsterWinds"
+    },
+
+    {
+      "id": "mobsterWinds",
+      "type": "choice",
+      "choices": [
+        {
+          "text": "“Um, <em>mobsters</em>?”",
+          "next": "mobsters"
+        },
+        {
+          "text": "“I love Winds of Wesmark! Do you remember what song?”",
+          "next": "mobsters"
+        }
+      ]
     },
 
     {
